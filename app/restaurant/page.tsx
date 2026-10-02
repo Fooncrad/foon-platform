@@ -1,7 +1,7 @@
 import {Suspense} from 'react';
 import {redirect} from 'next/navigation';
 import {database} from '@/db';
-import {requireUser} from '@/lib/auth';
+import {requireUser} from '@/app/session';
 import ControlPanel from '@/components/platform/control-panel';
 
 export default async function Restaurant({searchParams}:{searchParams:Promise<{tenant?:string}>}){
