@@ -1,0 +1,6 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {hashPassword,verifyPassword} from '../lib/platform/password.mjs';
+import {mysqlSql} from '../db/mysql.mjs';
+test('salted passwords reject incorrect passwords and malformed hashes',async()=>{const a=await hashPassword('Test-only-password-123!');const b=await hashPassword('Test-only-password-123!');assert.notEqual(a,b);assert.equal(await verifyPassword('Test-only-password-123!',a),true);assert.equal(await verifyPassword('incorrect',a),false);assert.equal(await verifyPassword('anything','broken'),false);});
+test('MySQL upserts preserve placeholders and quote reserved identifiers',()=>{const sql=mysqlSql('INSERT INTO platform_settings(key,value,updated_at) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at');assert.equal(sql,'INSERT INTO platform_settings(`key`,value,updated_at) VALUES(?,?,?) ON DUPLICATE KEY UPDATE value=VALUES(`value`),updated_at=VALUES(`updated_at`)');assert.equal(mysqlSql('SELECT key,value FROM platform_settings'),'SELECT `key`,value FROM platform_settings');assert.equal(mysqlSql('INSERT OR IGNORE INTO message_outbox(id) VALUES(?)'),'INSERT IGNORE INTO message_outbox(id) VALUES(?)');});

@@ -1,0 +1,31 @@
+import {randomBytes,createHash} from 'node:crypto';
+import {NextResponse} from 'next/server';
+import {database} from '@/db';
+import {ApiError,sameOrigin} from '@/lib/platform/security';
+import {verifyPassword,hashPassword} from '@/lib/platform/password.mjs';
+import {safeReturnPath} from '@/app/session';
+export const dynamic='force-dynamic';
+let dummy:Promise<string>|undefined;
+export async function POST(request:Request){
+ try{
+  sameOrigin(request);
+  const raw=await request.text();if(raw.length>4096)return NextResponse.json({error:'INVALID_INPUT'},{status:400});
+  const input=JSON.parse(raw);const email=String(input.email??'').trim().toLowerCase();const password=String(input.password??'');
+  if(!email||email.length>254||password.length>256)return NextResponse.json({error:'INVALID_CREDENTIALS'},{status:401});
+  const bucket=Math.floor(Date.now()/900000);const rateKey=createHash('sha256').update(email+':'+bucket).digest('hex');
+  await database().prepare('INSERT INTO auth_login_attempts(bucket_key,attempts,expires_at) VALUES(?,1,?) ON CONFLICT(bucket_key) DO UPDATE SET attempts=attempts+1').bind(rateKey,Date.now()+1800000).run();
+  const attempts=await database().prepare('SELECT attempts FROM auth_login_attempts WHERE bucket_key=?').bind(rateKey).first<{attempts:number}>();
+  if((attempts?.attempts??0)>10)return NextResponse.json({error:'TOO_MANY_ATTEMPTS'},{status:429});
+  const user=await database().prepare('SELECT id,email,password_hash FROM users WHERE email=?').bind(email).first<{id:string;email:string;password_hash:string|null}>();
+  dummy??=hashPassword(randomBytes(32).toString('hex'));
+  const valid=await verifyPassword(password,user?.password_hash??await dummy);
+  if(!valid||!user)return NextResponse.json({error:'INVALID_CREDENTIALS'},{status:401});
+  const token=randomBytes(32).toString('hex');const now=Date.now();
+  await database().prepare('INSERT INTO auth_sessions(token_hash,user_id,expires_at,created_at) VALUES(?,?,?,?)').bind(createHash('sha256').update(token).digest('hex'),user.id,now+7*86400000,now).run();
+  await database().prepare('DELETE FROM auth_sessions WHERE expires_at<?').bind(now).run();
+  await database().prepare('DELETE FROM auth_login_attempts WHERE expires_at<?').bind(now).run();
+  const admin=Boolean(process.env.PLATFORM_ADMIN_EMAIL)&&user.email.toLowerCase()===process.env.PLATFORM_ADMIN_EMAIL!.toLowerCase();
+  let next=safeReturnPath(String(input.next??''));if(next==='/'||(!admin&&next==='/admin'))next=admin?'/admin':'/store';
+  const response=NextResponse.json({next});response.cookies.set('foon_session',token,{httpOnly:true,secure:process.env.NODE_ENV==='production'&&process.env.SITE_ORIGIN?.startsWith('https://'),sameSite:'lax',path:'/',maxAge:7*86400});return response;
+ }catch(e){return e instanceof ApiError?NextResponse.json({error:e.code},{status:e.status}):NextResponse.json({error:'SIGN_IN_UNAVAILABLE'},{status:503});}
+}
