@@ -1,0 +1,1 @@
+import {Suspense} from 'react';import {requireUser} from '@/app/session';import SubscriptionSetup from '@/components/platform/subscription-setup';export const dynamic='force-dynamic';export default async function Page(){await requireUser('/store/subscription');return <Suspense><SubscriptionSetup/></Suspense>}
