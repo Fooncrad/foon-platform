@@ -11,6 +11,10 @@ cpSync('public','dist/public',{recursive:true});
 for(const name of ['.env','.env.local','.env.production','.env.production.local'])rmSync(`dist/${name}`,{force:true});
 writeFileSync('dist/.build-complete','FOON Node.js standalone build\n');
 console.log('Hostinger output: dist; entry: dist/server.js');
-// Database migrations are intentionally not executed during Hostinger builds.
-// Run `pnpm db:migrate` as an explicit deployment/maintenance step after the
-// production database credentials and network access have been verified.
+// One-time bootstrap when explicitly enabled in Hostinger.
+if(process.env.RUN_DB_MIGRATIONS==='true'){
+ for(const script of ['scripts/migrate-mysql.mjs',...(process.env.ADMIN_INITIAL_PASSWORD?['scripts/create-account.mjs']:[])]){
+  const child=spawnSync(process.execPath,[script],{stdio:'inherit',env:process.env});
+  if(child.status!==0)process.exit(child.status??1);
+ }
+}
