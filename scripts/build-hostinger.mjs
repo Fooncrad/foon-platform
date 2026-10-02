@@ -11,13 +11,13 @@ cpSync('public','dist/public',{recursive:true});
 for(const name of ['.env','.env.local','.env.production','.env.production.local'])rmSync(`dist/${name}`,{force:true});
 writeFileSync('dist/.build-complete','FOON Node.js standalone build\n');
 console.log('Hostinger output: dist; entry: dist/server.js');
-// Apply idempotent schema migrations during Hostinger builds whenever the database is configured.
-// schema_migrations + GET_LOCK make repeated deploys safe and non-destructive.
-if(process.env.DB_HOST&&process.env.DB_USER&&process.env.DB_NAME){
+// Keep deployment builds independent from database network/auth availability.
+// Run migrations only when explicitly requested in an environment that can reach MySQL.
+if(process.env.RUN_DB_MIGRATIONS==='true'){
  const child=spawnSync(process.execPath,['scripts/migrate-mysql.mjs'],{stdio:'inherit',env:process.env});
  if(child.status!==0)process.exit(child.status??1);
-}
-if(process.env.ADMIN_INITIAL_PASSWORD){
- const child=spawnSync(process.execPath,['scripts/create-account.mjs'],{stdio:'inherit',env:process.env});
- if(child.status!==0)process.exit(child.status??1);
+ if(process.env.ADMIN_INITIAL_PASSWORD){
+  const account=spawnSync(process.execPath,['scripts/create-account.mjs'],{stdio:'inherit',env:process.env});
+  if(account.status!==0)process.exit(account.status??1);
+ }
 }
