@@ -176,3 +176,5 @@ body{font-family:FoonArabic,Arial,sans-serif;line-height:1.8;-webkit-font-smooth
  .metrics{grid-template-columns:1fr!important}.command-health{display:none}.command-hero h2{font-size:21px!important}.workspace-content{padding:8px!important}
  .premium-board .board-top{padding:15px!important}.premium-board .board-index{font-size:7px!important}
 }
+
+.login-register{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;color:var(--muted-foreground)}.login-register a{font-weight:800;color:var(--primary);text-decoration:none}.login-register a:hover{text-decoration:underline}@media(max-width:760px){.panel-card{margin:18px auto!important;padding:20px 15px!important;border-radius:14px!important}.panel-card h1{font-size:22px!important}.panel-card input{font-size:16px!important;min-height:46px}.panel-card .primary-button{width:100%;min-height:48px}.login-register{flex-direction:column;align-items:stretch;text-align:center}.login-register a{min-height:44px;display:grid;place-items:center;border:1px solid var(--border);border-radius:9px;background:var(--background)}}
