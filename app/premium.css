@@ -296,3 +296,14 @@ html,body{max-width:100%;overflow-x:hidden}img,svg,video,canvas{max-width:100%}i
 .signup-plan small::before{content:'✓';margin-inline-end:6px;color:#f47736;font-weight:800}
 .signup-choice-note{margin-top:12px;line-height:1.65;color:#566273}
 @media(max-width:680px){.signup-plan-grid{grid-template-columns:1fr}.signup-plan{padding:14px}.signup-plan strong{font-size:15px}}
+
+/* Registration review: explicit contrast, independent from global theme tokens */
+.signup-review>div{background:#08121f!important;border-color:#1c3550!important;color:#f8fafc!important}
+.signup-review>div small{color:#9fb0c4!important;font-size:11px!important}
+.signup-review>div strong{color:#fff!important;font-size:15px!important;font-weight:750!important;overflow-wrap:anywhere}
+.signup-review>div span{color:#c8d3df!important;font-size:12px!important;line-height:1.55!important;overflow-wrap:anywhere}
+.signup-review>div strong[dir="ltr"]{direction:ltr;text-align:left;color:#e7f0fa!important}
+.signup-review .signup-consent{background:transparent!important;border:0!important;color:#64748b!important}
+.signup-consent{display:flex!important;align-items:flex-start!important;gap:9px!important;padding:5px 2px!important;cursor:pointer}
+.signup-consent input[type="checkbox"]{appearance:auto!important;-webkit-appearance:checkbox!important;width:18px!important;height:18px!important;min-width:18px!important;margin:1px 0 0!important;accent-color:#f47736}
+.signup-consent>span{display:inline!important;color:#64748b!important;font-size:12px!important;line-height:1.55!important}
