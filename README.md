@@ -58,3 +58,4 @@ Shared email templates and central delivery remain the default; stores may expli
 The existing managed preview deployment is separate and remains on its previous runtime. This repository is the portable Hostinger version. No old NFOOD functions or data were imported.
 
 See [foundation boundaries](docs/FOUNDATION.md).
+
