@@ -252,3 +252,15 @@ html,body{max-width:100%;overflow-x:hidden}img,svg,video,canvas{max-width:100%}i
 @media(max-width:600px){.hero-copy h1{font-size:clamp(32px,10vw,45px)!important}.production-footer-grid{grid-template-columns:1fr}}
 
 .managed-public-page{min-height:100vh;background:var(--background);color:var(--foreground);padding:64px 20px}.managed-public-page>div{width:min(900px,100%);margin:auto}.managed-public-page>a,.managed-public-page>div>a{display:inline-flex;align-items:center;gap:7px;color:var(--brand-orange);font-weight:800;font-size:13px}.managed-public-page h1{margin:32px 0 22px;font-size:clamp(30px,5vw,48px);line-height:1.25}.managed-public-body{display:grid;gap:16px;border:1px solid var(--border);background:var(--card);border-radius:24px;padding:clamp(22px,4vw,42px);box-shadow:var(--panel-shadow)}.managed-public-body p{white-space:pre-wrap;line-height:2;color:var(--muted-foreground)}.managed-public-empty{border:1px dashed var(--border);border-radius:20px;padding:28px;color:var(--muted-foreground)}
+
+/* Footer: keep the QR anchored at the far edge and use the previously empty band for all navigation. */
+.production-footer-inner{padding-top:24px}
+.production-footer-grid{grid-template-columns:1.2fr .85fr .85fr 1fr;align-items:start;gap:42px;padding:30px 190px 30px 0;min-height:198px;position:relative}
+.production-footer-qr{position:absolute;right:max(32px,calc((100vw - 1280px)/2 + 32px));margin-top:30px;width:150px;height:150px;border:0;padding:0;z-index:2}
+.production-footer-qr>div{display:none}
+.production-footer-qr>a{margin-left:auto}
+.production-footer-brand{justify-self:start;text-align:left;direction:ltr}
+.production-footer-grid>div:not(.production-footer-brand){text-align:start}
+.production-footer-bottom{margin-top:0}
+@media(max-width:900px){.production-footer-grid{padding:28px 0 190px;grid-template-columns:repeat(2,minmax(0,1fr));min-height:0}.production-footer-qr{position:absolute;right:24px;margin-top:calc(100% + 18px)}}
+@media(max-width:600px){.production-footer-grid{grid-template-columns:1fr;padding-bottom:185px}.production-footer-qr{right:18px}.production-footer-brand{justify-self:start}}
