@@ -307,3 +307,19 @@ html,body{max-width:100%;overflow-x:hidden}img,svg,video,canvas{max-width:100%}i
 .signup-consent{display:flex!important;align-items:flex-start!important;gap:9px!important;padding:5px 2px!important;cursor:pointer}
 .signup-consent input[type="checkbox"]{appearance:auto!important;-webkit-appearance:checkbox!important;width:18px!important;height:18px!important;min-width:18px!important;margin:1px 0 0!important;accent-color:#f47736}
 .signup-consent>span{display:inline!important;color:#64748b!important;font-size:12px!important;line-height:1.55!important}
+
+
+/* iOS/mobile registration: keep the focused field visible above the software keyboard. */
+@media(max-width:900px){
+ .legacy-register-shell{min-height:100dvh;display:block!important;overflow:visible!important}
+ .legacy-register-story{display:none!important}
+ .legacy-register-main{display:block!important;min-height:100dvh;overflow:visible!important;padding:8px 8px calc(96px + env(safe-area-inset-bottom))!important}
+ .legacy-register-card{width:100%!important;max-width:none!important;margin:0!important;padding:16px 14px!important;overflow:visible!important}
+ .legacy-register-card label{scroll-margin-top:18px;scroll-margin-bottom:42vh}
+ .legacy-register-card input,.legacy-register-card select{font-size:16px!important;min-height:48px!important;height:48px!important}
+ .legacy-register-card .signup-actions{position:static!important;margin-inline:0!important;margin-bottom:0!important;padding:12px 0 0!important;background:transparent!important;border-top:0!important;backdrop-filter:none!important}
+}
+@media(max-width:480px){
+ .legacy-register-main{padding:4px 4px calc(88px + env(safe-area-inset-bottom))!important}
+ .legacy-register-card{padding:14px 12px!important;border-radius:14px!important}
+}
