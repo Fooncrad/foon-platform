@@ -264,3 +264,22 @@ html,body{max-width:100%;overflow-x:hidden}img,svg,video,canvas{max-width:100%}i
 .production-footer-bottom{margin-top:0}
 @media(max-width:900px){.production-footer-grid{padding:28px 0 190px;grid-template-columns:repeat(2,minmax(0,1fr));min-height:0}.production-footer-qr{position:absolute;right:24px;margin-top:calc(100% + 18px)}}
 @media(max-width:600px){.production-footer-grid{grid-template-columns:1fr;padding-bottom:185px}.production-footer-qr{right:18px}.production-footer-brand{justify-self:start}}
+
+/* Registration density, readability and native browser autofill */
+.legacy-register-shell{grid-template-columns:minmax(360px,.72fr) minmax(0,1.28fr)}
+.legacy-register-story{padding:28px 34px}
+.legacy-register-brand>span{width:42px;height:42px;border-radius:13px}.legacy-register-brand svg{width:21px}
+.legacy-register-hero{margin-top:52px;max-width:360px}.legacy-register-hero h1{font-size:clamp(30px,2.35vw,38px);line-height:1.22}.legacy-register-hero>span{margin-top:14px;line-height:1.75}
+.legacy-register-benefits{gap:9px}.legacy-register-benefits div{padding:10px;border-radius:14px}
+.legacy-register-main{padding:14px 20px}.legacy-register-card{max-width:610px;border-radius:24px!important;padding:22px!important}
+.legacy-register-card .signup-title{margin-bottom:18px}.legacy-register-card .signup-title h2{font-size:clamp(20px,1.8vw,27px)}
+.legacy-register-card label{gap:6px;font-size:13px;color:#1e293b!important;font-weight:800}
+.legacy-register-card input,.legacy-register-card select{height:42px!important;min-height:42px!important;border-radius:12px!important;border-color:#94a3b8!important;background:#fff!important;color:#0f172a!important;font-size:14px!important;font-weight:650!important;opacity:1!important;padding-inline:13px!important;-webkit-text-fill-color:#0f172a!important}
+.legacy-register-card input::placeholder{color:#64748b!important;opacity:1!important;-webkit-text-fill-color:#64748b!important}
+.legacy-register-card input:disabled{background:#e9eef5!important;color:#334155!important;-webkit-text-fill-color:#334155!important;opacity:1!important}
+.legacy-register-card input:-webkit-autofill,.legacy-register-card input:-webkit-autofill:hover,.legacy-register-card input:-webkit-autofill:focus{-webkit-text-fill-color:#0f172a!important;-webkit-box-shadow:0 0 0 1000px #fff inset!important;box-shadow:0 0 0 1000px #fff inset!important;caret-color:#0f172a!important}
+.legacy-register-card .slug-field{min-height:42px}.legacy-register-card .slug-field>span{min-height:42px;display:flex;align-items:center}
+.legacy-register-card .signup-actions{margin-top:18px}.legacy-register-card .primary-button,.legacy-register-card .hero-ghost{min-height:42px!important}
+.legacy-register-card .signup-review{gap:9px}.legacy-register-card .signup-review>div{padding:11px 13px!important}
+@media(max-width:900px){.legacy-register-main{padding:8px;align-items:flex-start}.legacy-register-card{max-width:640px;min-height:0!important;padding:16px!important;border-radius:18px!important}.legacy-register-card .signup-title{margin-bottom:14px}}
+@media(max-width:480px){.legacy-register-main{padding:5px}.legacy-register-card{padding:12px!important;border-radius:15px!important}.legacy-register-card input,.legacy-register-card select{height:40px!important;min-height:40px!important}.legacy-register-card .signup-actions{margin-top:12px}}
