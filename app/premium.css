@@ -141,3 +141,38 @@ body{font-family:FoonArabic,Arial,sans-serif;line-height:1.8;-webkit-font-smooth
  .signup-card{padding-inline:13px}.signup-card .form-pair{grid-template-columns:1fr}
  .signup-actions{margin-inline:-13px}.signup-title h2{font-size:17px}
 }
+
+
+/* Global mobile usability pass — public + auth + admin */
+@media(max-width:760px){
+ html{scroll-padding-top:76px}body{font-size:15px;line-height:1.65}
+ .container{width:100%!important;max-width:none!important;padding-inline:14px!important}
+ .header-inner{min-height:64px!important;padding-block:8px!important;display:flex!important;flex-wrap:wrap!important;gap:7px!important}
+ .header .brand{max-width:46%;min-width:0}.header .brand-mark{width:34px;height:34px;flex:0 0 34px}.header .brand>span:last-child{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .header .preferences{margin-inline-start:auto;display:flex;gap:5px;flex:none}.header .preferences [data-slot=select-trigger]{height:38px;min-width:82px;padding-inline:8px}.header .icon-button{width:38px;height:38px}
+ .header:not(.admin-header) nav{order:3;width:100%;display:flex!important;justify-content:flex-start!important;overflow-x:auto;scrollbar-width:none;gap:4px!important;padding-bottom:1px}.header:not(.admin-header) nav::-webkit-scrollbar{display:none}.header:not(.admin-header) nav a{flex:0 0 auto;min-height:38px;display:flex;align-items:center;padding:6px 12px!important;font-size:12px!important}
+ main.container{padding-top:0}
+ .hero{display:flex!important;flex-direction:column!important;gap:22px!important;padding:26px 0 30px!important}.hero-copy{width:100%}.hero h1{font-size:clamp(29px,9vw,38px)!important;line-height:1.45!important;margin-bottom:12px!important}.hero .intro{font-size:14px!important;line-height:1.8!important;margin-bottom:18px!important}.hero-actions{grid-template-columns:1fr!important}.hero-actions>a{width:100%;min-height:48px}.trust-rail{font-size:9px!important}
+ .premium-board{width:100%;grid-template-columns:1fr!important}.premium-board .board-top,.premium-board .board-bottom{grid-column:1!important}.premium-board .board-row{border-inline-start:0!important;border-top:1px solid var(--border)!important;padding:17px!important;display:grid!important;grid-template-columns:auto 1fr auto!important;align-items:center!important;gap:12px!important}.premium-board .board-row .board-icon{margin:0!important;width:42px;height:42px}.premium-board .board-row h2{margin:0!important;font-size:14px!important}.premium-board .board-row p{font-size:11px!important;line-height:1.55!important;margin:2px 0 0!important}.premium-board .row-number{position:static!important}
+ .sector-section{padding:24px 0 30px!important}.section-heading{align-items:flex-start!important;gap:10px!important}.section-heading h2{font-size:21px!important}.section-heading p{font-size:12px!important}.activity-grid,.directory{grid-template-columns:1fr!important;gap:9px!important}.activity-card,.directory .activity-card{min-height:0!important;padding:16px!important;display:grid!important;grid-template-columns:auto 1fr!important;column-gap:12px!important;align-items:center!important}.activity-card svg{grid-row:1/3;margin:0!important;width:40px!important;height:40px!important}.activity-card h2,.activity-card h3{margin:0!important;font-size:15px!important}.activity-card span{font-size:11px!important}
+ .foundation-strip{padding:18px 16px!important;margin-bottom:28px!important;align-items:flex-start!important}.foundation-strip>svg{width:28px;flex:none}.foundation-strip h2{font-size:17px!important}.foundation-strip p{font-size:12px!important;line-height:1.7}
+ .page-heading{padding:25px 0 18px!important}.page-heading h1{font-size:25px!important;line-height:1.5}.page-heading p{font-size:12px!important}
+ .empty-panel{min-height:230px!important;padding:14px!important}
+ .control-heading{padding:17px 0!important}.control-heading h1{font-size:22px!important}.heading-actions{width:100%}.heading-actions>*{flex:1;justify-content:center}
+ .workspace-content{border-radius:12px!important;padding:11px!important}.command-toolbar{top:6px!important;margin-bottom:10px!important}.command-search{min-width:0}.command-search span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .command-hero{padding:18px 15px!important;min-height:0!important;align-items:flex-start!important}.command-hero h2{font-size:23px!important;line-height:1.45}.command-hero p{font-size:11px!important}.command-health{flex:none}
+ .metrics{grid-template-columns:1fr 1fr!important;gap:8px!important}.metric{min-height:104px!important;padding:12px!important;display:block!important}.metric>svg{position:static!important;width:31px!important;height:31px!important;margin-bottom:8px}.metric strong{font-size:22px!important}.metric span,.metric small{display:block;padding:0!important;font-size:10px!important}
+ .executive-deck{grid-template-columns:1fr!important}.executive-control{grid-column:auto!important}.ops-grid{grid-template-columns:1fr!important}.ops-card{padding:16px!important;min-height:0!important}.quick-actions{grid-template-columns:1fr!important}.quick-actions button{min-height:52px!important;flex-direction:row!important}
+ .mission-control{grid-template-columns:1fr!important;padding:8px!important}.mission-copy{padding:12px 10px 5px!important}.mission-launchers{grid-template-columns:1fr!important}.mission-launchers button{min-height:58px}
+ .system-matrix{padding:14px!important}.matrix-head{align-items:center}.matrix-nodes{grid-template-columns:1fr!important}.matrix-nodes>i{width:1px!important;height:10px!important;margin:auto}
+ .policy-banner{padding:15px!important}.policy-grid{grid-template-columns:1fr!important}.policy-grid>button{padding:17px!important}
+ .stores-layout,.message-layout,.integration-layout{grid-template-columns:1fr!important}.form-card,.records-card,.message-preview,.integration-note{padding:15px!important}.records-card{overflow-x:auto!important;-webkit-overflow-scrolling:touch}.records-card table{min-width:620px}.form-pair{grid-template-columns:1fr!important}
+ .form-card input,.form-card textarea,.field-select,.signup-card input,.signup-card select{font-size:16px!important}
+ button,a,[role=button],[data-slot=tabs-trigger],[data-slot=select-trigger]{touch-action:manipulation}
+ .footer{padding:18px 14px!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;font-size:11px!important}
+}
+@media(max-width:390px){
+ .container{padding-inline:10px!important}.header .brand>span:last-child{font-size:18px}.header .preferences [data-slot=select-trigger]{min-width:72px}
+ .metrics{grid-template-columns:1fr!important}.command-health{display:none}.command-hero h2{font-size:21px!important}.workspace-content{padding:8px!important}
+ .premium-board .board-top{padding:15px!important}.premium-board .board-index{font-size:7px!important}
+}
