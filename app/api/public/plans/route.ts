@@ -4,7 +4,7 @@ type Row=Record<string,unknown>;
 async function ensurePlansSchema(){const db=database();
  await db.prepare(`CREATE TABLE IF NOT EXISTS package_plans (id VARCHAR(40) NOT NULL,name_ar VARCHAR(120) NOT NULL,name_en VARCHAR(120) NOT NULL,monthly_price DECIMAL(12,2) NOT NULL DEFAULT 0,currency VARCHAR(3) NOT NULL DEFAULT 'SAR',enabled BIGINT NOT NULL DEFAULT 1,created_at BIGINT NOT NULL,PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`).run();
  const count=await db.prepare('SELECT COUNT(*) AS n FROM package_plans').first<{n:number|string}>();
- if(Number(count?.n||0)===0){const now=Date.now();await db.prepare("INSERT IGNORE INTO package_plans(id,name_ar,name_en,monthly_price,currency,enabled,created_at) VALUES ('starter','البداية','Starter',0,'SAR',1,?),('business','الأعمال','Business',399.00,'SAR',1,?)").bind(now,now).run()}
+ const now=Date.now();await db.prepare("INSERT IGNORE INTO package_plans(id,name_ar,name_en,monthly_price,currency,enabled,created_at) VALUES ('starter','المجانية','Free',0,'SAR',1,?),('basic','الأساسية','Basic',0,'SAR',1,?),('business','الأعمال','Business',399.00,'SAR',1,?),('professional','الاحترافية','Professional',0,'SAR',1,?)").bind(now,now,now,now).run();
 }
 export async function GET(){try{
  const db=database();await ensurePlansSchema();
