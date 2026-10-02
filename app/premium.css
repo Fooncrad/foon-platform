@@ -323,3 +323,16 @@ html,body{max-width:100%;overflow-x:hidden}img,svg,video,canvas{max-width:100%}i
  .legacy-register-main{padding:4px 4px calc(88px + env(safe-area-inset-bottom))!important}
  .legacy-register-card{padding:14px 12px!important;border-radius:14px!important}
 }
+
+
+/* Mobile viewport stability: prevent accidental horizontal page drift without breaking intentional scrollers. */
+html,body{max-width:100%;overflow-x:clip}
+#__next,body>main{max-width:100%}
+img,video,canvas,svg{max-width:100%}
+@media(max-width:900px){
+ html,body{width:100%;min-width:0;overscroll-behavior-x:none}
+ body{position:relative}
+ main,section,header,footer,nav,form,.container,.admin-container,.workspace-content,.legacy-register-shell,.legacy-register-main,.legacy-register-card{min-width:0;max-width:100%}
+ input,select,textarea,button{max-width:100%}
+ .legacy-register-shell,.legacy-register-main{width:100%!important}
+}
