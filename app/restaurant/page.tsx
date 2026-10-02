@@ -3,6 +3,7 @@ import {redirect} from 'next/navigation';
 import {database} from '@/db';
 import {requireUser} from '@/app/session';
 import ControlPanel from '@/components/platform/control-panel';
+import Surface from '@/components/platform/surface';
 
 export default async function Restaurant({searchParams}:{searchParams:Promise<{tenant?:string}>}){
  const user=await requireUser('/restaurant');
@@ -11,5 +12,5 @@ export default async function Restaurant({searchParams}:{searchParams:Promise<{t
  if(!memberships.results.length)redirect('/register/restaurant');
  if(params.tenant&&!memberships.results.some(x=>x.id===params.tenant))redirect('/restaurant?tenant='+memberships.results[0].id);
  if(!params.tenant)redirect('/restaurant?tenant='+memberships.results[0].id);
- return <Suspense><ControlPanel storeMode/></Suspense>
+ return <Suspense><Surface page="admin" content={<ControlPanel storeMode/>}/></Suspense>
 }
