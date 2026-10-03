@@ -1,21 +1,104 @@
 'use client';
-import {useEffect,useMemo,useState} from 'react';
+
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import {ArrowRight,Globe2,Languages,LoaderCircle,Menu as MenuIcon,Moon,QrCode,Search,ShoppingBag,Sun,UtensilsCrossed} from 'lucide-react';
-import {usePreferences} from '@/components/platform/preferences';
+import { ArrowRight, Globe2, Languages, LoaderCircle, Menu as MenuIcon, Minus, Moon, Plus, QrCode, Search, ShoppingBag, Sun, UtensilsCrossed, X } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { usePreferences } from '@/components/platform/preferences';
 
-type Store={id:string;name:string;slug:string;activity_id:string;country_code:string;currency:string;status:string};
-type MenuData={store?:Store;categories?:unknown[];items?:unknown[];error?:string};
+type Store = { id: string; name: string; slug: string; activity_id: string; country_code: string; currency: string; status: string };
+type Category = { id: string; name_ar: string; name_en: string; name_fr: string };
+type MenuItem = { id: string; category_id: string; name_ar: string; name_en: string; name_fr: string; description_ar: string | null; description_en: string | null; description_fr: string | null; price: string | number; image_url: string | null; calories: number | null };
+type MenuData = { store?: Store; categories?: Category[]; items?: MenuItem[]; error?: string };
+type CartLine = { item: MenuItem; quantity: number };
 
-export default function RestaurantMenu({slug}:{slug:string}){
- const {locale,setLocale,dark,toggleTheme}=usePreferences();const [data,setData]=useState<MenuData|null>(null);const [showQr,setShowQr]=useState(false);const [query,setQuery]=useState('');
- useEffect(()=>{let alive=true;fetch('/api/public/menu?slug='+encodeURIComponent(slug),{cache:'no-store'}).then(async r=>({ok:r.ok,body:await r.json()})).then(({ok,body})=>{if(alive)setData(ok?body:{error:body.error||'NOT_FOUND'})}).catch(()=>{if(alive)setData({error:'SERVICE_UNAVAILABLE'})});return()=>{alive=false}},[slug]);
- const labels=locale==='ar'?{back:'FOON',menu:'المنيو',scan:'QR المنيو',empty:'لم يضف المطعم أصناف المنيو بعد.',unavailable:'المنيو غير متاح حاليًا.',cart:'السلة',search:'ابحث في المنيو',all:'الكل',restaurant:'مطعم'}:locale==='fr'?{back:'FOON',menu:'Menu',scan:'QR du menu',empty:"Le restaurant n'a pas encore ajouté d'articles.",unavailable:'Menu indisponible.',cart:'Panier',search:'Rechercher dans le menu',all:'Tout',restaurant:'Restaurant'}:{back:'FOON',menu:'Menu',scan:'Menu QR',empty:'This restaurant has not added menu items yet.',unavailable:'Menu unavailable.',cart:'Cart',search:'Search menu',all:'All',restaurant:'Restaurant'};
- const cycle=()=>setLocale(locale==='ar'?'en':locale==='en'?'fr':'ar');const menuUrl=useMemo(()=>'/menu/'+slug,[slug]);
- return <div className="restaurant-menu-shell">
-  <header className="menu-header"><div className="menu-header-inner"><Link className="menu-brand" href="/"><span className="brand-mark"><UtensilsCrossed/></span><span>FOON<small>{labels.menu}</small></span></Link><nav><button type="button" onClick={cycle} aria-label="Language"><Languages/><span>{locale.toUpperCase()}</span></button><button type="button" onClick={toggleTheme} aria-label="Theme">{dark?<Sun/>:<Moon/>}</button><button type="button" className="menu-qr-button" onClick={()=>setShowQr(true)}><QrCode/><span>{labels.scan}</span></button></nav></div></header>
-  <main className="menu-main">{!data?<div className="menu-state"><LoaderCircle className="spin"/><span>{labels.menu}</span></div>:data.error?<div className="menu-state"><Globe2/><h1>{labels.unavailable}</h1><Link href="/"><ArrowRight/>{labels.back}</Link></div>:<><section className="menu-cover"><div className="menu-cover-copy"><p><UtensilsCrossed/>{labels.restaurant}</p><h1>{data.store?.name}</h1><div className="menu-meta"><span>{data.store?.country_code}</span><span>{data.store?.currency}</span></div></div><button type="button" className="menu-qr-card" onClick={()=>setShowQr(true)}><QrCode/><strong>{labels.scan}</strong><small dir="ltr">{menuUrl}</small></button></section><section className="menu-toolbar"><div className="menu-search"><Search/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder={labels.search}/></div><div className="menu-category-strip"><button className="active"><MenuIcon/>{labels.all}</button></div></section><section className="menu-content">{(data.items?.length??0)===0?<div className="menu-empty"><ShoppingBag/><h2>{labels.empty}</h2></div>:null}</section></>}</main>
-  {showQr&&<div className="menu-qr-modal" role="dialog" aria-modal="true" aria-label={labels.scan} onClick={()=>setShowQr(false)}><div onClick={e=>e.stopPropagation()}><button className="menu-qr-close" type="button" onClick={()=>setShowQr(false)}>×</button><span className="menu-qr-placeholder"><QrCode/></span><strong>{labels.scan}</strong><p dir="ltr">{typeof window!=='undefined'?window.location.origin+menuUrl:menuUrl}</p></div></div>}
-  <button className="menu-cart" type="button" aria-label={labels.cart}><ShoppingBag/><span>{labels.cart}</span></button>
- </div>
+const copy = {
+  ar: { menu: 'المنيو', scan: 'QR المنيو', empty: 'لا توجد أصناف متاحة حاليًا.', unavailable: 'المنيو غير متاح حاليًا.', search: 'ابحث في المنيو', all: 'الكل', restaurant: 'مطعم', add: 'أضف للسلة', cart: 'السلة', checkout: 'إرسال الطلب', name: 'الاسم', phone: 'رقم الجوال', email: 'البريد الإلكتروني (اختياري)', type: 'نوع الخدمة', pickup: 'استلام من المطعم', dine: 'داخل المطعم', room: 'خدمة الغرف', reference: 'رقم الطاولة أو الغرفة', notes: 'ملاحظات الطلب', total: 'الإجمالي', close: 'إغلاق', sending: 'جارٍ إرسال الطلب…', sent: 'تم إرسال طلبك', ref: 'رقم الطلب', emptyCart: 'السلة فارغة', currency: 'السعر', required: 'أكمل الاسم والجوال ورقم الطاولة أو الغرفة عند الحاجة.', error: 'تعذر إرسال الطلب. تحقق من البيانات وحاول مجددًا.', categories: 'الأقسام' },
+  en: { menu: 'Menu', scan: 'Menu QR', empty: 'No menu items are available yet.', unavailable: 'Menu unavailable.', search: 'Search menu', all: 'All', restaurant: 'Restaurant', add: 'Add to cart', cart: 'Cart', checkout: 'Place order', name: 'Name', phone: 'Phone', email: 'Email (optional)', type: 'Service type', pickup: 'Pickup', dine: 'Dine in', room: 'Room service', reference: 'Table or room number', notes: 'Order notes', total: 'Total', close: 'Close', sending: 'Sending order…', sent: 'Your order was placed', ref: 'Order reference', emptyCart: 'Your cart is empty', currency: 'Price', required: 'Enter your name, phone, and a table or room number when required.', error: 'Could not send the order. Check the details and try again.', categories: 'Categories' },
+  fr: { menu: 'Menu', scan: 'QR du menu', empty: 'Aucun article disponible pour le moment.', unavailable: 'Menu indisponible.', search: 'Rechercher dans le menu', all: 'Tout', restaurant: 'Restaurant', add: 'Ajouter au panier', cart: 'Panier', checkout: 'Commander', name: 'Nom', phone: 'Téléphone', email: 'E-mail (facultatif)', type: 'Type de service', pickup: 'À emporter', dine: 'Sur place', room: 'Service en chambre', reference: 'Numéro de table ou chambre', notes: 'Notes de commande', total: 'Total', close: 'Fermer', sending: 'Envoi en cours…', sent: 'Votre commande est envoyée', ref: 'Référence', emptyCart: 'Votre panier est vide', currency: 'Prix', required: 'Saisissez votre nom, téléphone et le numéro demandé.', error: 'Envoi impossible. Vérifiez les informations puis réessayez.', categories: 'Catégories' }
+} as const;
+
+export default function RestaurantMenu({ slug }: { slug: string }) {
+  const { locale, setLocale, dark, toggleTheme } = usePreferences();
+  const lang = locale === 'ar' || locale === 'fr' ? locale : 'en';
+  const t = copy[lang];
+  const [data, setData] = useState<MenuData | null>(null);
+  const [showQr, setShowQr] = useState(false);
+  const [origin, setOrigin] = useState('');
+  const [showCart, setShowCart] = useState(false);
+  const [query, setQuery] = useState('');
+  const [categoryId, setCategoryId] = useState('all');
+  const [cart, setCart] = useState<Record<string, CartLine>>({});
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [orderType, setOrderType] = useState<'pickup' | 'dine_in' | 'room_service'>('pickup');
+  const [reference, setReference] = useState('');
+  const [notes, setNotes] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const [lastReference, setLastReference] = useState('');
+  const [requestId, setRequestId] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    fetch('/api/public/menu?slug=' + encodeURIComponent(slug), { cache: 'no-store' })
+      .then(async response => ({ ok: response.ok, body: await response.json() as MenuData }))
+      .then(({ ok, body }) => { if (alive) { setOrigin(window.location.origin); setData(ok ? body : { error: body.error || 'NOT_FOUND' }); } })
+      .catch(() => { if (alive) setData({ error: 'SERVICE_UNAVAILABLE' }); });
+    return () => { alive = false; };
+  }, [slug]);
+
+  const menuUrl = useMemo(() => '/menu/' + encodeURIComponent(slug), [slug]);
+  const lines = Object.values(cart);
+  const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
+  const total = lines.reduce((sum, line) => sum + Math.round(Number(line.item.price) * 100) * line.quantity, 0) / 100;
+  const visibleItems = (data?.items ?? []).filter(item => {
+    const itemName = (lang === 'ar' ? item.name_ar : lang === 'fr' ? item.name_fr || item.name_en : item.name_en || item.name_ar).toLocaleLowerCase();
+    const desc = lang === 'ar' ? item.description_ar : lang === 'fr' ? item.description_fr : item.description_en;
+    return (categoryId === 'all' || item.category_id === categoryId) && (!query || `${itemName} ${desc ?? ''}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+  });
+  const nameOf = (item: MenuItem) => lang === 'ar' ? item.name_ar : lang === 'fr' ? item.name_fr || item.name_en || item.name_ar : item.name_en || item.name_ar;
+  const categoryName = (category: Category) => lang === 'ar' ? category.name_ar : lang === 'fr' ? category.name_fr || category.name_en : category.name_en || category.name_ar;
+  const descriptionOf = (item: MenuItem) => lang === 'ar' ? item.description_ar : lang === 'fr' ? item.description_fr || item.description_en : item.description_en || item.description_ar;
+  const cycleLocale = () => setLocale(locale === 'ar' ? 'en' : locale === 'en' ? 'fr' : 'ar');
+
+  function changeQuantity(item: MenuItem, amount: number) {
+    setCart(current => {
+      const next = { ...current };
+      const quantity = (next[item.id]?.quantity ?? 0) + amount;
+      if (quantity <= 0) delete next[item.id];
+      else next[item.id] = { item, quantity };
+      return next;
+    });
+  }
+
+  async function submitOrder(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!lines.length || submitting) return;
+    if (orderType !== 'pickup' && !reference.trim()) { setFeedback(t.required); return; }
+    setSubmitting(true); setFeedback('');
+    const key = requestId || crypto.randomUUID();
+    setRequestId(key);
+    try {
+      const response = await fetch('/api/public/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, clientRequestId: key, customerName: name, customerPhone: phone, customerEmail: email, orderType, serviceReference: reference, notes, items: lines.map(line => ({ id: line.item.id, quantity: line.quantity })) }) });
+      const body = await response.json() as { error?: string; order?: { reference?: string } };
+      if (!response.ok || !body.order?.reference) throw new Error(body.error || 'ORDER_FAILED');
+      setLastReference(body.order.reference); setCart({}); setRequestId(''); setFeedback('');
+    } catch {
+      setFeedback(t.error);
+    } finally { setSubmitting(false); }
+  }
+
+  return <div className="restaurant-menu-shell">
+    <header className="menu-header"><div className="menu-header-inner"><Link className="menu-brand" href="/"><span className="brand-mark"><UtensilsCrossed/></span><span>FOON<small>{t.menu}</small></span></Link><nav><button type="button" onClick={cycleLocale} aria-label="Language"><Languages/><span>{locale.toUpperCase()}</span></button><button type="button" onClick={toggleTheme} aria-label="Theme">{dark ? <Sun/> : <Moon/>}</button><button type="button" className="menu-qr-button" onClick={() => setShowQr(true)}><QrCode/><span>{t.scan}</span></button></nav></div></header>
+    <main className="menu-main">{!data ? <div className="menu-state"><LoaderCircle className="spin"/><span>{t.menu}</span></div> : data.error ? <div className="menu-state"><Globe2/><h1>{t.unavailable}</h1><Link href="/"><ArrowRight/>{'FOON'}</Link></div> : <>
+      <section className="menu-cover"><div className="menu-cover-copy"><p><UtensilsCrossed/>{t.restaurant}</p><h1>{data.store?.name}</h1><div className="menu-meta"><span>{data.store?.country_code}</span><span>{data.store?.currency}</span></div></div><button type="button" className="menu-qr-card" onClick={() => setShowQr(true)}><QRCodeSVG value={(origin||'https://fooncard.com')+menuUrl} size={64} level="M"/><strong>{t.scan}</strong><small dir="ltr">{menuUrl}</small></button></section>
+      <section className="menu-toolbar"><div className="menu-search"><Search/><input value={query} onChange={event => setQuery(event.target.value)} placeholder={t.search}/></div><div className="menu-category-strip"><button type="button" className={categoryId === 'all' ? 'active' : ''} onClick={() => setCategoryId('all')}><MenuIcon/>{t.all}</button>{(data.categories ?? []).map(category => <button type="button" key={category.id} className={categoryId === category.id ? 'active' : ''} onClick={() => setCategoryId(category.id)}>{categoryName(category)}</button>)}</div></section>
+      <section className="menu-content" aria-label={t.categories}>{visibleItems.length === 0 ? <div className="menu-empty"><ShoppingBag/><h2>{t.empty}</h2></div> : <div className="menu-item-grid">{visibleItems.map(item => <article className="menu-item-card" key={item.id}>{item.image_url ? <img className="menu-item-image" src={item.image_url} alt={nameOf(item)} loading="lazy"/> : <div className="menu-item-image menu-item-image-empty"><UtensilsCrossed/></div>}<div className="menu-item-copy"><h2>{nameOf(item)}</h2>{descriptionOf(item) && <p>{descriptionOf(item)}</p>}<div className="menu-item-bottom"><strong>{Number(item.price).toFixed(2)} <small>{data.store?.currency}</small></strong>{cart[item.id] ? <div className="menu-quantity"><button type="button" aria-label="Decrease" onClick={() => changeQuantity(item, -1)}><Minus/></button><span>{cart[item.id].quantity}</span><button type="button" aria-label="Increase" onClick={() => changeQuantity(item, 1)}><Plus/></button></div> : <button type="button" className="menu-add-button" onClick={() => changeQuantity(item, 1)}><Plus/>{t.add}</button>}</div></div></article>)}</div>}</section>
+    </>}</main>
+    {itemCount > 0 && <button className="menu-cart" type="button" onClick={() => { setShowCart(true); setLastReference(''); }} aria-label={`${t.cart} ${itemCount}`}><ShoppingBag/><span>{t.cart} · {itemCount}</span><b>{total.toFixed(2)} {data?.store?.currency}</b></button>}
+    {showQr && <div className="menu-qr-modal" role="dialog" aria-modal="true" aria-label={t.scan} onClick={() => setShowQr(false)}><div onClick={event => event.stopPropagation()}><button className="menu-qr-close" type="button" onClick={() => setShowQr(false)} aria-label={t.close}>×</button><span className="menu-qr-placeholder"><QRCodeSVG value={(origin||'https://fooncard.com')+menuUrl} size={150} level="H"/></span><strong>{t.scan}</strong><p dir="ltr">{origin ? origin+menuUrl : menuUrl}</p></div></div>}
+    {showCart && <div className="menu-checkout-backdrop" role="dialog" aria-modal="true" aria-label={t.cart} onClick={() => setShowCart(false)}><section className="menu-checkout" dir={lang === 'ar' ? 'rtl' : 'ltr'} onClick={event => event.stopPropagation()}><header><div><small>{t.cart}</small><h2>{lastReference ? t.sent : t.checkout}</h2></div><button type="button" onClick={() => setShowCart(false)} aria-label={t.close}><X/></button></header>{lastReference ? <div className="menu-order-success"><span><ShoppingBag/></span><p>{t.ref}</p><strong dir="ltr">{lastReference}</strong><button className="menu-submit-button" type="button" onClick={() => setShowCart(false)}>{t.close}</button></div> : lines.length === 0 ? <div className="menu-empty"><ShoppingBag/><h2>{t.emptyCart}</h2></div> : <><div className="menu-cart-lines">{lines.map(line => <article key={line.item.id}><div><strong>{nameOf(line.item)}</strong><small>{(Number(line.item.price) * line.quantity).toFixed(2)} {data?.store?.currency}</small></div><div className="menu-quantity"><button type="button" aria-label="Decrease" onClick={() => changeQuantity(line.item, -1)}><Minus/></button><span>{line.quantity}</span><button type="button" aria-label="Increase" onClick={() => changeQuantity(line.item, 1)}><Plus/></button></div></article>)}</div><form className="menu-checkout-form" onSubmit={submitOrder}><label>{t.name}<input required minLength={2} maxLength={160} value={name} onChange={event => setName(event.target.value)}/></label><label>{t.phone}<input required inputMode="tel" minLength={5} maxLength={32} value={phone} onChange={event => setPhone(event.target.value)}/></label><label>{t.email}<input type="email" maxLength={254} value={email} onChange={event => setEmail(event.target.value)}/></label><label>{t.type}<select value={orderType} onChange={event => setOrderType(event.target.value as typeof orderType)}><option value="pickup">{t.pickup}</option><option value="dine_in">{t.dine}</option><option value="room_service">{t.room}</option></select></label>{orderType !== 'pickup' && <label>{t.reference}<input required maxLength={80} value={reference} onChange={event => setReference(event.target.value)}/></label>}<label>{t.notes}<textarea maxLength={1000} rows={2} value={notes} onChange={event => setNotes(event.target.value)}/></label><div className="menu-checkout-total"><span>{t.total}</span><strong>{total.toFixed(2)} {data?.store?.currency}</strong></div>{feedback && <p className="menu-checkout-error" role="alert">{feedback}</p>}<button className="menu-submit-button" disabled={submitting}>{submitting ? t.sending : t.checkout}</button></form></>}</section></div>}
+  </div>;
 }
