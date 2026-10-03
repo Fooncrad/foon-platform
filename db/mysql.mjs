@@ -24,5 +24,6 @@ class Statement{
 }
 export function mysqlDatabase(){return {
  prepare(sql){return new Statement(sql);},
- async batch(statements){const conn=await getPool().getConnection();try{await conn.beginTransaction();const results=[];for(const s of statements)results.push(await s.execute(conn));await conn.commit();return results;}catch(e){await conn.rollback();throw e;}finally{conn.release();}}
+ async batch(statements){const conn=await getPool().getConnection();try{await conn.beginTransaction();const results=[];for(const s of statements)results.push(await s.execute(conn));await conn.commit();return results;}catch(e){await conn.rollback();throw e;}finally{conn.release();}},
+ async transaction(callback){const conn=await getPool().getConnection();try{await conn.beginTransaction();const tx={prepare(sql){return new Statement(sql,[],conn);}};const result=await callback(tx);await conn.commit();return result;}catch(e){await conn.rollback();throw e;}finally{conn.release();}}
 };}
