@@ -174,3 +174,14 @@ body {
 .restaurant-sidebar{overflow:hidden}.restaurant-sidebar nav{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-inline-end:4px}.restaurant-sidebar-foot{flex:none;background:var(--card);position:relative;z-index:2}.restaurant-nav-group:first-child{padding-top:0}.restaurant-nav-group>small{position:static}.restaurant-reference-dashboard{max-width:1600px;margin-inline:auto;width:100%}.restaurant-ops-head{align-items:center}.restaurant-reference-stats article{min-height:118px}.restaurant-dashboard-main>.records-card,.restaurant-dashboard-side>.records-card,.restaurant-profile-grid>.records-card{height:auto}
 @media(min-width:901px){.restaurant-main{max-width:calc(100vw - 292px);width:100%}.restaurant-topbar{width:100%}}
 @media(max-width:900px){.restaurant-main{width:100%;max-width:100vw}.restaurant-sidebar nav{padding-bottom:20px}.restaurant-sidebar-foot{padding-bottom:max(12px,env(safe-area-inset-bottom))}}
+
+/* Reference-density restaurant workspace */
+.restaurant-shell{grid-template-columns:268px minmax(0,1fr)}
+.restaurant-sidebar{width:268px;padding:12px 10px}
+.restaurant-sidebar-brand{padding:4px 10px 12px}.restaurant-sidebar-brand strong{font-size:22px}.restaurant-sidebar-brand small{font-size:12px;margin-top:3px}
+.restaurant-sidebar nav a,.restaurant-sidebar nav>span,.restaurant-sidebar-foot a{min-height:38px;padding:7px 9px;border-radius:10px;font-size:14px}.restaurant-nav-group{padding:4px 0}.restaurant-nav-group>small{padding:7px 9px 3px;font-size:10px}
+.restaurant-topbar{height:56px;padding:0 18px}.restaurant-topbar strong{font-size:14px}.restaurant-topbar small{font-size:11px}.restaurant-topbar>a{font-size:13px}
+.restaurant-workspace-shell{padding:18px}.restaurant-ops-head{min-height:118px;padding:8px 2px 12px}.restaurant-ops-head h1{font-size:clamp(30px,3.1vw,48px);line-height:1.05;margin:12px 0 8px}.restaurant-ops-head p{margin:0}.restaurant-ops-kicker{font-size:13px}.restaurant-ops-head .primary-button{min-height:44px;padding:0 18px}
+.restaurant-reference-dashboard{gap:14px}.restaurant-reference-stats{gap:14px}.restaurant-reference-stats article{min-height:102px;padding:16px}.restaurant-dashboard-grid,.restaurant-dashboard-main,.restaurant-dashboard-side,.restaurant-profile-grid{gap:14px}
+@media(min-width:901px){.restaurant-main{max-width:calc(100vw - 268px)}}
+@media(max-width:900px){.restaurant-sidebar{width:min(88vw,300px)}.restaurant-workspace-shell{padding:12px}.restaurant-ops-head{min-height:auto;padding:8px 0 14px;align-items:flex-start;gap:12px;flex-wrap:wrap}.restaurant-ops-head h1{font-size:30px}.restaurant-ops-head .primary-button{margin-inline-start:0}}
