@@ -1,0 +1,1 @@
+import RestaurantOrders from '@/components/restaurant/orders-manager';export default async function OrdersPage({params}:{params:Promise<{slug:string}>}){const {slug}=await params;return <RestaurantOrders slug={slug}/>}
