@@ -581,8 +581,13 @@ body{overflow-x:clip}
 .menu-draft-card{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 14px;padding:14px 16px;border:1px solid color-mix(in srgb,var(--primary) 25%,var(--border));border-radius:14px;background:color-mix(in srgb,var(--primary) 5%,var(--card))}.menu-draft-card>div{min-width:0}.menu-draft-card strong{color:var(--foreground)}.menu-draft-card p{margin:4px 0 0;color:var(--muted-foreground);font-size:12px}.menu-draft-status{flex-basis:100%;color:var(--muted-foreground);font-size:11px;text-align:center}@media(max-width:680px){.menu-draft-card{align-items:stretch;flex-direction:column}.menu-draft-card button{width:100%;justify-content:center}.menu-editor-panel>footer{position:sticky;bottom:0;z-index:2;background:var(--card);padding-bottom:max(12px,env(safe-area-inset-bottom))}.menu-editor-panel{height:100dvh}.menu-editor-content{min-height:0}}
 
 
-/* Pin the add/save controls to the editor viewport at every screen width. */
-.menu-editor-panel{height:100dvh;min-height:0}
-.menu-editor-panel>header,.menu-editor-panel>footer{flex:0 0 auto}
-.menu-editor-content{min-height:0;overscroll-behavior:contain}
-.menu-editor-panel>footer{position:sticky;bottom:0;z-index:5;background:var(--card);box-shadow:0 -8px 20px color-mix(in srgb,var(--foreground) 7%,transparent)}
+/* Keep item editor actions fixed while only the form fields scroll. */
+.menu-editor-backdrop{align-items:stretch;overflow:hidden}
+.menu-editor-panel{position:relative;height:100vh;height:100dvh;max-height:100dvh;min-height:0;overflow:hidden}
+.menu-editor-content{flex:1 1 auto;height:0;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:190px}
+.menu-editor-panel>footer{position:absolute;inset-inline:0;bottom:0;z-index:10;flex:0 0 auto;background:var(--card);box-shadow:0 -8px 20px color-mix(in srgb,var(--foreground) 10%,transparent);padding-bottom:max(14px,env(safe-area-inset-bottom))}
+@media(max-width:680px){
+ .menu-editor-content{padding-bottom:210px}
+ .menu-editor-panel>footer{padding:12px 14px max(14px,env(safe-area-inset-bottom));gap:8px}
+ .menu-editor-panel>footer .primary-button,.menu-editor-panel>footer .quiet-button{flex:1 1 140px;min-height:46px;justify-content:center}
+}
