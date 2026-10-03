@@ -355,3 +355,8 @@ img,video,canvas,svg{max-width:100%}
 @media(max-width:700px){.menu-item-grid{gap:9px}.menu-item-card{border-radius:13px}.menu-item-copy{padding:10px}.menu-item-copy h2{font-size:14px}.menu-item-copy p{font-size:12px}.menu-item-bottom{align-items:flex-start;flex-direction:column}.menu-add-button{width:100%;min-height:34px}.menu-item-bottom .menu-quantity{align-self:flex-start}.menu-checkout{padding:18px 15px}.menu-admin-head{align-items:flex-start;flex-direction:column}.menu-admin-head>.quiet-button{width:100%;justify-content:center}.menu-admin-grid{grid-template-columns:1fr}.menu-admin-items{grid-template-columns:1fr}.menu-admin .form-pair{grid-template-columns:1fr}.order-board-card{padding:13px}.order-board-card>header{align-items:flex-start;flex-direction:column}.order-board-card>footer{align-items:flex-start;flex-direction:column}.order-board-card>footer>div{width:100%}.order-board-card>footer button{flex:1}.order-board-meta{gap:8px}.menu-cart{inset-inline:12px;justify-content:space-between}}
 @media(max-width:360px){.restaurant-stat-grid{grid-template-columns:1fr}}
 .restaurant-order-context{margin:8px 0;color:var(--muted-foreground);font-size:13px;line-height:1.6}
+
+/* Independent activity email and message scope selectors */
+.activity-scope-picker{display:grid;gap:7px;max-width:520px;margin:0 0 18px;font-size:14px;font-weight:700;color:var(--foreground)}
+.legacy-login-forgot{display:flex;justify-content:flex-end;margin-top:-8px;font-size:13px;font-weight:700}
+.legacy-login-forgot a{color:var(--primary);text-decoration:underline;text-underline-offset:3px}
