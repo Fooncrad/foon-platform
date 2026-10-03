@@ -620,3 +620,7 @@ body{overflow-x:clip}
 .menu-editor-footer-v2{justify-content:flex-start!important}
 .menu-editor-draft-v2{display:none!important}
 @media(max-width:700px){.menu-editor-footer-v2>.menu-editor-draft-v2{display:none!important}}
+
+/* Restore real draft action: drafts are auto-saved locally and can be explicitly saved */
+.menu-editor-draft-v2{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;min-height:44px!important;white-space:nowrap!important}
+@media(max-width:700px){.menu-editor-footer-v2>.menu-editor-draft-v2{display:inline-flex!important}}
