@@ -5,7 +5,7 @@ import {useEffect,useState} from 'react';
 import {BarChart3,BookOpen,CalendarDays,ChevronLeft,ClipboardList,ContactRound,CreditCard,LayoutDashboard,Menu,MessageSquare,PackageOpen,Settings2,Share2,ShoppingCart,Star,UsersRound,Warehouse,X} from 'lucide-react';
 import {usePreferences} from '@/components/platform/preferences';
 type Props={slug:string;name:string;children:React.ReactNode};
-type Item={key:string;ar:string;en:string;icon:any;ready?:boolean};
+type Item={key:string;ar:string;en:string;icon:typeof Menu;ready?:boolean};
 const groups:{ar:string;en:string;items:Item[]}[]=[
  {ar:'عام',en:'General',items:[{key:'overview',ar:'لوحة التحكم',en:'Dashboard',icon:LayoutDashboard,ready:true},{key:'subscription',ar:'الاشتراكات',en:'Subscriptions',icon:PackageOpen}]},
  {ar:'الطلبات',en:'Order',items:[{key:'orders',ar:'الطلبات المباشرة',en:'Live order',icon:ClipboardList,ready:true},{key:'reservations',ar:'الحجوزات',en:'Reservation',icon:CalendarDays,ready:true},{key:'kds',ar:'KDS',en:'KDS',icon:ClipboardList,ready:true},{key:'pos',ar:'نقاط البيع POS',en:'POS',icon:ShoppingCart},{key:'reports',ar:'التقارير',en:'Reports',icon:BarChart3}]},
