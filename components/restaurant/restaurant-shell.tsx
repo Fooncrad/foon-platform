@@ -8,7 +8,7 @@ import {usePreferences} from '@/components/platform/preferences';
 type Props={slug:string;name:string;children:React.ReactNode};
 const modules=[
  ['overview','نظرة عامة','Overview',LayoutDashboard,true],
- ['menu','المنيو والأصناف','Menu & items',BookOpen,false],
+ ['menu','المنيو والأصناف','Menu & items',BookOpen,true],
  ['orders','الطلبات','Orders',ClipboardList,false],
  ['pos','نقاط البيع','POS',ShoppingCart,false],
  ['tables','الطاولات والحجوزات','Tables & reservations',CalendarDays,false],
