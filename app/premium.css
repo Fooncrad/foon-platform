@@ -106,7 +106,7 @@ body{font-family:FoonArabic,Arial,sans-serif;line-height:1.8;-webkit-font-smooth
 
 /* Mobile-first store registration hardening */
 @media(max-width:760px){
- body{overflow-x:hidden}
+ html,body{max-width:100%;overflow-x:clip;overscroll-behavior-x:none}
  .admin-header .header-inner{min-height:64px!important;padding:8px 0!important;flex-wrap:nowrap!important}
  .admin-header .brand{max-width:42%;min-width:0}
  .admin-header .brand>span:last-child{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -212,6 +212,12 @@ html,body{max-width:100%;overflow-x:hidden}img,svg,video,canvas{max-width:100%}i
 .legacy-login-main{min-height:100svh;background:#f8fafc;color:#142d4e;display:flex;align-items:center;justify-content:center;padding:36px}.dark .legacy-login-main{background:#090f18;color:#f0f4fb}.legacy-login-card{width:min(100%,490px);background:var(--card);border:1px solid var(--border);border-radius:22px;padding:34px;box-shadow:0 25px 70px #061c3714}.legacy-login-title{display:flex;align-items:flex-start;gap:15px;margin-bottom:28px}.legacy-login-title>span{width:47px;height:47px;display:grid;place-items:center;border-radius:14px;background:#fff0e3;color:#e87514}.dark .legacy-login-title>span{background:#3b291a;color:#ffad68}.legacy-login-title h1{font-size:27px;margin:0}.legacy-login-title p{color:var(--muted-foreground);font-size:14px;margin-top:4px;line-height:1.8}.legacy-login-card form{display:grid;gap:18px}.legacy-login-card label{display:grid;gap:7px;font-size:14px;font-weight:700}.legacy-login-input{display:flex;align-items:center;gap:10px;border:1px solid var(--input);border-radius:11px;background:var(--card);min-height:49px;padding-inline:13px;transition:.18s}.legacy-login-input:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px #0761f912}.legacy-login-input>svg{width:18px;color:var(--muted-foreground);flex:none}.legacy-login-input input{border:0;outline:0;background:transparent;color:var(--foreground);width:100%;min-width:0;font:inherit}.legacy-login-input button{border:0;background:transparent;color:var(--muted-foreground);display:grid;place-items:center;padding:5px}.legacy-login-input button svg{width:18px}.legacy-login-submit{width:100%;justify-content:center;min-height:49px;margin-top:4px}.legacy-login-register{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;border-top:1px solid var(--border);margin-top:25px;padding-top:22px;font-size:13px;color:var(--muted-foreground)}.legacy-login-register a{color:var(--primary);font-weight:800;padding:5px 8px;border-radius:7px;background:var(--secondary)}
 @media(max-width:900px){.legacy-login-shell{grid-template-columns:1fr}.legacy-login-story{display:none}.legacy-login-main{padding:24px 16px;align-items:flex-start}.legacy-login-card{margin-top:4vh;padding:27px 20px;border-radius:18px}.legacy-login-title h1{font-size:24px}}
 @media(max-width:380px){.legacy-login-main{padding:14px 10px}.legacy-login-card{padding:22px 15px}.legacy-login-title{gap:10px}.legacy-login-title>span{width:41px;height:41px}.legacy-login-register{align-items:stretch;flex-direction:column;text-align:center}.legacy-login-register a{display:block}}
+
+/* Keep iOS from zooming the login page when an email or password field receives focus. */
+@media(max-width:900px){.legacy-login-main{min-height:100svh;align-items:flex-start}.legacy-login-card{margin-top:clamp(14px,3vh,28px)}.legacy-login-input input{font-size:16px;line-height:1.4}.legacy-login-card input{max-width:100%}}
+
+/* Touch layouts should not retain hover transforms after a tap. */
+@media(hover:none){.legacy-store-card:hover,.activity-card:hover{transform:none!important}.restaurant-quick-actions a:active{transform:scale(.985)}}
 
 
 /* NFOOD restaurant menu experience adapted to FOON */
