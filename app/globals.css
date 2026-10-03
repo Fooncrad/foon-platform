@@ -445,3 +445,49 @@ body{overflow-x:clip}
  .menu-reference-library-list>div>span{flex:1 1 100%}
  .menu-reference-tabs{margin-inline:-2px}
 }
+
+/* Responsive sidebar + expandable restaurant workspace */
+.restaurant-shell{--restaurant-sidebar-w:244px;transition:grid-template-columns .2s ease}
+.restaurant-sidebar-collapse{flex:none;transition:transform .2s ease,background-color .2s ease}
+.restaurant-sidebar.is-collapsed .restaurant-sidebar-collapse{transform:rotate(180deg)}
+[dir="rtl"] .restaurant-sidebar.is-collapsed .restaurant-sidebar-collapse{transform:rotate(180deg)}
+@media(min-width:1440px){
+ .restaurant-shell{--restaurant-sidebar-w:252px}
+ .restaurant-workspace-shell:has(.restaurant-reference-dashboard){padding-inline:16px!important}
+}
+@media(min-width:901px) and (max-width:1199px){
+ .restaurant-shell{--restaurant-sidebar-w:220px}
+ .restaurant-sidebar{padding-inline:6px!important}
+ .restaurant-nav-group a,.restaurant-nav-pending{font-size:11.5px!important}
+ .restaurant-sidebar-brand small{max-width:120px!important}
+}
+@media(min-width:901px){
+ .restaurant-shell:has(.restaurant-sidebar.is-collapsed){--restaurant-sidebar-w:68px}
+ .restaurant-sidebar.is-collapsed{width:68px!important;max-width:68px!important}
+ .restaurant-sidebar.is-collapsed .restaurant-sidebar-brand>div{display:none!important}
+ .restaurant-sidebar.is-collapsed .restaurant-sidebar-brand{justify-content:center!important;min-height:58px!important}
+ .restaurant-sidebar.is-collapsed .restaurant-sidebar-collapse{display:grid!important}
+ .restaurant-sidebar.is-collapsed nav{padding-inline:5px!important}
+ .restaurant-sidebar.is-collapsed .restaurant-nav-group a,.restaurant-sidebar.is-collapsed .restaurant-nav-pending{width:48px!important;height:44px!important;margin-inline:auto!important}
+ .restaurant-sidebar.is-collapsed .restaurant-nav-group a svg,.restaurant-sidebar.is-collapsed .restaurant-nav-pending svg{width:19px!important;height:19px!important}
+ .restaurant-sidebar.is-collapsed .restaurant-sidebar-foot{display:none!important}
+ .restaurant-shell:has(.restaurant-sidebar.is-collapsed) .restaurant-reference-dashboard{max-width:1800px!important}
+}
+@media(max-width:900px){
+ .restaurant-sidebar-collapse{display:none!important}
+ .restaurant-sidebar{position:fixed!important;inset-block:0!important;inset-inline-start:0!important;width:min(88vw,310px)!important;max-width:min(88vw,310px)!important;height:100dvh!important}
+ .restaurant-main{width:100%!important;max-width:100vw!important}
+ .restaurant-mobile-menu{display:inline-flex!important;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px!important}
+ .restaurant-workspace-shell{width:100%!important;max-width:100vw!important}
+}
+@media(max-width:480px){
+ .restaurant-sidebar{width:min(92vw,300px)!important;max-width:min(92vw,300px)!important}
+ .restaurant-topbar-actions{gap:3px!important}
+ .restaurant-theme-toggle{width:36px!important;height:36px!important}
+ .restaurant-view-shop{font-size:11px!important}
+}
+@media(max-width:360px){
+ .restaurant-sidebar{width:94vw!important;max-width:94vw!important}
+ .restaurant-reference-stats{grid-template-columns:1fr!important}
+ .restaurant-profile-counts,.restaurant-order-status-grid,.restaurant-quick-actions{grid-template-columns:1fr!important}
+}
