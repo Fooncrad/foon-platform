@@ -5,8 +5,7 @@ import {
   CalendarDays,
   ChefHat,
   ClipboardList,
-  Eye,
-  LayoutDashboard,
+  Eye ,
   PackageOpen,
   Share2,
   ShoppingCart,
@@ -71,17 +70,6 @@ export default function RestaurantDashboard(p: Props) {
 
   return (
     <div className="restaurant-ops restaurant-reference-dashboard">
-      <div className="restaurant-ops-head">
-        <div>
-          <span className="restaurant-ops-kicker"><LayoutDashboard size={16} /> {L('لوحة المطعم', 'Restaurant dashboard', 'Tableau du restaurant')}</span>
-          <h1>{p.name}</h1>
-          <p>{L('مركز إدارة وتشغيل المطعم.', 'Restaurant management and operations center.', 'Centre de gestion du restaurant.')}</p>
-        </div>
-        <Link className="primary-button" href={'/menu/' + encodeURIComponent(p.slug)} target="_blank" rel="noreferrer">
-          <Eye size={16} /> {L('عرض المتجر', 'View shop', 'Voir le restaurant')}
-        </Link>
-      </div>
-
       <section className="restaurant-stat-grid restaurant-reference-stats" aria-label={L('ملخص المطعم', 'Restaurant summary', 'Résumé du restaurant')}>
         <article><span><UtensilsCrossed /></span><div><strong>{p.itemCount}</strong><small>{L('إجمالي الأصناف', 'Total items', 'Total articles')}</small></div></article>
         <article><span><ShoppingCart /></span><div><strong>{p.orderCount}</strong><small>{L('إجمالي الطلبات', 'Total orders', 'Total commandes')}</small></div></article>
@@ -93,7 +81,6 @@ export default function RestaurantDashboard(p: Props) {
         <section className="restaurant-dashboard-main">
           <div className="restaurant-profile-grid">
             <article className="records-card restaurant-profile-card">
-              <div className="restaurant-card-head"><div><h2>{p.name}</h2><small>{p.status}</small></div></div>
               <div className="restaurant-profile-counts">
                 <span><UtensilsCrossed /> {L('المنيو', 'Menu', 'Menu')} <b>{p.itemCount}</b></span>
                 <span><PackageOpen /> {L('الأقسام', 'Categories', 'Catégories')} <b>{p.categoryCount}</b></span>
