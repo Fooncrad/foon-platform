@@ -579,3 +579,10 @@ body{overflow-x:clip}
 
 /* Recover interrupted menu item work as a clear, resumable draft. */
 .menu-draft-card{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 14px;padding:14px 16px;border:1px solid color-mix(in srgb,var(--primary) 25%,var(--border));border-radius:14px;background:color-mix(in srgb,var(--primary) 5%,var(--card))}.menu-draft-card>div{min-width:0}.menu-draft-card strong{color:var(--foreground)}.menu-draft-card p{margin:4px 0 0;color:var(--muted-foreground);font-size:12px}.menu-draft-status{flex-basis:100%;color:var(--muted-foreground);font-size:11px;text-align:center}@media(max-width:680px){.menu-draft-card{align-items:stretch;flex-direction:column}.menu-draft-card button{width:100%;justify-content:center}.menu-editor-panel>footer{position:sticky;bottom:0;z-index:2;background:var(--card);padding-bottom:max(12px,env(safe-area-inset-bottom))}.menu-editor-panel{height:100dvh}.menu-editor-content{min-height:0}}
+
+
+/* Pin the add/save controls to the editor viewport at every screen width. */
+.menu-editor-panel{height:100dvh;min-height:0}
+.menu-editor-panel>header,.menu-editor-panel>footer{flex:0 0 auto}
+.menu-editor-content{min-height:0;overscroll-behavior:contain}
+.menu-editor-panel>footer{position:sticky;bottom:0;z-index:5;background:var(--card);box-shadow:0 -8px 20px color-mix(in srgb,var(--foreground) 7%,transparent)}
