@@ -3,8 +3,8 @@ import {database} from '@/db';
 import {requireUser} from '@/app/session';
 import RestaurantDashboard from '@/components/restaurant/restaurant-dashboard';
 export default async function RestaurantWorkspace({params}:{params:Promise<{slug:string}>}){const user=await requireUser('/restaurant');const {slug}=await params;const m=await database().prepare("SELECT t.id,t.slug,t.name,t.status,t.currency FROM memberships m JOIN tenants t ON t.id=m.tenant_id WHERE m.user_id=? AND t.slug=? AND t.activity_id='restaurants' LIMIT 1").bind(user.userId,slug).first<{id:string;slug:string;name:string;status:string;currency:string}>();if(!m){const f=await database().prepare("SELECT t.slug FROM memberships m JOIN tenants t ON t.id=m.tenant_id WHERE m.user_id=? AND t.activity_id='restaurants' ORDER BY t.created_at ASC LIMIT 1").bind(user.userId).first<{slug:string}>();if(!f)redirect('/register/restaurant');redirect('/restaurant/'+encodeURIComponent(f.slug))}
- const safe=async<T>(sql:string,...args:any[])=>{try{return await database().prepare(sql).bind(...args).first<T>()}catch{return undefined}};
- const rows=async(sql:string,...args:any[])=>{try{return (await database().prepare(sql).bind(...args).all()).results}catch{return []}};
+ const safe=async <T,>(sql:string,...args:any[])=>{try{return await database().prepare(sql).bind(...args).first<T>()}catch{return undefined}};
+ const rows=async (sql:string,...args:any[])=>{try{return (await database().prepare(sql).bind(...args).all()).results}catch{return []}};
  const [counts,sales,statuses,recent,sub,features]=await Promise.all([
   safe<any>("SELECT (SELECT COUNT(*) FROM menu_items WHERE tenant_id=?) items,(SELECT COUNT(*) FROM menu_categories WHERE tenant_id=?) categories,(SELECT COUNT(*) FROM restaurant_orders WHERE tenant_id=?) orders",m.id,m.id,m.id),
   safe<any>("SELECT COALESCE(SUM(total),0) total,COUNT(*) count FROM restaurant_orders WHERE tenant_id=? AND status IN ('completed','delivered')",m.id),
