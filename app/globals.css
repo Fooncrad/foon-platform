@@ -150,3 +150,7 @@ body {
 .language-grid-head{position:sticky;top:0;z-index:2;background:var(--background);padding-block:12px}
 .language-grid code{direction:ltr;text-align:left;overflow-wrap:anywhere}
 @media(max-width:900px){.language-grid{grid-template-columns:minmax(150px,.7fr) repeat(3,minmax(210px,1fr))}}
+
+.plan-feature-row{display:grid;grid-template-columns:minmax(220px,1fr) minmax(120px,180px) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.plan-feature-row .signup-consent span{display:flex;flex-direction:column;gap:2px}.plan-feature-row small{opacity:.62}
+@media(max-width:700px){.plan-feature-row{grid-template-columns:1fr}.plan-feature-row input{width:100%}}
