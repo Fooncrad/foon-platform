@@ -581,13 +581,16 @@ body{overflow-x:clip}
 .menu-draft-card{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 14px;padding:14px 16px;border:1px solid color-mix(in srgb,var(--primary) 25%,var(--border));border-radius:14px;background:color-mix(in srgb,var(--primary) 5%,var(--card))}.menu-draft-card>div{min-width:0}.menu-draft-card strong{color:var(--foreground)}.menu-draft-card p{margin:4px 0 0;color:var(--muted-foreground);font-size:12px}.menu-draft-status{flex-basis:100%;color:var(--muted-foreground);font-size:11px;text-align:center}@media(max-width:680px){.menu-draft-card{align-items:stretch;flex-direction:column}.menu-draft-card button{width:100%;justify-content:center}.menu-editor-panel>footer{position:sticky;bottom:0;z-index:2;background:var(--card);padding-bottom:max(12px,env(safe-area-inset-bottom))}.menu-editor-panel{height:100dvh}.menu-editor-content{min-height:0}}
 
 
-/* Keep item editor actions fixed while only the form fields scroll. */
+/* Keep the item editor frame within the viewport and reserve a permanent action row. */
 .menu-editor-backdrop{align-items:stretch;overflow:hidden}
-.menu-editor-panel{position:relative;height:100vh;height:100dvh;max-height:100dvh;min-height:0;overflow:hidden}
-.menu-editor-content{flex:1 1 auto;height:0;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:190px}
-.menu-editor-panel>footer{position:absolute;inset-inline:0;bottom:0;z-index:10;flex:0 0 auto;background:var(--card);box-shadow:0 -8px 20px color-mix(in srgb,var(--foreground) 10%,transparent);padding-bottom:max(14px,env(safe-area-inset-bottom))}
+.menu-editor-panel{display:grid;grid-template-rows:auto minmax(0,1fr) auto;position:relative;width:min(900px,100vw);height:100vh;height:100dvh;max-height:100dvh;min-height:0;overflow:hidden}
+.menu-editor-content{min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;padding-bottom:24px}
+.menu-editor-panel>header{min-width:0}
+.menu-editor-panel>footer{position:relative;inset:auto;z-index:2;min-width:0;background:var(--card);box-shadow:0 -8px 20px color-mix(in srgb,var(--foreground) 10%,transparent);padding-bottom:max(14px,env(safe-area-inset-bottom))}
 @media(max-width:680px){
- .menu-editor-content{padding-bottom:210px}
+ .menu-editor-panel{width:100vw}
+ .menu-editor-content{padding:14px 14px 24px}
+ .menu-editor-panel>header{padding:14px}
  .menu-editor-panel>footer{padding:12px 14px max(14px,env(safe-area-inset-bottom));gap:8px}
  .menu-editor-panel>footer .primary-button,.menu-editor-panel>footer .quiet-button{flex:1 1 140px;min-height:46px;justify-content:center}
 }
