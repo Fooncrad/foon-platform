@@ -638,3 +638,13 @@ body{overflow-x:clip}
 @media(max-width:1100px){.menu-item-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:760px){.menu-item-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.menu-item-card-square .menu-item-copy{padding:8px!important}.menu-item-card-square .menu-item-copy h2{font-size:12px!important}.menu-item-card-square .menu-item-copy>p{font-size:9px!important}.menu-item-badges{display:none!important}}
 @media(max-width:340px){.menu-item-grid{gap:6px!important}}
+
+/* Menu price integrity + always-visible edit control */
+.menu-price-old{display:inline-block!important;margin-inline-end:7px!important;color:var(--muted-foreground)!important;font-size:.78em!important;font-weight:600!important;text-decoration-thickness:1px!important}
+.menu-price-current{display:inline-block!important;font-variant-numeric:tabular-nums!important}
+.menu-reference-item-media{position:relative!important}
+.menu-reference-edit-overlay{position:absolute!important;z-index:4!important;inset-inline-start:10px!important;inset-block-end:10px!important;min-height:34px!important;padding:0 12px!important;border:1px solid rgba(255,255,255,.85)!important;border-radius:9px!important;background:rgba(255,255,255,.94)!important;color:#102a4c!important;font-size:10px!important;font-weight:900!important;box-shadow:0 5px 16px rgba(15,23,42,.12)!important}
+.dark .menu-reference-edit-overlay{background:rgba(9,27,48,.94)!important;color:#fff!important;border-color:#314861!important}
+.menu-item-card-square strong{display:flex!important;align-items:baseline!important;gap:5px!important;flex-wrap:wrap!important}
+.menu-customize-panel{max-height:min(88dvh,760px)!important}
+.menu-customize-content{overflow-y:auto!important}
