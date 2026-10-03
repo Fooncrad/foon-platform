@@ -1,0 +1,1 @@
+import KdsBoard from '@/components/restaurant/kds-board';export default async function KdsPage({params}:{params:Promise<{slug:string}>}){const {slug}=await params;return <KdsBoard slug={slug}/>}
