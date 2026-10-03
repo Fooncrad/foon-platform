@@ -1,0 +1,1 @@
+import ReservationsManager from '@/components/restaurant/reservations-manager';export default async function ReservationsPage({params}:{params:Promise<{slug:string}>}){const {slug}=await params;return <ReservationsManager slug={slug}/>}
