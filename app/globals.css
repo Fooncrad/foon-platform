@@ -624,3 +624,17 @@ body{overflow-x:clip}
 /* Restore real draft action: drafts are auto-saved locally and can be explicitly saved */
 .menu-editor-draft-v2{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;min-height:44px!important;white-space:nowrap!important}
 @media(max-width:700px){.menu-editor-footer-v2>.menu-editor-draft-v2{display:inline-flex!important}}
+
+/* Public menu 4:4 cards + short card copy + full description dialog */
+.menu-item-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}
+.menu-item-card-square{aspect-ratio:1/1!important;min-height:0!important;display:grid!important;grid-template-rows:minmax(0,56%) minmax(0,44%)!important;overflow:hidden!important;cursor:pointer!important}
+.menu-item-card-square .menu-item-image{width:100%!important;height:100%!important;min-height:0!important;object-fit:cover!important}
+.menu-item-card-square .menu-item-copy{min-height:0!important;padding:11px 12px!important;display:flex!important;flex-direction:column!important;gap:5px!important}
+.menu-item-card-square .menu-item-copy h2{font-size:14px!important;line-height:1.25!important;margin:0!important}
+.menu-item-card-square .menu-item-copy>p{margin:0!important;font-size:10px!important;line-height:1.45!important;color:var(--muted-foreground)!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+.menu-item-card-square .menu-item-bottom{margin-top:auto!important;gap:5px!important}
+.menu-customize-hero{width:100%;max-height:300px;aspect-ratio:16/9;object-fit:cover;border-radius:14px;margin-bottom:12px}
+.menu-customize-description{margin:0 0 16px;white-space:pre-wrap;line-height:1.8;color:var(--muted-foreground);font-size:13px}
+@media(max-width:1100px){.menu-item-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:760px){.menu-item-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.menu-item-card-square .menu-item-copy{padding:8px!important}.menu-item-card-square .menu-item-copy h2{font-size:12px!important}.menu-item-card-square .menu-item-copy>p{font-size:9px!important}.menu-item-badges{display:none!important}}
+@media(max-width:340px){.menu-item-grid{gap:6px!important}}
