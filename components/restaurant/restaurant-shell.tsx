@@ -2,35 +2,17 @@
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {useState} from 'react';
-import {BarChart3,BookOpen,CalendarDays,ChevronLeft,ClipboardList,Hotel,LayoutDashboard,Menu,PackageOpen,QrCode,Settings2,ShoppingCart,UsersRound,Warehouse,X} from 'lucide-react';
+import {BarChart3,BookOpen,CalendarDays,ChevronLeft,ClipboardList,Cloud,ContactRound,CreditCard,Hotel,LayoutDashboard,Mail,MapPinned,Menu,MessageSquare,PackageOpen,Printer,QrCode,Settings2,ShoppingCart,Star,Truck,UsersRound,Warehouse,X} from 'lucide-react';
 import {usePreferences} from '@/components/platform/preferences';
-
 type Props={slug:string;name:string;children:React.ReactNode};
-const modules=[
- ['overview','نظرة عامة','Overview',LayoutDashboard,true],
- ['menu','المنيو والأصناف','Menu & items',BookOpen,true],
- ['orders','الطلبات','Orders',ClipboardList,false],
- ['pos','نقاط البيع','POS',ShoppingCart,false],
- ['tables','الطاولات والحجوزات','Tables & reservations',CalendarDays,false],
- ['queue','قائمة الانتظار','Queue',UsersRound,false],
- ['room-service','خدمة الغرف','Room service',Hotel,false],
- ['inventory','المخزون والمشتريات','Inventory',Warehouse,false],
- ['staff','الموظفون والصلاحيات','Staff & permissions',UsersRound,false],
- ['reports','التقارير والتحليلات','Reports & analytics',BarChart3,false],
- ['qr','QR والطاولات','QR & tables',QrCode,false],
- ['settings','إعدادات المطعم','Restaurant settings',Settings2,false],
-] as const;
-
-export default function RestaurantShell({slug,name,children}:Props){
- const {locale}=usePreferences();const pathname=usePathname();const [open,setOpen]=useState(false);const base='/restaurant/'+encodeURIComponent(slug);
- const rtl=locale==='ar';
- return <div className="restaurant-shell" dir={rtl?'rtl':'ltr'}>
-  <aside className={'restaurant-sidebar '+(open?'is-open':'')}>
-   <div className="restaurant-sidebar-brand"><div><strong>FOON.</strong><small>{name}</small></div><button onClick={()=>setOpen(false)} aria-label="Close"><X/></button></div>
-   <nav>{modules.map(([key,ar,en,Icon,ready])=>{const label=rtl?ar:en;const href=key==='overview'?base:base+'/'+key;const active=key==='overview'?pathname===base:pathname.startsWith(href);return ready?<Link key={key} href={href} className={active?'active':''} onClick={()=>setOpen(false)}><Icon/><span>{label}</span><ChevronLeft/></Link>:<span key={key} className="restaurant-nav-pending"><Icon/><span>{label}</span></span>})}</nav>
-   <div className="restaurant-sidebar-foot"><Link href={'/menu/'+encodeURIComponent(slug)} target="_blank"><BookOpen/>{rtl?'فتح منيو المطعم':'Open restaurant menu'}</Link><Link href={'/store/subscription?tenant='} className="restaurant-nav-muted" aria-disabled="true"><PackageOpen/>{rtl?'الباقة والخصائص':'Plan & features'}</Link></div>
-  </aside>
-  <div className="restaurant-main"><header className="restaurant-topbar"><button className="restaurant-mobile-menu" onClick={()=>setOpen(true)} aria-label="Menu"><Menu/></button><div><strong>{name}</strong><small>{rtl?'إدارة وتشغيل المطعم':'Restaurant operations'}</small></div><Link href={base}>{rtl?'مركز التشغيل':'Operations'}</Link></header>{children}</div>
-  {open&&<button className="restaurant-sidebar-backdrop" aria-label="Close" onClick={()=>setOpen(false)}/>}
- </div>
-}
+type Item={key:string;ar:string;en:string;icon:any;ready?:boolean};
+const groups:{ar:string;en:string;items:Item[]}[]=[
+ {ar:'التشغيل',en:'Operations',items:[{key:'overview',ar:'نظرة عامة',en:'Overview',icon:LayoutDashboard,ready:true},{key:'orders',ar:'الطلبات',en:'Orders',icon:ClipboardList},{key:'pos',ar:'نقاط البيع POS',en:'Point of sale',icon:ShoppingCart},{key:'kds',ar:'شاشات المطبخ KDS',en:'Kitchen display KDS',icon:ClipboardList},{key:'queue',ar:'قائمة الانتظار',en:'Queue',icon:UsersRound}]},
+ {ar:'المنيو والبيع',en:'Menu & sales',items:[{key:'menu',ar:'المنيو والأصناف',en:'Menu & items',icon:BookOpen,ready:true},{key:'extras',ar:'الإضافات والمقاسات والمتغيرات',en:'Extras, sizes & variants',icon:PackageOpen},{key:'offers',ar:'العروض والكوبونات',en:'Offers & coupons',icon:Star},{key:'payments',ar:'الدفع والفواتير',en:'Payments & invoices',icon:CreditCard},{key:'printers',ar:'الطابعات والطباعة',en:'Printers & printing',icon:Printer}]},
+ {ar:'الصالة والحجوزات',en:'Floor & reservations',items:[{key:'reservations',ar:'الحجوزات والمواعيد',en:'Reservations & slots',icon:CalendarDays},{key:'tables',ar:'المناطق والطاولات',en:'Areas & tables',icon:UsersRound},{key:'waiter',ar:'الندلاء ونداء النادل',en:'Waiters & waiter calls',icon:MessageSquare},{key:'qr',ar:'QR والمنيو للطاولات',en:'QR & table menu',icon:QrCode},{key:'room-service',ar:'الفنادق وخدمة الغرف',en:'Hotels & room service',icon:Hotel}]},
+ {ar:'المخزون والمشتريات',en:'Inventory & purchasing',items:[{key:'inventory',ar:'المخزون',en:'Inventory',icon:Warehouse},{key:'purchases',ar:'المشتريات',en:'Purchases',icon:ShoppingCart},{key:'vendors',ar:'الموردون',en:'Vendors',icon:ContactRound},{key:'stock-requests',ar:'طلبات المخزون',en:'Stock requests',icon:PackageOpen},{key:'expenses',ar:'المصاريف والتصنيفات',en:'Expenses & categories',icon:CreditCard}]},
+ {ar:'الفريق والتوصيل',en:'Team & delivery',items:[{key:'staff',ar:'الموظفون',en:'Staff',icon:UsersRound},{key:'roles',ar:'الأدوار والصلاحيات',en:'Roles & permissions',icon:UsersRound},{key:'delivery',ar:'التوصيل والسائقون',en:'Delivery & drivers',icon:Truck},{key:'delivery-areas',ar:'مناطق التوصيل ونقاط الاستلام',en:'Delivery areas & pickup points',icon:MapPinned}]},
+ {ar:'العملاء والنمو',en:'Customers & growth',items:[{key:'customers',ar:'العملاء',en:'Customers',icon:ContactRound},{key:'reviews',ar:'التقييمات والمراجعات',en:'Ratings & reviews',icon:Star},{key:'notifications',ar:'الإشعارات',en:'Notifications',icon:MessageSquare},{key:'email',ar:'البريد والقوالب',en:'Email & templates',icon:Mail},{key:'reports',ar:'التقارير والإحصائيات',en:'Reports & statistics',icon:BarChart3}]},
+ {ar:'الإعدادات والتكامل',en:'Settings & integrations',items:[{key:'restaurant-settings',ar:'إعدادات المطعم',en:'Restaurant settings',icon:Settings2},{key:'order-settings',ar:'إعدادات الطلب والخدمات',en:'Order & service settings',icon:ClipboardList},{key:'integrations',ar:'التكاملات وPusher وPush',en:'Integrations, Pusher & Push',icon:Cloud},{key:'pwa',ar:'PWA والمظهر',en:'PWA & appearance',icon:Cloud},{key:'seo',ar:'SEO والصفحات والسياسات',en:'SEO, pages & policies',icon:BookOpen}]}
+];
+export default function RestaurantShell({slug,name,children}:Props){const {locale}=usePreferences();const pathname=usePathname();const [open,setOpen]=useState(false);const base='/restaurant/'+encodeURIComponent(slug),rtl=locale==='ar';return <div className="restaurant-shell" dir={rtl?'rtl':'ltr'}><aside className={'restaurant-sidebar '+(open?'is-open':'')}><div className="restaurant-sidebar-brand"><div><strong>FOON.</strong><small>{name}</small></div><button onClick={()=>setOpen(false)} aria-label="Close"><X/></button></div><nav>{groups.map(g=><section className="restaurant-nav-group" key={g.en}><small>{rtl?g.ar:g.en}</small>{g.items.map(({key,ar,en,icon:Icon,ready})=>{const href=key==='overview'?base:base+'/'+key,active=key==='overview'?pathname===base:pathname.startsWith(href);return ready?<Link key={key} href={href} className={active?'active':''} onClick={()=>setOpen(false)}><Icon/><span>{rtl?ar:en}</span><ChevronLeft/></Link>:<span key={key} className="restaurant-nav-pending" title={rtl?'قيد نقل الوظيفة من النظام المرجعي':'Function migration in progress'}><Icon/><span>{rtl?ar:en}</span></span>})}</section>)}</nav><div className="restaurant-sidebar-foot"><Link href={'/menu/'+encodeURIComponent(slug)} target="_blank"><BookOpen/>{rtl?'فتح منيو المطعم':'Open restaurant menu'}</Link><span className="restaurant-nav-pending"><PackageOpen/>{rtl?'الباقة والخصائص':'Plan & features'}</span></div></aside><div className="restaurant-main"><header className="restaurant-topbar"><button className="restaurant-mobile-menu" onClick={()=>setOpen(true)} aria-label="Menu"><Menu/></button><div><strong>{name}</strong><small>{rtl?'إدارة وتشغيل المطعم':'Restaurant operations'}</small></div><Link href={base}>{rtl?'مركز التشغيل':'Operations'}</Link></header>{children}</div>{open&&<button className="restaurant-sidebar-backdrop" aria-label="Close" onClick={()=>setOpen(false)}/>}</div>}
