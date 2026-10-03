@@ -77,7 +77,7 @@ export default function RestaurantDashboard(p: Props) {
         <article><span><Share2 /></span><div><strong>—</strong><small>{L('المشاركات', 'Shares', 'Partages')}</small></div></article>
       </section>
 
-      <div className="restaurant-dashboard-grid">
+      <section className="restaurant-priority-strip" aria-label={L('أولوية التشغيل','Operational priorities','Priorités opérationnelles')}><Link href={base + '/orders'}><ClipboardList/><span>{L('طلبات تحتاج متابعة','Orders to handle','Commandes à traiter')}</span><strong>{pending}</strong></Link><Link href={base + '/reservations'}><CalendarDays/><span>{L('الحجوزات والانتظار','Reservations & waitlist','Réservations et attente')}</span><strong>→</strong></Link><Link href={base + '/kds'}><ChefHat/><span>{L('المطبخ KDS','Kitchen KDS','Cuisine KDS')}</span><strong>→</strong></Link></section><div className="restaurant-dashboard-grid">
         <section className="restaurant-dashboard-main">
           <div className="restaurant-profile-grid">
             <article className="records-card restaurant-profile-card">
