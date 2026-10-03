@@ -1,0 +1,1 @@
+import PosWorkspace from '@/components/restaurant/pos-workspace';export default async function PosPage({params}:{params:Promise<{slug:string}>}){const {slug}=await params;return <PosWorkspace slug={slug}/>}
