@@ -648,3 +648,16 @@ body{overflow-x:clip}
 .menu-item-card-square strong{display:flex!important;align-items:baseline!important;gap:5px!important;flex-wrap:wrap!important}
 .menu-customize-panel{max-height:min(88dvh,760px)!important}
 .menu-customize-content{overflow-y:auto!important}
+
+/* Restaurant menu: category-first 4:4 workspace */
+.menu-category-gallery{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;margin:14px 0 22px!important}
+.menu-category-gallery>button{aspect-ratio:1/1!important;overflow:hidden!important;border:1px solid #dbe5f1!important;border-radius:16px!important;background:#fff!important;padding:0!important;display:grid!important;grid-template-rows:minmax(0,1fr) auto auto!important;text-align:start!important;cursor:pointer!important}
+.menu-category-gallery>button.active{outline:2px solid #ff7417!important;outline-offset:2px!important}
+.menu-category-gallery-media{min-height:0!important;display:grid!important;place-items:center!important;background:#edf4fd!important;overflow:hidden!important}
+.menu-category-gallery-media img{width:100%!important;height:100%!important;object-fit:cover!important}.menu-category-gallery-media svg{width:34px;height:34px}
+.menu-category-gallery strong{padding:9px 10px 2px!important;font-size:13px!important}.menu-category-gallery small{padding:0 10px 10px!important;color:#73839a!important}
+.menu-category-open-hint{min-height:90px;display:grid;place-items:center;text-align:center;color:#718096;font-weight:800}
+.menu-image-gallery-editor{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}.menu-image-gallery-editor .menu-image-preview{aspect-ratio:1/1;position:relative;overflow:hidden}.menu-image-gallery-editor .menu-image-preview img{width:100%;height:100%;object-fit:cover}.menu-image-gallery-editor .menu-image-preview b{position:absolute;inset-block-start:6px;inset-inline-start:6px;background:#ff7417;color:#fff;border-radius:7px;padding:4px 6px;font-size:9px}
+.menu-customize-gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.menu-customize-gallery .menu-customize-hero{grid-column:1/-1;width:100%;aspect-ratio:16/9;object-fit:cover;margin:0}.menu-customize-thumb{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:9px}
+@media(max-width:900px){.menu-category-gallery{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:600px){.menu-category-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.menu-image-gallery-editor{grid-template-columns:repeat(3,minmax(0,1fr))}}
