@@ -118,7 +118,22 @@ export default function RestaurantMenu({ slug }: { slug: string }) {
     } finally { setSubmitting(false); }
   }
 
-  function sendWhatsAppOrder(){const number=(data?.store?.whatsapp||'').replace(/\\D/g,'');if(!number||!lines.length)return;const typeLabel=orderType==='pickup'?t.pickup:orderType==='takeaway'?t.takeaway:orderType==='dine_in'?t.dine:orderType==='delivery'?t.delivery:orderType==='room_service'?t.room:t.reservation;const message=[data?.store?.name||'',\x60${t.type}: ${typeLabel}\x60,...lines.map(line=>\x60${line.quantity} × ${nameOf(line.item)}${line.summary?\x60 (${line.summary})\x60:''} — ${(line.unitCents*line.quantity/100).toFixed(2)} ${data?.store?.currency||''}\x60),\x60${t.total}: ${(total+serviceFee).toFixed(2)} ${data?.store?.currency||''}\x60,name?\x60${t.name}: ${name}\x60:'',phone?\x60${t.phone}: ${phone}\x60:'',reference?\x60${t.reference}: ${reference}\x60:'',notes?\x60${t.notes}: ${notes}\x60:''].filter(Boolean).join('\\n');window.open(\x60https://wa.me/${number}?text=${encodeURIComponent(message)}\x60,'_blank','noopener,noreferrer')}
+  function sendWhatsAppOrder(){
+    const number=(data?.store?.whatsapp||'').replace(/\D/g,'');
+    if(!number||!lines.length)return;
+    const typeLabel=orderType==='pickup'?t.pickup:orderType==='takeaway'?t.takeaway:orderType==='dine_in'?t.dine:orderType==='delivery'?t.delivery:orderType==='room_service'?t.room:t.reservation;
+    const message=[
+      data?.store?.name||'',
+      t.type+': '+typeLabel,
+      ...lines.map(line=>line.quantity+' × '+nameOf(line.item)+(line.summary?' ('+line.summary+')':'')+' — '+(line.unitCents*line.quantity/100).toFixed(2)+' '+(data?.store?.currency||'')),
+      t.total+': '+(total+serviceFee).toFixed(2)+' '+(data?.store?.currency||''),
+      name?t.name+': '+name:'',
+      phone?t.phone+': '+phone:'',
+      reference?t.reference+': '+reference:'',
+      notes?t.notes+': '+notes:''
+    ].filter(Boolean).join('\n');
+    window.open('https://wa.me/'+number+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
+  }
 
   return <div className="restaurant-menu-shell">
     <header className="menu-header"><div className="menu-header-inner"><Link className="menu-brand" href="/"><span className="brand-mark"><UtensilsCrossed/></span><span>FOON<small>{t.menu}</small></span></Link><nav><button type="button" onClick={()=>setShowNav(true)} aria-label={t.categories}><MenuIcon/></button><button type="button" onClick={toggleTheme} aria-label="Theme">{dark ? <Sun/> : <Moon/>}</button><button type="button" onClick={cycleLocale} aria-label="Language"><Languages/><span>{locale.toUpperCase()}</span></button>{Number(data?.store?.waiter_call_enabled)===1&&tableToken?<button type="button" className="menu-qr-button menu-waiter-button" onClick={callWaiter} aria-label={lang==='ar'?'نداء النادل':lang==='fr'?'Appeler le serveur':'Call waiter'}><BellRing/><span>{lang==='ar'?'نداء النادل':lang==='fr'?'Appeler le serveur':'Call waiter'}</span></button>:null}</nav></div></header>
