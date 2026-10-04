@@ -51,7 +51,51 @@ export default function RestaurantMenuManager({slug}:{slug:string}){
  function parseCsvLine(line:string){const values:string[]=[];let value='',quoted=false;for(let i=0;i<line.length;i++){const char=line[i];if(char==='"'&&quoted&&line[i+1]==='"'){value+='"';i++}else if(char==='"')quoted=!quoted;else if(char===','&&!quoted){values.push(value);value=''}else value+=char}values.push(value);return values}
  async function importAddons(file:File){const text=await file.text(),lines=text.replace(/^\ufeff/,'').split(/\r?\n/).filter(line=>line.trim());let imported=0;for(const line of lines.slice(1)){const [ar,en,fr,price,stock,enabled]=parseCsvLine(line);if(!ar?.trim()||!Number.isFinite(Number(price))||Number(price)<0)continue;const ok=await send('POST',{action:'create_addon_library',nameAr:ar.trim(),nameEn:en||'',nameFr:fr||'',priceDelta:Number(price),stockQuantity:Math.max(0,Number(stock)||0),enabled:enabled?.trim().toLowerCase()!=='false'});if(ok)imported++}setMsg(L(`تم استيراد ${imported} إضافة`,`Imported ${imported} add-ons`,`${imported} suppléments importés`))}
  function downloadCategoryExcelTemplate(category:ApiCategory){const xml='<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Menu"><Table>'+[['name_ar','name_en','name_fr','description_ar','description_en','description_fr','price','discount_price','tax_rate','tax_included','stock_quantity','track_inventory','dietary_type','calories','enabled'],['مثال صنف','Example item','Article exemple','','','','25','','15','true','0','false','unspecified','','true']].map(row=>'<Row>'+row.map(v=>'<Cell><Data ss:Type="String">'+String(v).replaceAll('&','&amp;').replaceAll('<','&lt;')+'</Data></Cell>').join('')+'</Row>').join('')+'</Table></Worksheet></Workbook>';const url=URL.createObjectURL(new Blob([xml],{type:'application/vnd.ms-excel'})),a=document.createElement('a');a.href=url;a.download='foon-menu-'+(category.name_en||category.name_ar||'category').replace(/[^a-zA-Z0-9_-]+/g,'-')+'.xls';a.click();URL.revokeObjectURL(url)}
- async function importCategoryExcel(categoryId:string,file:File){setBusy(true);setMsg('');try{const xml=await file.text(),doc=new DOMParser().parseFromString(xml,'application/xml');if(doc.querySelector('parsererror'))throw Error('INVALID_EXCEL_FILE');const rows=Array.from(doc.getElementsByTagNameNS('*','Row')).map(row=>Array.from(row.getElementsByTagNameNS('*','Data')).map(cell=>cell.textContent||''));if(rows.length<2)throw Error('EMPTY_EXCEL_FILE');const headers=rows[0].map(x=>x.trim()),idx=(name:string)=>headers.indexOf(name);if(idx('name_ar')<0||idx('price')<0)throw Error('INVALID_EXCEL_COLUMNS');let imported=0,rejected=0;for(const row of rows.slice(1)){const nameAr=(row[idx('name_ar')]||'').trim(),price=Number(row[idx('price')]);if(!nameAr||!Number.isFinite(price)||price<0){rejected++;continue}const bool=(name:string,fallback:boolean)=>idx(name)<0?fallback:!['false','0','no'].includes((row[idx(name)]||'').trim().toLowerCase());const num=(name:string,fallback=0)=>{const n=idx(name)<0?fallback:Number(row[idx(name)]);return Number.isFinite(n)?n:fallback};const ok=await send('POST',{action:'create_item',categoryId,nameAr,nameEn:idx('name_en')>=0?row[idx('name_en')]||'':'',nameFr:idx('name_fr')>=0?row[idx('name_fr')]||'':'',descriptionAr:idx('description_ar')>=0?row[idx('description_ar')]||'':'',descriptionEn:idx('description_en')>=0?row[idx('description_en')]||'':'',descriptionFr:idx('description_fr')>=0?row[idx('description_fr')]||'':'',price,discountPrice:idx('discount_price')>=0&&row[idx('discount_price')]!==''?num('discount_price'):null,taxRate:Math.max(0,Math.min(100,num('tax_rate',0))),taxIncluded:bool('tax_included',true),stockQuantity:Math.max(0,num('stock_quantity',0)),trackInventory:bool('track_inventory',false),dietaryType:(idx('dietary_type')>=0&&['vegetarian','non_vegetarian'].includes(row[idx('dietary_type')])?row[idx('dietary_type')]:'unspecified') as Editor['dietaryType'],sortOrder:data.items.filter(x=>x.category_id===categoryId).length+imported+1,imageUrl:'',imageUrls:[],calories:idx('calories')>=0&&row[idx('calories')]!==''?Math.max(0,num('calories')):null,enabled:bool('enabled',true),variants:[],addonGroups:[]});if(ok)imported++;else rejected++}setMsg(L('تم استيراد '+imported+' صنف'+(rejected?'، ورفض '+rejected+' صف':''),'Imported '+imported+' items'+(rejected?', rejected '+rejected+' rows':''),'Importé '+imported+' articles'+(rejected?', '+rejected+' lignes rejetées':''))}catch(e){setMsg(e instanceof Error?e.message:'EXCEL_IMPORT_FAILED')}finally{setBusy(false)}}
+ async function importCategoryExcel(categoryId:string,file:File){
+  setBusy(true); setMsg('');
+  try{
+    const xml=await file.text();
+    const doc=new DOMParser().parseFromString(xml,'application/xml');
+    if(doc.querySelector('parsererror')) throw new Error('INVALID_EXCEL_FILE');
+    const rows=Array.from(doc.getElementsByTagNameNS('*','Row')).map(row=>Array.from(row.getElementsByTagNameNS('*','Data')).map(cell=>cell.textContent||''));
+    if(rows.length<2) throw new Error('EMPTY_EXCEL_FILE');
+    const headers=rows[0].map(x=>x.trim());
+    const idx=(name:string)=>headers.indexOf(name);
+    if(idx('name_ar')<0||idx('price')<0) throw new Error('INVALID_EXCEL_COLUMNS');
+    let imported=0,rejected=0;
+    for(const row of rows.slice(1)){
+      const nameAr=(row[idx('name_ar')]||'').trim();
+      const price=Number(row[idx('price')]);
+      if(!nameAr||!Number.isFinite(price)||price<0){rejected++;continue}
+      const bool=(name:string,fallback:boolean)=>idx(name)<0?fallback:!['false','0','no'].includes((row[idx(name)]||'').trim().toLowerCase());
+      const num=(name:string,fallback=0)=>{const n=idx(name)<0?fallback:Number(row[idx(name)]);return Number.isFinite(n)?n:fallback};
+      const dietaryRaw=idx('dietary_type')>=0?(row[idx('dietary_type')]||''):'';
+      const dietaryType:Editor['dietaryType']=dietaryRaw==='vegetarian'||dietaryRaw==='non_vegetarian'?dietaryRaw:'unspecified';
+      const ok=await send('POST',{
+        action:'create_item',categoryId,nameAr,
+        nameEn:idx('name_en')>=0?(row[idx('name_en')]||''):'',
+        nameFr:idx('name_fr')>=0?(row[idx('name_fr')]||''):'',
+        descriptionAr:idx('description_ar')>=0?(row[idx('description_ar')]||''):'',
+        descriptionEn:idx('description_en')>=0?(row[idx('description_en')]||''):'',
+        descriptionFr:idx('description_fr')>=0?(row[idx('description_fr')]||''):'',
+        price,
+        discountPrice:idx('discount_price')>=0&&row[idx('discount_price')]!==''?num('discount_price'):null,
+        taxRate:Math.max(0,Math.min(100,num('tax_rate',0))),
+        taxIncluded:bool('tax_included',true),
+        stockQuantity:Math.max(0,num('stock_quantity',0)),
+        trackInventory:bool('track_inventory',false),
+        dietaryType,
+        sortOrder:data.items.filter(x=>x.category_id===categoryId).length+imported+1,
+        imageUrl:'',imageUrls:[],
+        calories:idx('calories')>=0&&row[idx('calories')]!==''?Math.max(0,num('calories')):null,
+        enabled:bool('enabled',true),variants:[],addonGroups:[]
+      });
+      if(ok) imported++; else rejected++;
+    }
+    setMsg(L('تم استيراد '+imported+' صنف'+(rejected?'، ورفض '+rejected+' صف':''),'Imported '+imported+' items'+(rejected?', rejected '+rejected+' rows':''),'Importé '+imported+' articles'+(rejected?', '+rejected+' lignes rejetées':''));
+  }catch(e){setMsg(e instanceof Error?e.message:'EXCEL_IMPORT_FAILED')}
+  finally{setBusy(false)}
+}
  function importLibraryOption(groupIndex:number,option:ApiOption){patchGroup(groupIndex,{options:[...editor!.addonGroups[groupIndex].options,{name:local(option.name_ar,option.name_en,option.name_fr),priceDelta:String(option.price_delta),stockQuantity:String(option.stock_quantity||0),enabled:true}]})}
  const categoryName=(c:Pick<ApiCategory,'name_ar'|'name_en'|'name_fr'>)=>locale==='ar'?c.name_ar:locale==='fr'?c.name_fr||c.name_en||c.name_ar:c.name_en||c.name_ar;
  const visibleItems=data.items.filter(x=>(Boolean(categoryFilter)&&x.category_id===categoryFilter)&&(!itemSearch||`${x.name_ar} ${x.name_en} ${x.name_fr} ${x.description_ar||''} ${x.description_en||''}`.toLowerCase().includes(itemSearch.toLowerCase()))).sort((a,b)=>sortDirection==='asc'?Number(a.sort_order)-Number(b.sort_order):Number(b.sort_order)-Number(a.sort_order));
