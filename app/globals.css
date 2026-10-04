@@ -1125,3 +1125,17 @@ body{overflow-x:clip}
  .plan-feature-limit label{grid-template-columns:minmax(0,1fr) 84px}
  .plan-save-actions{align-items:stretch;flex-direction:column}
 }
+
+/* Keep mobile navigation close controls reachable above their dimmer. */
+.restaurant-v2-sidebar .restaurant-v2-mobile-close{position:relative;z-index:130;flex:none;min-width:44px;min-height:44px;pointer-events:auto;touch-action:manipulation;cursor:pointer}
+.admin-sidebar-trigger{display:none}
+.admin-sidebar-close{display:none}
+@media(max-width:760px){
+ .admin-sidebar-trigger{display:grid;place-items:center;flex:none;width:42px;height:42px;border:1px solid rgba(148,163,184,.25);border-radius:11px;background:transparent;color:inherit;touch-action:manipulation}
+ .workspace-sidebar{position:fixed!important;inset-block:0;inset-inline-start:0;width:min(84vw,320px)!important;height:100dvh;z-index:120;transform:translateX(-105%);transition:transform .2s ease;overflow:auto}
+ [dir="rtl"] .workspace-sidebar{transform:translateX(105%)}
+ .workspace-sidebar.is-open{transform:translateX(0)}
+ .workspace-sidebar-header{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px}
+ .admin-sidebar-close{display:grid;place-items:center;flex:none;width:44px;height:44px;border:1px solid rgba(148,163,184,.24);border-radius:11px;background:transparent;color:#dbeafe;z-index:130;pointer-events:auto;touch-action:manipulation;cursor:pointer}
+ .admin-sidebar-backdrop{position:fixed;inset:0;z-index:110;border:0;background:rgba(3,12,24,.46);touch-action:manipulation}
+}
