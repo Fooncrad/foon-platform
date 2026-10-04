@@ -1,4 +1,4 @@
 import {Suspense} from 'react';
 import Surface from '@/components/platform/surface';
-import StoreRegistration from '@/components/platform/store-registration';
-export default function StoreRegister(){return <Suspense><Surface page="admin" content={<StoreRegistration/>}/></Suspense>}
+import AccountRegistration from '@/components/platform/account-registration';
+export default function StoreRegister(){return <Suspense><Surface page="admin" content={<AccountRegistration/>}/></Suspense>}
