@@ -42,6 +42,7 @@ export async function POST(request: Request) {
     const input = inputSchema.parse(untrusted);
     const tenant = await database().prepare("SELECT id,currency,name FROM tenants WHERE slug=? AND activity_id='restaurants' AND status='active' LIMIT 1").bind(input.slug).first<{ id: string; currency: string; name:string }>();
     if (!tenant) throw new ApiError(404, 'NOT_FOUND');
+    try{const setting=await database().prepare('SELECT enabled FROM restaurant_order_type_settings WHERE tenant_id=? AND order_type=? LIMIT 1').bind(tenant.id,input.orderType).first<{enabled:number}>();if(setting&&!Number(setting.enabled))throw new ApiError(403,'ORDER_TYPE_DISABLED')}catch(error){if(error instanceof ApiError)throw error;}
     await requireTenantFeature(tenant.id, 'orders');
     const featureForType:Record<string,string>={pickup:'pickup',takeaway:'pickup',dine_in:'orders',delivery:'delivery',room_service:'room_service',reservation:'reservations'};
     const requiredFeature=featureForType[input.orderType]; if(requiredFeature&&requiredFeature!=='orders') await requireTenantFeature(tenant.id, requiredFeature);
