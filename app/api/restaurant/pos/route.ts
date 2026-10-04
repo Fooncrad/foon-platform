@@ -3,6 +3,7 @@ import { database } from '@/db';
 import { ApiError, audit, authorize, sameOrigin } from '@/lib/platform/security';
 import { requireTenantFeature } from '@/lib/platform/entitlements';
 import { priceMenuSelection } from '@/lib/restaurant/menu-pricing';
+import {enforceOrderLimit} from '@/lib/restaurant/order-quota';
 
 export const dynamic = 'force-dynamic';
 const body = z.object({
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
     if (!Number.isSafeInteger(totalCents) || totalCents <= 0) throw new ApiError(400, 'INVALID_TOTAL');
     const total = (totalCents / 100).toFixed(2), id = crypto.randomUUID(), reference = `POS-${Date.now().toString(36).toUpperCase()}-${crypto.randomUUID().slice(0, 4).toUpperCase()}`, now = Date.now();
     await database().transaction(async tx => {
+      await enforceOrderLimit(tx,current.id);
       const stockByItem = new Map<string, number>();
       for (const line of lines) stockByItem.set(line.id, (stockByItem.get(line.id) || 0) + line.quantity);
       for (const [itemId, quantity] of stockByItem) {
