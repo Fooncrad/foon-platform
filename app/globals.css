@@ -1065,3 +1065,63 @@ body{overflow-x:clip}
 
 .store-password-reset{display:grid;gap:6px;min-width:180px}
 .store-password-reset .primary-button,.store-password-reset .quiet-button{min-height:34px;padding:6px 10px;font-size:12px}
+
+/* Clear, compact administration workspace */
+.control-panel .executive-deck,.control-panel .mission-control,.control-panel .system-matrix{display:none!important}
+.control-panel .command-hero{min-height:108px;margin-top:12px;padding:18px}
+.control-panel .metrics{gap:10px;margin-bottom:14px}
+.control-panel .metric{padding:15px;gap:6px}
+.control-panel .metric strong{font-size:28px}
+.control-panel .ops-grid{gap:12px;margin-bottom:12px}
+.control-panel .ops-card{padding:16px}
+.control-panel .policy-grid{gap:12px;margin-top:12px}
+.control-panel .policy-grid button{padding:18px}
+.control-panel .activity-strip{margin-top:10px}
+.plan-manager{max-width:1120px;margin-inline:auto}
+.plan-manager .section-heading{margin-bottom:14px}
+.plan-selector{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:9px;margin:12px 0 16px}
+.plan-selector-button{display:grid;gap:5px;min-width:0;padding:12px 13px;border:1px solid var(--border);border-radius:13px;background:var(--card);color:var(--foreground);text-align:start;cursor:pointer;transition:border-color .16s,box-shadow .16s,transform .16s}
+.plan-selector-button:hover{border-color:#f97316;transform:translateY(-1px)}
+.plan-selector-button.is-selected{border-color:#f97316;box-shadow:0 0 0 2px rgba(249,115,22,.14);background:color-mix(in srgb,var(--card) 94%,#f97316)}
+.plan-selector-button strong{font-size:14px}
+.plan-selector-button span{font-size:12px;color:var(--muted-foreground);direction:ltr;text-align:start}
+.plan-selector-button small{font-size:11px;color:var(--muted-foreground)}
+.plan-admin-selected{display:grid;gap:14px}
+.plan-card-heading,.plan-feature-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.plan-card-heading h3,.plan-feature-heading h3{margin:0;font-size:18px}
+.plan-card-heading p,.plan-feature-heading p{margin:4px 0 0;color:var(--muted-foreground);font-size:12px;line-height:1.6}
+.plan-admin-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.plan-admin-fields>.form-pair{grid-column:1/-1}
+.plan-admin-fields>label{display:grid;gap:6px;min-width:0;font-size:12px;font-weight:700}
+.plan-admin-fields textarea{min-height:72px}
+.plan-features-card{display:grid;gap:8px;padding:14px}
+.plan-feature-heading{padding-bottom:8px;border-bottom:1px solid var(--border)}
+.plan-feature-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(145px,190px);align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid color-mix(in srgb,var(--border) 75%,transparent)}
+.plan-feature-row:last-child{border-bottom:0}
+.plan-feature-row .signup-consent{align-items:flex-start}
+.plan-feature-row .signup-consent>span{display:grid;gap:3px}
+.plan-feature-row .signup-consent strong{font-size:13px}
+.plan-feature-row .signup-consent small{font-size:11px;line-height:1.5;color:var(--muted-foreground)}
+.plan-feature-limit{display:grid;gap:4px}
+.plan-feature-limit label{display:grid;grid-template-columns:minmax(0,1fr) 82px;align-items:center;gap:8px;font-size:11px;color:var(--muted-foreground)}
+.plan-feature-limit input{height:36px;padding-inline:8px}
+.plan-feature-limit>small{font-size:10px;color:var(--muted-foreground);line-height:1.4}
+.status-badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:750;white-space:nowrap}
+.status-badge.is-enabled{background:#e8f7ef;color:#18734b}
+.status-badge.is-disabled{background:#f1f3f6;color:#657184}
+.dark .status-badge.is-enabled{background:#113d2e;color:#80dfae}
+.dark .status-badge.is-disabled{background:#18253a;color:#aab6c8}
+.plan-save-actions{justify-content:space-between;align-items:center}
+.plan-manager [role=status]{min-height:1.5em}
+@media(max-width:650px){
+ .control-panel .command-hero{min-height:0;padding:14px}
+ .control-panel .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .control-panel .metric{padding:11px}
+ .control-panel .metric strong{font-size:24px}
+ .plan-admin-fields{grid-template-columns:minmax(0,1fr)}
+ .plan-admin-fields>.form-pair{grid-column:auto}
+ .plan-feature-row{grid-template-columns:minmax(0,1fr);gap:8px}
+ .plan-feature-limit{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end}
+ .plan-feature-limit label{grid-template-columns:minmax(0,1fr) 84px}
+ .plan-save-actions{align-items:stretch;flex-direction:column}
+}
