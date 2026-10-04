@@ -1,0 +1,26 @@
+'use client';
+import {useState} from 'react';
+import Link from 'next/link';
+import {Check,LayoutGrid,List,Palette,PanelTop,Shapes} from 'lucide-react';
+import {usePreferences} from '@/components/platform/preferences';
+
+type Template='grid'|'list'|'gallery';
+export default function BrandThemeManager({slug}:{slug:string}){
+ const {locale}=usePreferences(); const ar=locale==='ar',fr=locale==='fr';
+ const L=(a:string,e:string,f=e)=>ar?a:fr?f:e;
+ const [tab,setTab]=useState<'templates'|'themes'|'identity'>('templates');
+ const [template,setTemplate]=useState<Template>(()=>typeof window==='undefined'?'grid':((localStorage.getItem('foon-menu-template-'+slug) as Template)||'grid'));
+ const select=(v:Template)=>{setTemplate(v);localStorage.setItem('foon-menu-template-'+slug,v)};
+ const templates:[Template,string,string,typeof LayoutGrid][]=[
+  ['grid',L('شبكة','Grid','Grille'),L('بطاقات متوازنة وسريعة للتسوق.','Balanced cards for fast shopping.','Cartes équilibrées pour commander rapidement.'),LayoutGrid],
+  ['list',L('قائمة','List','Liste'),L('عرض أفقي واضح للأصناف والتفاصيل.','Clear horizontal item layout.','Présentation horizontale claire.'),List],
+  ['gallery',L('صور','Gallery','Galerie'),L('صور أكبر وتجربة بصرية للأصناف.','Image-led menu experience.','Expérience visuelle centrée sur les images.'),PanelTop]
+ ];
+ return <div className="restaurant-brand-page">
+  <header className="restaurant-v2-page-heading"><div><span className="restaurant-v2-eyebrow">{L('المظهر العام','Appearance','Apparence')}</span><h1>{L('الهوية والسمات','Brand & themes','Identité et thèmes')}</h1><p>{L('تحكم بقالب المنيو والسمات وهوية المطعم من مكان واحد.','Manage menu templates, themes and restaurant identity in one place.','Gérez les modèles, thèmes et identité du restaurant.')}</p></div><Link className="primary-button" href={'/menu/'+encodeURIComponent(slug)+'?template='+template} target="_blank">{L('معاينة المنيو','Preview menu','Aperçu du menu')}</Link></header>
+  <nav className="restaurant-brand-tabs">{([['templates',L('القوالب','Templates','Modèles'),Shapes],['themes',L('السمات','Themes','Thèmes'),Palette],['identity',L('الهوية','Identity','Identité'),PanelTop]] as const).map(([key,label,Icon])=><button key={key} className={tab===key?'active':''} onClick={()=>setTab(key)}><Icon/>{label}</button>)}</nav>
+  {tab==='templates'&&<section className="restaurant-template-grid">{templates.map(([id,title,desc,Icon])=><article key={id} className={template===id?'selected':''}><div className={'restaurant-template-preview '+id}><Icon/></div><div><h2>{title}</h2><p>{desc}</p></div><button type="button" onClick={()=>select(id)}>{template===id?<><Check/>{L('محدد','Selected','Sélectionné')}</>:L('اختيار القالب','Select template','Choisir')}</button></article>)}</section>}
+  {tab==='themes'&&<section className="restaurant-v2-card restaurant-brand-settings"><h2>{L('السمات','Themes','Thèmes')}</h2><p>{L('ألوان المنيو والخلفية والخطوط والحواف والوضع الليلي ستدار من هنا.','Menu colors, backgrounds, fonts, radius and dark mode are managed here.','Couleurs, arrière-plans, polices, rayons et mode sombre.')}</p><div className="brand-setting-grid"><label>{L('اللون الرئيسي','Primary color','Couleur principale')}<input type="color" defaultValue="#f28c28"/></label><label>{L('لون الخلفية','Background','Arrière-plan')}<input type="color" defaultValue="#ffffff"/></label><label>{L('شكل الحواف','Corner style','Coins')}<select defaultValue="rounded"><option value="rounded">{L('دائري','Rounded','Arrondis')}</option><option value="soft">{L('ناعم','Soft','Doux')}</option><option value="square">{L('مربع','Square','Carrés')}</option></select></label></div></section>}
+  {tab==='identity'&&<section className="restaurant-v2-card restaurant-brand-settings"><h2>{L('هوية المطعم','Restaurant identity','Identité du restaurant')}</h2><p>{L('الشعار والغلاف واسم العلامة ومظهر المنيو العام.','Logo, cover, brand name and public menu appearance.','Logo, couverture, marque et apparence publique.')}</p><div className="brand-setting-grid"><label>{L('الشعار','Logo','Logo')}<input type="file" accept="image/*"/></label><label>{L('صورة الغلاف','Cover image','Image de couverture')}<input type="file" accept="image/*"/></label></div></section>}
+ </div>
+}
