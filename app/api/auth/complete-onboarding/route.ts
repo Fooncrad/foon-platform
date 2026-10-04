@@ -10,7 +10,7 @@ const schema=z.object({storeName:z.string().trim().min(2).max(120),slug:z.string
 export async function POST(request:Request){
  try{
   sameOrigin(request);
-  const user=await getCurrentUser();if(!user)return NextResponse.json({error:'SIGN_IN_REQUIRED'},{status:401});
+  const user=await getCurrentUser();if(!user)return NextResponse.json({error:'SIGN_IN_REQUIRED'},{status:401});if(Boolean(process.env.PLATFORM_ADMIN_EMAIL)&&user.email.toLowerCase()===process.env.PLATFORM_ADMIN_EMAIL!.toLowerCase())throw new ApiError(403,'FORBIDDEN');
   const raw=await request.text();if(raw.length>6000)throw new ApiError(413,'INPUT_TOO_LARGE');
   let parsed:unknown;try{parsed=JSON.parse(raw)}catch{return NextResponse.json({error:'INVALID_INPUT',field:'request'},{status:400})}
   const checked=schema.safeParse(parsed);if(!checked.success)return NextResponse.json({error:'INVALID_INPUT',field:String(checked.error.issues[0]?.path[0]??'request')},{status:400});
