@@ -813,3 +813,75 @@ body{overflow-x:clip}
 @media(prefers-reduced-motion:reduce){
  .restaurant-v2-sidebar,.restaurant-v2-actions a,.restaurant-v2-collapse{transition:none!important}
 }
+
+/* Restaurant dashboard: clearer spacing, readable hierarchy, and honest empty states */
+.restaurant-v2-workspace{max-width:1560px;margin-inline:auto;padding:clamp(16px,2vw,30px);gap:18px}
+.restaurant-v2-page-heading h1{font-size:clamp(24px,2.1vw,32px);line-height:1.25}
+.restaurant-v2-page-heading p{font-size:13px;line-height:1.65}
+.restaurant-v2-eyebrow{font-size:11px}
+.restaurant-v2-kpis{gap:12px}
+.restaurant-v2-kpis article{min-height:104px;padding:15px;gap:12px;border-radius:16px}
+.restaurant-v2-kpis article>div>small:first-child{font-size:11px;line-height:1.5}
+.restaurant-v2-kpis article>div>small+small{font-size:10px;line-height:1.5}
+.restaurant-v2-kpis b{font-size:clamp(20px,2vw,27px)}
+.restaurant-v2-actions{gap:12px}
+.restaurant-v2-actions a{min-height:72px;padding:14px;border-radius:15px}
+.restaurant-v2-actions b{font-size:13px}
+.restaurant-v2-actions small{font-size:11px}
+.restaurant-v2-grid{grid-template-columns:minmax(0,1.65fr) minmax(290px,.8fr);gap:14px}
+.restaurant-v2-primary,.restaurant-v2-secondary{gap:14px}
+.restaurant-v2-card{padding:19px;border-radius:18px}
+.restaurant-v2-card h2{font-size:17px}
+.restaurant-v2-card header small{font-size:11px}
+.restaurant-v2-card header>a{font-size:12px}
+.restaurant-v2-chart{min-height:210px}
+.restaurant-v2-chart:has(.restaurant-v2-empty){min-height:0}
+.restaurant-v2-chart .restaurant-v2-empty{min-height:68px;padding:12px;border-radius:12px;background:#f8fafc;font-size:12px}
+.dark .restaurant-v2-chart .restaurant-v2-empty{background:#0d2035}
+.restaurant-v2-status{gap:10px}
+.restaurant-v2-status>div{min-height:82px}
+.restaurant-v2-status b{font-size:23px}
+.restaurant-v2-status small{font-size:11px;text-align:center}
+.restaurant-v2-orders>div{min-height:58px}
+.restaurant-v2-orders b{font-size:12px}
+.restaurant-v2-orders small{font-size:10px}
+.restaurant-v2-menu-summary>div>span{min-height:76px}
+.restaurant-v2-sources>div>div{min-height:48px;font-size:12px}
+.restaurant-v2-empty.compact{min-height:70px;padding:10px;font-size:11px}
+@media(max-width:900px){
+ .restaurant-v2-workspace{padding:16px 14px max(26px,env(safe-area-inset-bottom));gap:14px}
+ .restaurant-v2-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+ .restaurant-v2-primary,.restaurant-v2-secondary{gap:12px}
+ .restaurant-v2-secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .restaurant-v2-plan{grid-column:1/-1}
+}
+@media(max-width:620px){
+ .restaurant-v2-workspace{padding:13px 12px max(28px,env(safe-area-inset-bottom));gap:12px}
+ .restaurant-v2-page-heading h1{font-size:23px}
+ .restaurant-v2-page-heading p{font-size:12px}
+ .restaurant-v2-kpis{gap:9px}
+ .restaurant-v2-kpis article{min-height:92px;padding:11px;gap:8px}
+ .restaurant-v2-kpis article>div>small:first-child{font-size:10px}
+ .restaurant-v2-kpis b{font-size:19px}
+ .restaurant-v2-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}
+ .restaurant-v2-actions a{min-height:68px;padding:10px;gap:8px}
+ .restaurant-v2-actions>a:last-child{grid-column:1/-1}
+ .restaurant-v2-actions b{font-size:11px}
+ .restaurant-v2-actions small{font-size:10px}
+ .restaurant-v2-card{padding:14px;border-radius:15px}
+ .restaurant-v2-card h2{font-size:15px}
+ .restaurant-v2-secondary{grid-template-columns:minmax(0,1fr)}
+ .restaurant-v2-plan{grid-column:auto}
+ .restaurant-v2-chart{min-height:0}
+ .restaurant-v2-bars{height:140px}
+ .restaurant-v2-status{gap:7px}
+ .restaurant-v2-status>div{min-height:70px}
+ .restaurant-v2-status b{font-size:20px}
+ .restaurant-v2-status small{font-size:9px}
+}
+@media(max-width:360px){
+ .restaurant-v2-workspace{padding-inline:9px}
+ .restaurant-v2-kpis article{padding:9px}
+ .restaurant-v2-actions a{padding:8px;grid-template-columns:auto minmax(0,1fr) auto}
+ .restaurant-v2-actions svg{width:18px}
+}
