@@ -1,2 +1,2 @@
-import RestaurantModule from '@/components/restaurant/restaurant-module';
-export default async function Page({params}:{params:Promise<{slug:string}>}){const {slug}=await params;return <RestaurantModule slug={slug} module="promo"/>}
+import PromoManager from '@/components/restaurant/promo-manager';
+export default async function Page({params}:{params:Promise<{slug:string}>}){const {slug}=await params;return <PromoManager slug={slug}/>}
