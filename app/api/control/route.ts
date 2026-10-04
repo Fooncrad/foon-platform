@@ -12,7 +12,35 @@ const templateSchema=z.object({tenantId:z.string().optional(),activityId:z.enum(
 function failure(e:unknown){if(e instanceof ApiError)return Response.json({error:e.code},{status:e.status});if(e instanceof z.ZodError)return Response.json({error:'INVALID_INPUT'},{status:400});console.error('Control operation failed',e instanceof Error?e.name:'Unknown');return Response.json({error:'SERVICE_UNAVAILABLE'},{status:503});}
 async function config(kind:'email'|'payment',tenantId?:string,activityId?:string){const table=tenantId?(kind==='email'?'tenant_email_settings':'tenant_payment_settings'):kind==='email'&&activityId?'activity_email_settings':kind==='email'?'platform_email_settings':'platform_payment_settings';const column=tenantId?'tenant_id':kind==='email'&&activityId?'activity_id':'id';const id=tenantId??activityId??'platform';const row=await database().prepare('SELECT * FROM '+table+' WHERE '+column+'=?').bind(id).first<Record<string,unknown>>();if(!row)return null;const {secret_ciphertext,...safe}=row;return {...safe,hasSecret:Boolean(secret_ciphertext)};}
 export async function GET(request:Request){try{const url=new URL(request.url);const action=url.searchParams.get('action')??'summary';const tenantId=url.searchParams.get('tenantId')??undefined;const activityId=url.searchParams.get('activityId')??undefined;
- if(action==='stores'){const u=await actor();let freePlan=await database().prepare("SELECT id FROM package_plans WHERE enabled=1 AND monthly_price=0 ORDER BY created_at ASC LIMIT 1").first<{id:string}>();if(freePlan){const marker=await database().prepare("SELECT value FROM platform_settings WHERE key='free_plan_rollout_v1'").first<{value:string}>();if(!marker){const tenants=await database().prepare('SELECT id FROM tenants').all<{id:string}>();const now=Date.now();await database().prepare("UPDATE subscriptions SET status='cancelled',updated_at=? WHERE status='active'").bind(now).run();for(const tenant of tenants.results){await database().prepare("INSERT INTO subscriptions(id,tenant_id,plan_id,status,starts_at,expires_at,created_at,updated_at) VALUES(?,?,?,'active',?,NULL,?,?)").bind(crypto.randomUUID(),tenant.id,freePlan.id,now,now,now).run();await audit(u.userId,'subscription.migrated_to_free',tenant.id)}}await database().prepare("INSERT INTO platform_settings(key,value,updated_at) VALUES('free_plan_rollout_v1',?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(freePlan.id,Date.now()).run()}else{const missing=await database().prepare("SELECT t.id FROM tenants t WHERE NOT EXISTS (SELECT 1 FROM subscriptions s WHERE s.tenant_id=t.id AND s.status='active')").all<{id:string}>();for(const tenant of missing.results){const now=Date.now();await database().prepare("INSERT INTO subscriptions(id,tenant_id,plan_id,status,starts_at,expires_at,created_at,updated_at) VALUES(?,?,?,'active',?,NULL,?,?)").bind(crypto.randomUUID(),tenant.id,freePlan.id,now,now,now).run()}}}const rows=u.admin?await database().prepare('SELECT id,name,slug,activity_id,country_code,currency,status,created_at FROM tenants ORDER BY created_at DESC').all():await database().prepare("SELECT t.id,t.name,t.slug,t.activity_id,t.country_code,t.currency,t.status,t.created_at FROM tenants t JOIN memberships m ON m.tenant_id=t.id WHERE m.user_id=? AND m.role IN ('owner','manager') ORDER BY t.created_at DESC").bind(u.userId).all();return Response.json({stores:rows.results,admin:u.admin});}
+ if(action==='stores'){
+  const u=await actor();
+  if(u.admin){
+   const freePlan=await database().prepare("SELECT id FROM package_plans WHERE enabled=1 AND monthly_price=0 ORDER BY created_at ASC LIMIT 1").first<{id:string}>();
+   if(freePlan){
+    const marker=await database().prepare("SELECT value FROM platform_settings WHERE key='free_plan_rollout_v1'").first<{value:string}>();
+    if(!marker){
+     const tenants=await database().prepare('SELECT id FROM tenants').all<{id:string}>();
+     const now=Date.now();
+     await database().prepare("UPDATE subscriptions SET status='cancelled',updated_at=? WHERE status='active'").bind(now).run();
+     for(const tenant of tenants.results){
+      await database().prepare("INSERT INTO subscriptions(id,tenant_id,plan_id,status,starts_at,expires_at,created_at,updated_at) VALUES(?,?,?,'active',?,NULL,?,?)").bind(crypto.randomUUID(),tenant.id,freePlan.id,now,now,now).run();
+      await audit(u.userId,'subscription.migrated_to_free',tenant.id);
+     }
+     await database().prepare("INSERT INTO platform_settings(key,value,updated_at) VALUES('free_plan_rollout_v1',?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(freePlan.id,Date.now()).run();
+    }else{
+     const missing=await database().prepare("SELECT t.id FROM tenants t WHERE NOT EXISTS (SELECT 1 FROM subscriptions s WHERE s.tenant_id=t.id AND s.status='active')").all<{id:string}>();
+     for(const tenant of missing.results){
+      const now=Date.now();
+      await database().prepare("INSERT INTO subscriptions(id,tenant_id,plan_id,status,starts_at,expires_at,created_at,updated_at) VALUES(?,?,?,'active',?,NULL,?,?)").bind(crypto.randomUUID(),tenant.id,freePlan.id,now,now,now).run();
+     }
+    }
+   }
+  }
+  const rows=u.admin
+   ?await database().prepare('SELECT id,name,slug,activity_id,country_code,currency,status,created_at FROM tenants ORDER BY created_at DESC').all()
+   :await database().prepare("SELECT t.id,t.name,t.slug,t.activity_id,t.country_code,t.currency,t.status,t.created_at FROM tenants t JOIN memberships m ON m.tenant_id=t.id WHERE m.user_id=? AND m.role IN ('owner','manager') ORDER BY t.created_at DESC").bind(u.userId).all();
+  return Response.json({stores:rows.results,admin:u.admin});
+ }
  const u=await authorize(tenantId);if(activityId&&(tenantId||!u.admin))throw new ApiError(403,'FORBIDDEN');
  if(action==='plans'){if(!u.admin)throw new ApiError(403,'FORBIDDEN');await database().batch([
   database().prepare("INSERT IGNORE INTO feature_definitions(id,label_ar,label_en,label_fr,description_ar,description_en,description_fr,created_at) VALUES('qr_menu','قائمة QR للطاولات','QR table menu','Menu QR par table','إنشاء رموز QR للطاولات وربط الطلبات بها.','Create table QR codes and accept orders through them.','Créer des QR de table et recevoir les commandes associées.',UNIX_TIMESTAMP()*1000)"),
