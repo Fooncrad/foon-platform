@@ -46,12 +46,13 @@ export default function RestaurantMenu({ slug }: { slug: string }) {
   const [feedback, setFeedback] = useState('');
   const [lastReference, setLastReference] = useState('');
   const [requestId, setRequestId] = useState('');
+  const [tableToken,setTableToken]=useState('');
 
   useEffect(() => {
     let alive = true;
     fetch('/api/public/menu?slug=' + encodeURIComponent(slug), { cache: 'no-store' })
       .then(async response => ({ ok: response.ok, body: await response.json() as MenuData }))
-      .then(({ ok, body }) => { if (alive) { setOrigin(window.location.origin); setData(ok ? body : { error: body.error || 'NOT_FOUND' }); } })
+      .then(({ ok, body }) => { if (alive) { setOrigin(window.location.origin); const token=new URLSearchParams(window.location.search).get('table')||'';setTableToken(token);if(token){setOrderType('dine_in');setReference('QR');} setData(ok ? body : { error: body.error || 'NOT_FOUND' }); } })
       .catch(() => { if (alive) setData({ error: 'SERVICE_UNAVAILABLE' }); });
     return () => { alive = false; };
   }, [slug]);
@@ -101,7 +102,7 @@ export default function RestaurantMenu({ slug }: { slug: string }) {
     const key = requestId || crypto.randomUUID();
     setRequestId(key);
     try {
-      const response = await fetch('/api/public/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, clientRequestId: key, customerName: name, customerPhone: phone, customerEmail: email, orderType, serviceReference: reference, notes,locale,items: lines.map(line => ({ id: line.item.id, quantity: line.quantity,variantId:line.variantId,options:line.options })) }) });
+      const response = await fetch('/api/public/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, clientRequestId: key, customerName: name, customerPhone: phone, customerEmail: email, orderType, serviceReference: tableToken?'':reference, tableToken:tableToken||undefined, notes,locale,items: lines.map(line => ({ id: line.item.id, quantity: line.quantity,variantId:line.variantId,options:line.options })) }) });
       const body = await response.json() as { error?: string; order?: { reference?: string } };
       if (!response.ok || !body.order?.reference) throw new Error(body.error || 'ORDER_FAILED');
       setLastReference(body.order.reference); setCart({}); setRequestId(''); setFeedback('');
