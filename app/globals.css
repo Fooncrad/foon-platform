@@ -1015,3 +1015,17 @@ body{overflow-x:clip}
 .restaurant-inventory-form-fields input:focus-visible{outline:2px solid #f47719;outline-offset:1px}
 .restaurant-inventory-form-actions{display:flex;justify-content:flex-start;gap:8px;padding-top:4px}
 @media(max-width:560px){.restaurant-v2-workspace>section.restaurant-v2-card:has(.restaurant-inventory-form){width:100%}.restaurant-inventory-form-fields{grid-template-columns:minmax(0,1fr);gap:10px}.restaurant-inventory-form-fields>label:first-child{grid-column:auto}}
+
+
+/* Orders: concise tickets that do not stretch across wide screens */
+.restaurant-live-orders{grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),520px))!important;justify-content:start!important;gap:12px!important}
+.restaurant-order-ticket{min-width:0;max-width:520px;padding:14px!important;border-radius:15px!important}
+.restaurant-order-ticket .restaurant-card-head{gap:12px}
+.restaurant-order-customer{gap:6px 11px!important;margin:9px 0!important;font-size:11px}
+.restaurant-order-context{font-size:11px;line-height:1.5}
+.restaurant-order-lines>div{padding:7px 0!important;font-size:12px}
+.restaurant-order-actions{gap:7px!important;margin-top:10px!important}
+.restaurant-order-actions button{min-height:38px!important;padding-inline:12px!important}
+.restaurant-order-action-error{flex:1 0 100%;padding:8px 10px;border-radius:9px;background:#fff1f0;color:#b42318;font-size:11px;line-height:1.5}
+.dark .restaurant-order-action-error{background:#381b1d;color:#ffb4aa}
+@media(max-width:700px){.restaurant-live-orders{grid-template-columns:minmax(0,1fr)!important}.restaurant-order-ticket{max-width:100%;padding:12px!important}.restaurant-order-actions button{flex:1!important}}
