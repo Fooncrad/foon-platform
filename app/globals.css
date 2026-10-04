@@ -1236,3 +1236,24 @@ html,body{max-width:100%;overflow-x:hidden}
  .menu-template-list .menu-item-card-square{grid-template-columns:96px minmax(0,1fr)!important}
  .menu-template-switch button{padding-inline:7px}
 }
+
+
+/* Restaurant brand, themes and templates */
+.restaurant-brand-page{display:grid;gap:18px}
+.restaurant-brand-tabs{display:flex;gap:8px;overflow:auto;padding:4px;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+.restaurant-brand-tabs button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:8px 16px;border:0;border-radius:10px;background:transparent;color:var(--muted-foreground);font:inherit;font-weight:800;white-space:nowrap;cursor:pointer}
+.restaurant-brand-tabs button svg{width:17px}
+.restaurant-brand-tabs button.active{background:var(--foreground);color:var(--background)}
+.restaurant-template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.restaurant-template-grid article{display:grid;gap:12px;padding:12px;border:1px solid var(--border);border-radius:18px;background:var(--card);box-shadow:0 8px 25px #0000000a}
+.restaurant-template-grid article.selected{outline:2px solid var(--brand-orange);outline-offset:1px}
+.restaurant-template-preview{display:grid;place-items:center;aspect-ratio:16/10;border-radius:13px;background:linear-gradient(145deg,var(--muted),var(--background));border:1px solid var(--border)}
+.restaurant-template-preview svg{width:44px;height:44px;opacity:.65}
+.restaurant-template-grid h2{margin:0 0 5px;font-size:17px}.restaurant-template-grid p{margin:0;color:var(--muted-foreground);font-size:12px;line-height:1.6}
+.restaurant-template-grid article>button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;border:1px solid var(--border);border-radius:10px;background:var(--background);color:inherit;font:inherit;font-weight:800;cursor:pointer}
+.restaurant-template-grid article.selected>button{background:var(--foreground);color:var(--background)}
+.restaurant-template-grid article>button svg{width:16px}
+.restaurant-brand-settings{display:grid;gap:16px;padding:20px}.restaurant-brand-settings h2,.restaurant-brand-settings p{margin:0}.restaurant-brand-settings p{color:var(--muted-foreground)}
+.brand-setting-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.brand-setting-grid label{display:grid;gap:8px;font-size:13px;font-weight:700}.brand-setting-grid input,.brand-setting-grid select{width:100%;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--background);color:inherit;padding:8px}
+@media(max-width:900px){.restaurant-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.brand-setting-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.restaurant-brand-tabs button{flex:1;padding-inline:10px}.restaurant-template-grid{grid-template-columns:1fr}.brand-setting-grid{grid-template-columns:1fr}.restaurant-brand-page{min-width:0;overflow-x:hidden}}
