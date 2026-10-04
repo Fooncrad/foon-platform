@@ -4,6 +4,7 @@ import { ApiError, sameOrigin } from '@/lib/platform/security';
 import { requireTenantFeature } from '@/lib/platform/entitlements';
 import { priceMenuSelection } from '@/lib/restaurant/menu-pricing';
 import { sendAutomaticMessage } from '@/lib/platform/delivery';
+import {enforceOrderLimit} from '@/lib/restaurant/order-quota';
 
 export const dynamic = 'force-dynamic';
 const inputSchema = z.object({
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
     const id = crypto.randomUUID(), reference = `FN-${Date.now().toString(36).toUpperCase()}-${id.slice(0, 6).toUpperCase()}`, now = Date.now(), amount = (totalCents / 100).toFixed(2);
     try {
       await database().transaction(async tx => {
+        await enforceOrderLimit(tx,tenant.id);
         const stockByItem = new Map<string, number>();
         for (const line of lines) stockByItem.set(line.id, (stockByItem.get(line.id) || 0) + line.quantity);
         for (const [itemId, quantity] of stockByItem) {
