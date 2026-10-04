@@ -1,3 +1,4 @@
+import TablesManager from '@/components/restaurant/tables-manager';
 import OperationsSettings from '@/components/restaurant/operations-settings';
 import {redirect} from 'next/navigation';
 import {database} from '@/db';
@@ -17,7 +18,7 @@ export default async function Page({params}:{params:Promise<{slug:string}>}){
  ]);
  return <div className="restaurant-v2-workspace">
   <section className="restaurant-v2-card"><header><div><small>الإعداد</small><h2>المطعم والفروع</h2></div></header><div className="restaurant-v2-status"><div><b>{t.name}</b><small>المطعم</small></div><div><b>{branches.length}</b><small>الفروع</small></div><div><b>{t.waiter_call_enabled?'مفعل':'متوقف'}</b><small>نداء النادل</small></div></div></section>
-  <div className="restaurant-v2-grid"><section className="restaurant-v2-primary"><OperationsSettings slug={slug} stations={stations} printers={printers} items={items}/></section>
+  <div className="restaurant-v2-grid"><section className="restaurant-v2-primary"><OperationsSettings slug={slug} stations={stations} printers={printers} items={items}/><TablesManager slug={slug} branches={branches}/></section>
    <aside className="restaurant-v2-secondary"><article className="restaurant-v2-card"><header><div><small>الخدمات</small><h2>QR</h2></div></header>{qrs.length?<div className="restaurant-v2-orders">{qrs.map(x=><div key={x.id}><span><b>{x.label}</b><small>{x.service_type}</small></span><strong>{x.reference_value||'—'}</strong></div>)}</div>:<div className="restaurant-v2-empty">QR المنيو العام متاح من رابط المتجر، ويمكن إضافة QR للخدمات والطاولات.</div>}</article></aside>
   </div>
  </div>
