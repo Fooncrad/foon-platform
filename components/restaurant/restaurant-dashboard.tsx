@@ -14,7 +14,7 @@ export default function RestaurantDashboard(p:Props){
  const base='/restaurant/'+encodeURIComponent(p.slug);
  const money=(value:number)=>new Intl.NumberFormat(ar?'ar-SA-u-nu-latn':locale==='fr'?'fr-FR':'en-US',{style:'currency',currency:p.currency||'SAR',maximumFractionDigits:2}).format(value);
  const count=(...keys:string[])=>keys.reduce((total,key)=>total+(p.orderStatuses[key]||0),0);
- const pending=count('new','pending','confirmed','preparing');
+ const pending=count('new','pending','confirmed','preparing','ready');
  const completed=count('completed');
  const delivered=count('delivered');
  const cancelled=count('cancelled','canceled','no_show');
