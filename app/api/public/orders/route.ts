@@ -1,3 +1,4 @@
+import { apiErrorResponse } from '@/lib/platform/error-reporting';
 import { z } from 'zod';
 import { database } from '@/db';
 import { ApiError, sameOrigin } from '@/lib/platform/security';
@@ -26,12 +27,7 @@ const inputSchema = z.object({
   notes: z.string().trim().max(1000).optional().default(''), locale: z.enum(['ar', 'en', 'fr']).default('ar'),
   items: z.array(z.object({ id: z.string().uuid(), quantity: z.number().int().min(1).max(99), variantId: z.string().uuid().optional(), options: z.array(z.object({ id: z.string().uuid(), quantity: z.number().int().min(1).max(99) })).max(100).default([]) })).min(1).max(50)
 });
-function fail(error: unknown) {
-  if (error instanceof ApiError) return Response.json({ error: error.code }, { status: error.status });
-  if (error instanceof z.ZodError) return Response.json({ error: 'INVALID_INPUT' }, { status: 400 });
-  console.error('Public order failed', error instanceof Error ? error.name : 'Unknown');
-  return Response.json({ error: 'SERVICE_UNAVAILABLE' }, { status: 503 });
-}
+function fail(error: unknown) { return apiErrorResponse(error, '/app/api/public/orders'); }
 
 export async function POST(request: Request) {
   try {

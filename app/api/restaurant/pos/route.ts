@@ -1,3 +1,4 @@
+import { apiErrorResponse } from '@/lib/platform/error-reporting';
 import { z } from 'zod';
 import { database } from '@/db';
 import { ApiError, audit, authorize, sameOrigin } from '@/lib/platform/security';
@@ -12,12 +13,7 @@ const body = z.object({
   roomNumber: z.string().trim().max(40).optional(), pickupLabel: z.string().trim().max(160).optional(), locale: z.enum(['ar', 'en', 'fr']).default('ar'),
   items: z.array(z.object({ id: z.string().uuid(), quantity: z.number().int().min(1).max(100), variantId: z.string().uuid().optional(), options: z.array(z.object({ id: z.string().uuid(), quantity: z.number().int().min(1).max(99) })).max(100).default([]) })).min(1).max(100)
 });
-function fail(error: unknown) {
-  if (error instanceof ApiError) return Response.json({ error: error.code }, { status: error.status });
-  if (error instanceof z.ZodError) return Response.json({ error: 'INVALID_INPUT', issues: error.issues }, { status: 400 });
-  console.error('Restaurant POS failed', error instanceof Error ? error.name : 'Unknown');
-  return Response.json({ error: 'SERVICE_UNAVAILABLE' }, { status: 503 });
-}
+function fail(error: unknown) { return apiErrorResponse(error, '/app/api/restaurant/pos'); }
 async function tenant(slug: string) {
   const result = await database().prepare("SELECT id,currency FROM tenants WHERE slug=? AND activity_id='restaurants' LIMIT 1").bind(slug).first<{ id: string; currency: string }>();
   if (!result) throw new ApiError(404, 'NOT_FOUND');

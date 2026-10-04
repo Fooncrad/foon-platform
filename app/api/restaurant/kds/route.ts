@@ -1,10 +1,11 @@
+import { apiErrorResponse } from '@/lib/platform/error-reporting';
 import {z} from 'zod';
 import {database} from '@/db';
 import {ApiError,audit,authorize,sameOrigin} from '@/lib/platform/security';
 import {requireTenantFeature} from '@/lib/platform/entitlements';
 export const dynamic='force-dynamic';
 const next=z.enum(['confirmed','preparing','ready']);
-function fail(e:unknown){if(e instanceof ApiError)return Response.json({error:e.code},{status:e.status});if(e instanceof z.ZodError)return Response.json({error:'INVALID_INPUT',issues:e.issues},{status:400});console.error('Restaurant KDS failed',e instanceof Error?e.name:'Unknown');return Response.json({error:'SERVICE_UNAVAILABLE'},{status:503})}
+function fail(error: unknown) { return apiErrorResponse(error, '/app/api/restaurant/kds'); }
 async function tenant(slug:string){const t=await database().prepare("SELECT id FROM tenants WHERE slug=? AND activity_id='restaurants' LIMIT 1").bind(slug).first<{id:string}>();if(!t)throw new ApiError(404,'NOT_FOUND');const u=await authorize(t.id);try{await requireTenantFeature(t.id,'kds')}catch{await requireTenantFeature(t.id,'orders')}return {...t,userId:u.userId}}
 export async function GET(req:Request){try{
  const u=new URL(req.url),t=await tenant(u.searchParams.get('slug')||''),station=(u.searchParams.get('station')||'').trim();
