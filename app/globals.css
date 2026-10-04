@@ -1042,3 +1042,16 @@ body{overflow-x:clip}
 .restaurant-order-action-error{flex:1 0 100%;padding:8px 10px;border-radius:9px;background:#fff1f0;color:#b42318;font-size:11px;line-height:1.5}
 .dark .restaurant-order-action-error{background:#381b1d;color:#ffb4aa}
 @media(max-width:700px){.restaurant-live-orders{grid-template-columns:minmax(0,1fr)!important}.restaurant-order-ticket{max-width:100%;padding:12px!important}.restaurant-order-actions button{flex:1!important}}
+
+
+.promo-forms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.promo-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:18px;border:1px solid var(--border);border-radius:16px;background:var(--card)}
+.promo-form h3{grid-column:1/-1;margin:0 0 4px}
+.promo-form label{display:grid;gap:6px;min-width:0;font-size:13px;font-weight:650}
+.promo-form button{grid-column:1/-1;justify-self:start}
+.promo-lists{display:grid;gap:14px}
+.promo-lists .restaurant-v2-orders>div{gap:12px}
+.promo-lists .restaurant-v2-orders>div>span{display:grid;gap:4px;min-width:0}
+.promo-lists .restaurant-v2-orders small{color:var(--muted-foreground,#68758a)}
+@media(max-width:720px){.promo-forms{grid-template-columns:minmax(0,1fr)}.promo-form{padding:14px;gap:10px}}
+@media(max-width:380px){.promo-form{grid-template-columns:minmax(0,1fr)}.promo-form h3,.promo-form button{grid-column:1}}
