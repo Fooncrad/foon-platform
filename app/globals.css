@@ -982,3 +982,24 @@ body{overflow-x:clip}
 @media(max-width:1000px){.restaurant-pos{grid-template-columns:minmax(0,1fr) 300px}}
 @media(max-width:760px){.restaurant-pos{grid-template-columns:minmax(0,1fr)}.restaurant-pos-cart{position:static}.restaurant-pos-catalog.is-locked{min-height:250px}.restaurant-pos-catalog.is-locked .restaurant-pos-feature-state{padding:15px}.restaurant-pos-products{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:380px){.restaurant-pos-products{grid-template-columns:1fr}.restaurant-pos-catalog.is-locked .restaurant-pos-feature-state{gap:9px;padding:12px}.restaurant-pos-feature-state h2{font-size:15px}}
+
+
+/* POS: compact cart and show a useful explanation instead of an empty workspace */
+.restaurant-pos{grid-template-columns:minmax(0,1fr) minmax(280px,320px);gap:14px;align-items:start}
+.restaurant-pos-products{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.restaurant-pos-products>button{min-height:96px;padding:11px;border-radius:13px}
+.restaurant-pos-feature-state{display:none}
+.restaurant-pos-catalog.is-locked{min-height:clamp(270px,42vh,430px);display:grid;align-content:center}
+.restaurant-pos-catalog.is-locked .restaurant-pos-search,.restaurant-pos-catalog.is-locked .restaurant-pos-cats,.restaurant-pos-catalog.is-locked .restaurant-pos-products{display:none}
+.restaurant-pos-catalog.is-locked .restaurant-pos-feature-state{width:min(100%,600px);margin:0 auto;display:flex;align-items:flex-start;gap:14px;padding:20px;border:1px solid #e4eaf2;border-radius:17px;background:var(--card);box-shadow:0 8px 24px rgba(15,35,65,.05)}
+.restaurant-pos-feature-state>span{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:13px;background:#fff2e8;color:#ed6b16}
+.restaurant-pos-feature-state>span svg{width:22px;height:22px}
+.restaurant-pos-feature-state>div{min-width:0}
+.restaurant-pos-feature-state small{font-size:10px;font-weight:850;color:#ed6b16}
+.restaurant-pos-feature-state h2{margin:5px 0;font-size:17px}
+.restaurant-pos-feature-state p{margin:0 0 12px;color:var(--muted-foreground);font-size:12px;line-height:1.65}
+.restaurant-pos-feature-state a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 13px;border-radius:10px;background:#f47719;color:#fff;text-decoration:none;font-size:11px;font-weight:850}
+.restaurant-pos-empty{grid-column:1/-1;min-height:120px;display:grid;place-items:center;padding:18px;border:1px dashed #d5deea;border-radius:13px;color:var(--muted-foreground);text-align:center;font-size:12px;line-height:1.65}
+@media(max-width:1000px){.restaurant-pos{grid-template-columns:minmax(0,1fr) 300px}}
+@media(max-width:760px){.restaurant-pos{grid-template-columns:minmax(0,1fr)}.restaurant-pos-cart{position:static}.restaurant-pos-catalog.is-locked{min-height:250px}.restaurant-pos-catalog.is-locked .restaurant-pos-feature-state{padding:15px}.restaurant-pos-products{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:380px){.restaurant-pos-products{grid-template-columns:1fr}.restaurant-pos-catalog.is-locked .restaurant-pos-feature-state{gap:9px;padding:12px}.restaurant-pos-feature-state h2{font-size:15px}}
