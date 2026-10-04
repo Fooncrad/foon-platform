@@ -12,7 +12,7 @@ export default function RestaurantDashboard(p:Props){
  const ar=locale==='ar';
  const L=(a:string,e:string,f=e)=>ar?a:locale==='fr'?f:e;
  const base='/restaurant/'+encodeURIComponent(p.slug);
- const money=(value:number)=>new Intl.NumberFormat(ar?'ar-SA':locale==='fr'?'fr-FR':'en-US',{style:'currency',currency:p.currency||'SAR',maximumFractionDigits:2}).format(value);
+ const money=(value:number)=>new Intl.NumberFormat(ar?'ar-SA-u-nu-latn':locale==='fr'?'fr-FR':'en-US',{style:'currency',currency:p.currency||'SAR',maximumFractionDigits:2}).format(value);
  const count=(...keys:string[])=>keys.reduce((total,key)=>total+(p.orderStatuses[key]||0),0);
  const pending=count('new','pending','confirmed','preparing');
  const completed=count('completed');
