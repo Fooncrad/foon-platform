@@ -671,3 +671,28 @@ body{overflow-x:clip}
 .menu-editor-panel>header,.menu-editor-panel>footer{flex:0 0 auto}
 .menu-editor-content{min-height:0;overscroll-behavior:contain}
 .menu-editor-panel>footer{position:sticky;bottom:0;z-index:5;background:var(--card);box-shadow:0 -8px 20px color-mix(in srgb,var(--foreground) 7%,transparent)}
+
+/* FOON operational orders + KDS density */
+.restaurant-live-orders{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(360px,1fr))!important;gap:14px!important;align-items:start!important}
+.restaurant-order-ticket{padding:18px!important;border-radius:18px!important;border-inline-start:4px solid #d9e2ee!important;box-shadow:0 8px 24px rgba(15,35,65,.05)!important}
+.restaurant-order-ticket.is-new,.restaurant-order-ticket.is-pending{border-inline-start-color:#ff7a18!important}
+.restaurant-order-ticket.is-confirmed,.restaurant-order-ticket.is-preparing{border-inline-start-color:#2f6fed!important}
+.restaurant-order-ticket.is-ready{border-inline-start-color:#16a36a!important}
+.restaurant-order-customer{display:flex!important;flex-wrap:wrap!important;gap:8px 14px!important;align-items:center!important;margin:12px 0!important}
+.restaurant-order-customer a,.restaurant-order-customer span{display:inline-flex!important;align-items:center!important;gap:5px!important}
+.restaurant-order-context{margin:7px 0!important;padding:9px 11px!important;background:rgba(237,244,253,.72)!important;border-radius:10px!important}
+.restaurant-order-location{display:flex!important;align-items:center!important;gap:8px!important}
+.restaurant-order-location span{flex:1}
+.restaurant-order-lines{margin:12px 0!important;border-block:1px solid #e3eaf3!important}
+.restaurant-order-lines>div{padding:9px 0!important}
+.restaurant-order-actions{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important;margin-top:13px!important}
+.restaurant-order-actions button{min-height:42px!important;border-radius:11px!important;padding:0 16px!important}
+.order-status-badge{margin-inline-end:auto!important;font-size:12px!important;font-weight:900!important;padding:7px 10px!important;border-radius:999px!important;background:#eef3f9!important}
+.order-status-badge.is-new,.order-status-badge.is-pending{background:#fff0e5!important;color:#a94800!important}
+.order-status-badge.is-confirmed,.order-status-badge.is-preparing{background:#e9f1ff!important;color:#164eaa!important}
+.order-status-badge.is-ready{background:#e6f8ef!important;color:#087647!important}
+.restaurant-kds-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))!important;gap:14px!important}
+.restaurant-kds-ticket{padding:16px!important;border-radius:16px!important;border-top:5px solid #d9e2ee!important;box-shadow:0 8px 24px rgba(15,35,65,.06)!important}
+.restaurant-kds-ticket.is-confirmed{border-top-color:#ff7a18!important}.restaurant-kds-ticket.is-preparing{border-top-color:#2f6fed!important}.restaurant-kds-ticket.is-ready{border-top-color:#16a36a!important}
+.restaurant-kds-ticket .primary-button{width:100%!important;justify-content:center!important;margin-top:12px!important}
+@media(max-width:700px){.restaurant-live-orders,.restaurant-kds-grid{grid-template-columns:1fr!important}.restaurant-order-ticket,.restaurant-kds-ticket{padding:13px!important}.restaurant-order-actions button{flex:1!important}.restaurant-ops-head{align-items:flex-start!important}.restaurant-orders-toolbar{gap:10px!important}}
