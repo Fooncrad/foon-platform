@@ -1,18 +1,4 @@
-import { z } from 'zod';
-import { database } from '@/db';
-
+import {z} from 'zod';import {database} from '@/db';import {sameOrigin} from '@/lib/platform/security';
 export const dynamic='force-dynamic';
-const schema=z.object({slug:z.string().regex(/^[a-z0-9][a-z0-9-]{1,59}$/),tableReference:z.string().trim().min(1).max(80)});
-
-export async function POST(request:Request){
- try{
-  const v=schema.parse(await request.json());
-  const tenant=await database().prepare("SELECT id,waiter_call_enabled FROM tenants WHERE slug=? AND activity_id='restaurants' AND status='active' LIMIT 1").bind(v.slug).first<{id:string;waiter_call_enabled:number|string}>();
-  if(!tenant)return Response.json({error:'RESTAURANT_NOT_FOUND'},{status:404});
-  if(!Number(tenant.waiter_call_enabled))return Response.json({error:'WAITER_CALL_DISABLED'},{status:403});
-  const recent=await database().prepare("SELECT id FROM restaurant_waiter_calls WHERE tenant_id=? AND table_reference=? AND status IN ('new','acknowledged') AND created_at>? LIMIT 1").bind(tenant.id,v.tableReference,Date.now()-20*60*1000).first();
-  if(recent)return Response.json({error:'WAITER_CALL_ALREADY_ACTIVE'},{status:409});
-  await database().prepare("INSERT INTO restaurant_waiter_calls(id,tenant_id,table_reference,status,source,created_at) VALUES(?,?,?,'new','menu',?)").bind(crypto.randomUUID(),tenant.id,v.tableReference,Date.now()).run();
-  return Response.json({ok:true});
- }catch(e){return Response.json({error:e instanceof z.ZodError?'INVALID_WAITER_CALL':'WAITER_CALL_FAILED'},{status:400})}
-}
+const schema=z.object({slug:z.string().regex(/^[a-z0-9][a-z0-9-]{1,59}$/),tableReference:z.string().trim().regex(/^[a-f0-9]{32}$/)});
+export async function POST(request:Request){try{sameOrigin(request);const v=schema.parse(await request.json()),now=Date.now();const tenant=await database().prepare("SELECT id,waiter_call_enabled FROM tenants WHERE slug=? AND activity_id='restaurants' AND status='active' LIMIT 1").bind(v.slug).first<{id:string;waiter_call_enabled:number|string}>();if(!tenant)return Response.json({error:'RESTAURANT_NOT_FOUND'},{status:404});if(!Number(tenant.waiter_call_enabled))return Response.json({error:'WAITER_CALL_DISABLED'},{status:403});const table=await database().prepare("SELECT tb.id,rt.waiter_user_id FROM restaurant_table_runtime rt JOIN restaurant_tables tb ON tb.id=rt.table_id AND tb.tenant_id=rt.tenant_id WHERE rt.tenant_id=? AND rt.qr_token=? AND tb.enabled=1 LIMIT 1").bind(tenant.id,v.tableReference).first<{id:string;waiter_user_id:string|null}>();if(!table)return Response.json({error:'INVALID_TABLE_QR'},{status:404});const recent=await database().prepare("SELECT id FROM restaurant_table_service_events WHERE tenant_id=? AND table_id=? AND event_type='waiter_call' AND created_at>? LIMIT 1").bind(tenant.id,table.id,now-20*60*1000).first();if(recent)return Response.json({error:'WAITER_CALL_COOLDOWN',retryAfterSeconds:1200},{status:429});await database().batch([database().prepare("INSERT INTO restaurant_table_service_events(id,tenant_id,table_id,waiter_id,event_type,reason,source,created_at) VALUES(?,?,?,?, 'waiter_call',NULL,'menu',?)").bind(crypto.randomUUID(),tenant.id,table.id,table.waiter_user_id,now),database().prepare("UPDATE restaurant_table_runtime SET status=CASE WHEN status='available' THEN 'service' ELSE status END,updated_at=? WHERE tenant_id=? AND table_id=?").bind(now,tenant.id,table.id)]);return Response.json({ok:true})}catch(e){return Response.json({error:e instanceof z.ZodError?'INVALID_WAITER_CALL':'WAITER_CALL_FAILED'},{status:400})}}
