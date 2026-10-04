@@ -1176,3 +1176,36 @@ body{overflow-x:clip}
 @media(min-width:1200px){.restaurant-live-orders{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:700px){.restaurant-live-orders{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}.restaurant-order-ticket{padding:8px!important}.restaurant-order-actions{flex-wrap:wrap!important}.restaurant-order-actions button{flex:0 1 auto!important}.restaurant-order-ticket .restaurant-card-head strong{font-size:15px!important}.restaurant-order-ticket .restaurant-card-head>b{font-size:12px!important}.restaurant-order-summary{grid-template-columns:1fr!important}.restaurant-order-summary>a,.restaurant-order-summary>span{grid-column:1!important}.restaurant-order-summary>a{font-size:9px!important}}
 @media(max-width:430px){.restaurant-live-orders{grid-template-columns:1fr!important}.restaurant-order-ticket{min-height:0!important}}
+
+
+/* FOON mobile shopping stability v1 */
+html,body{max-width:100%;overflow-x:hidden}
+.restaurant-menu-shell{width:100%;max-width:100vw;min-width:0;overflow-x:clip;overflow-wrap:anywhere}
+.restaurant-menu-shell *{min-width:0;box-sizing:border-box}
+.restaurant-menu-shell img,.restaurant-menu-shell svg{max-width:100%}
+.restaurant-menu-shell input,.restaurant-menu-shell select,.restaurant-menu-shell textarea{max-width:100%;font-size:16px}
+.menu-category-strip{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.menu-category-strip::-webkit-scrollbar{display:none}
+.menu-item-grid,.menu-item-card,.menu-item-card-square,.menu-item-copy,.menu-item-bottom{min-width:0;max-width:100%}
+.menu-item-copy h2,.menu-item-copy p{overflow-wrap:anywhere}
+.menu-customize-backdrop{width:100vw;max-width:100vw;overflow:hidden}
+.menu-customize-panel{max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}
+.menu-customize-content{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.menu-cart{max-width:calc(100vw - 24px)}
+@media(max-width:760px){
+ body:has(.restaurant-menu-shell){overflow-x:hidden;overscroll-behavior-x:none}
+ .restaurant-menu-shell{contain:inline-size}
+ .menu-main,.menu-content,.menu-toolbar,.menu-cover,.menu-restaurant-footer{width:100%;max-width:100%;overflow-x:clip}
+ .menu-item-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%}
+ .menu-item-card-square{width:100%;max-width:100%;overflow:hidden!important}
+ .menu-customize-backdrop{padding:6px;align-items:end}
+ .menu-customize-panel{width:100%;max-width:100%;max-height:92dvh;border-radius:18px 18px 0 0}
+ .menu-customize-panel>header,.menu-customize-panel>footer{padding:12px 14px;flex-shrink:0}
+ .menu-customize-content{padding:8px 14px;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+ .menu-cart{position:fixed;z-index:120;inset-inline:12px;bottom:max(12px,env(safe-area-inset-bottom));width:auto;max-width:none}
+}
+@media(max-width:340px){
+ .restaurant-menu-shell{font-size:14px}
+ .menu-item-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+ .menu-item-card-square .menu-item-copy{padding:7px!important}
+}
