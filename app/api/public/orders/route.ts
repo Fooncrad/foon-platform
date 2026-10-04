@@ -45,6 +45,7 @@ export async function POST(request: Request) {
     if (!tenant) throw new ApiError(404, 'NOT_FOUND');
     try{const setting=await database().prepare('SELECT enabled FROM restaurant_order_type_settings WHERE tenant_id=? AND order_type=? LIMIT 1').bind(tenant.id,input.orderType).first<{enabled:number}>();if(setting&&!Number(setting.enabled))throw new ApiError(403,'ORDER_TYPE_DISABLED')}catch(error){if(error instanceof ApiError)throw error;}
     await requireTenantFeature(tenant.id, 'orders');
+    if(input.tableToken) await requireTenantFeature(tenant.id, 'qr_menu');
     const featureForType:Record<string,string>={pickup:'pickup',takeaway:'pickup',dine_in:'orders',delivery:'delivery',room_service:'room_service',reservation:'reservations'};
     const requiredFeature=featureForType[input.orderType]; if(requiredFeature&&requiredFeature!=='orders') await requireTenantFeature(tenant.id, requiredFeature);
     const policy=await database().prepare('SELECT min_order,service_fee,service_fee_label_ar,service_fee_label_en,service_fee_label_fr,max_active_orders,requires_driver FROM restaurant_order_policies WHERE tenant_id=? AND order_type=? LIMIT 1').bind(tenant.id,input.orderType).first<{min_order:number|string;service_fee:number|string;service_fee_label_ar:string|null;service_fee_label_en:string|null;service_fee_label_fr:string|null;max_active_orders:number|string|null;requires_driver:number|string}>().catch(()=>null);
