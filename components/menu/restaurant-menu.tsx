@@ -112,8 +112,9 @@ export default function RestaurantMenu({ slug }: { slug: string }) {
       const body = await response.json() as { error?: string; order?: { reference?: string } };
       if (!response.ok || !body.order?.reference) throw new Error(body.error || 'ORDER_FAILED');
       setLastReference(body.order.reference); setCart({}); setRequestId(''); setFeedback('');
-    } catch {
-      setFeedback(t.error);
+    } catch (error) {
+      const code=error instanceof Error?error.message:'';
+      setFeedback(code==='PLAN_LIMIT_REACHED'?(lang==='ar'?'وصل المطعم إلى حد الطلبات المسموح به في الباقة الحالية.':'This restaurant has reached its order allowance for the current plan.'):t.error);
     } finally { setSubmitting(false); }
   }
 
