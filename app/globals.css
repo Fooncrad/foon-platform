@@ -741,8 +741,8 @@ body{overflow-x:clip}
 .restaurant-v2-orders>div>strong{flex:none}
 @media(max-width:900px){
  .restaurant-v2-shell{display:block}
- .restaurant-v2-shell.is-collapsed{--side:min(88vw,360px)}
- .restaurant-v2-sidebar{width:min(88vw,360px);max-width:360px;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);touch-action:pan-y}
+ .restaurant-v2-shell.is-collapsed{--side:min(82vw,320px)}
+ .restaurant-v2-sidebar{width:min(82vw,320px);max-width:360px;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);touch-action:pan-y}
  .restaurant-v2-shell.is-collapsed .restaurant-v2-sidebar .restaurant-v2-brand{justify-content:space-between;padding-inline:16px}
  .restaurant-v2-shell.is-collapsed .restaurant-v2-sidebar .restaurant-v2-brand>div{display:grid}
  .restaurant-v2-shell.is-collapsed .restaurant-v2-sidebar .restaurant-v2-brand b{font-size:24px}
