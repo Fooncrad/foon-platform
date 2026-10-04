@@ -45,14 +45,14 @@ export default function RestaurantShell({slug,name,children}:Props){
   if(!start||!touch)return;
   const dx=touch.clientX-start.x,dy=touch.clientY-start.y;
   if(Math.abs(dx)<52||Math.abs(dx)<Math.abs(dy)*1.25)return;
-  if(open&&dx>0){setOpen(false);return}
+  if(open&&((rtl&&dx>0)||(!rtl&&dx<0))){setOpen(false);return}
   const fromEdge=rtl?start.x>=window.innerWidth-24:start.x<=24;
   const towardDrawer=rtl?dx<0:dx>0;
   if(!open&&fromEdge&&towardDrawer)setOpen(true);
  };
  return <div className={'restaurant-v2-shell '+(collapsed?'is-collapsed':'')} dir={rtl?'rtl':'ltr'} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onTouchCancel={()=>{gestureStart.current=null}}>
   <aside className={'restaurant-v2-sidebar '+(open?'is-open':'')} aria-label={L('قائمة المطعم','Restaurant navigation','Navigation du restaurant')}>
-   <div className="restaurant-v2-brand"><div><b>FOON<span>.</span></b><small title={name}>{name}</small></div><button type="button" className="restaurant-v2-mobile-close" onPointerUp={event=>{event.stopPropagation();setOpen(false)}} onTouchEnd={event=>{event.preventDefault();event.stopPropagation();setOpen(false)}} onClick={()=>setOpen(false)} aria-label={L('إغلاق القائمة','Close navigation','Fermer la navigation')}><X/></button></div>
+   <div className="restaurant-v2-brand"><div><b>FOON<span>.</span></b><small title={name}>{name}</small></div><button type="button" className="restaurant-v2-mobile-close" onClick={event=>{event.stopPropagation();setOpen(false)}} aria-label={L('إغلاق القائمة','Close navigation','Fermer la navigation')}><X/></button></div>
    <nav id="restaurant-navigation">{groups.map(group=><section key={group.en}><label>{locale==='fr'?group.fr:rtl?group.ar:group.en}</label>{group.items.map(({key,ar,en,fr,icon:Icon})=>{const href=key==='overview'?base:base+'/'+key;const active=key==='overview'?pathname===base:pathname===href||pathname.startsWith(href+'/');const label=locale==='fr'?fr:rtl?ar:en;return <Link key={key} href={href} className={active?'active':''} title={label} aria-current={active?'page':undefined} onClick={()=>setOpen(false)} onNavigate={()=>setOpen(false)}><Icon/><span>{label}</span></Link>})}</section>)}</nav>
    <footer><label><Languages/><span>{L('اللغة','Language','Langue')}</span><select aria-label={L('اختيار اللغة','Choose language','Choisir la langue')} value={locale} onChange={event=>setLocale(event.target.value as 'ar'|'en'|'fr')}><option value="ar">العربية</option><option value="en">English</option><option value="fr">Français</option></select></label><Link href={'/menu/'+encodeURIComponent(slug)} target="_blank" rel="noreferrer"><BookOpen/><span>{L('فتح المنيو','Open menu','Ouvrir le menu')}</span></Link></footer>
   </aside>
@@ -61,6 +61,6 @@ export default function RestaurantShell({slug,name,children}:Props){
    <header className="restaurant-v2-topbar"><button type="button" className="restaurant-v2-menu" onClick={()=>setOpen(true)} aria-expanded={open} aria-controls="restaurant-navigation" aria-label={L('فتح القائمة','Open navigation','Ouvrir la navigation')}><Menu/></button><div className="restaurant-v2-title"><b>{current?(locale==='fr'?current.fr:rtl?current.ar:current.en):L('مركز التشغيل','Operations','Opérations')}</b><small>{name}</small></div><Link className="restaurant-v2-store" href={'/menu/'+encodeURIComponent(slug)} target="_blank" rel="noreferrer"><Eye/><span>{L('عرض المتجر','View shop','Voir le restaurant')}</span></Link><div className="restaurant-v2-tools"><button type="button" onClick={toggleTheme} aria-label={dark?L('الوضع النهاري','Light mode','Mode clair'):L('الوضع الليلي','Dark mode','Mode sombre')}>{dark?<Sun/>:<Moon/>}</button></div></header>
    {children}
   </main>
-  {open&&<button type="button" className="restaurant-v2-backdrop" onPointerUp={()=>setOpen(false)} onTouchEnd={event=>{event.preventDefault();setOpen(false)}} onClick={()=>setOpen(false)} aria-label={L('إغلاق القائمة','Close navigation','Fermer la navigation')}/>}
+  {open&&<button type="button" className="restaurant-v2-backdrop" onClick={()=>setOpen(false)} aria-label={L('إغلاق القائمة','Close navigation','Fermer la navigation')}/>}
  </div>
 }
