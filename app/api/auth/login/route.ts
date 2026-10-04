@@ -25,7 +25,13 @@ export async function POST(request:Request){
   await database().prepare('DELETE FROM auth_sessions WHERE expires_at<?').bind(now).run();
   await database().prepare('DELETE FROM auth_login_attempts WHERE expires_at<?').bind(now).run();
   const admin=Boolean(process.env.PLATFORM_ADMIN_EMAIL)&&user.email.toLowerCase()===process.env.PLATFORM_ADMIN_EMAIL!.toLowerCase();
-  let next=safeReturnPath(String(input.next??''));if(next==='/'||(!admin&&next==='/admin'))next=admin?'/admin':'/store';
+  let next=safeReturnPath(String(input.next??''));
+  if(admin){if(next==='/')next='/admin';}
+  else{
+   const workspace=await database().prepare('SELECT t.id,t.activity_id FROM memberships m JOIN tenants t ON t.id=m.tenant_id WHERE m.user_id=? ORDER BY t.created_at ASC LIMIT 1').bind(user.id).first<{id:string;activity_id:string}>();
+   if(!workspace)next='/onboarding';
+   else if(next==='/'||next==='/admin'||next==='/onboarding')next=workspace.activity_id==='restaurants'?'/restaurant?tenant='+workspace.id:'/store?tenant='+workspace.id;
+  }
   const response=NextResponse.json({next});response.cookies.set('foon_session',token,{httpOnly:true,secure:process.env.NODE_ENV==='production'&&process.env.SITE_ORIGIN?.startsWith('https://'),sameSite:'lax',path:'/',maxAge:7*86400});return response;
  }catch(e){return e instanceof ApiError?NextResponse.json({error:e.code},{status:e.status}):NextResponse.json({error:'SIGN_IN_UNAVAILABLE'},{status:503});}
 }
