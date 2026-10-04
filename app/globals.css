@@ -1257,3 +1257,52 @@ html,body{max-width:100%;overflow-x:hidden}
 .brand-setting-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.brand-setting-grid label{display:grid;gap:8px;font-size:13px;font-weight:700}.brand-setting-grid input,.brand-setting-grid select{width:100%;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--background);color:inherit;padding:8px}
 @media(max-width:900px){.restaurant-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.brand-setting-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.restaurant-brand-tabs button{flex:1;padding-inline:10px}.restaurant-template-grid{grid-template-columns:1fr}.brand-setting-grid{grid-template-columns:1fr}.restaurant-brand-page{min-width:0;overflow-x:hidden}}
+
+
+/* Fix public menu category/search chips: never squeeze or overlap labels */
+.restaurant-menu-shell .menu-category-strip,
+.restaurant-menu-shell .menu-categories{
+ display:flex!important;
+ flex-wrap:nowrap!important;
+ align-items:center!important;
+ gap:8px!important;
+ width:100%!important;
+ max-width:100%!important;
+ overflow-x:auto!important;
+ overflow-y:hidden!important;
+ scrollbar-width:none;
+ -webkit-overflow-scrolling:touch;
+ scroll-snap-type:x proximity;
+ overscroll-behavior-inline:contain;
+}
+.restaurant-menu-shell .menu-category-strip::-webkit-scrollbar,
+.restaurant-menu-shell .menu-categories::-webkit-scrollbar{display:none}
+.restaurant-menu-shell .menu-category-strip>button,
+.restaurant-menu-shell .menu-categories>button,
+.restaurant-menu-shell .menu-category-strip>a,
+.restaurant-menu-shell .menu-categories>a{
+ flex:0 0 auto!important;
+ width:auto!important;
+ min-width:max-content!important;
+ max-width:none!important;
+ padding:9px 14px!important;
+ white-space:nowrap!important;
+ overflow:visible!important;
+ text-overflow:clip!important;
+ line-height:1.2!important;
+ scroll-snap-align:start;
+}
+.restaurant-menu-shell .menu-category-strip>button *,
+.restaurant-menu-shell .menu-categories>button *{
+ white-space:nowrap!important;
+ overflow:visible!important;
+ text-overflow:clip!important;
+}
+@media(max-width:600px){
+ .restaurant-menu-shell .menu-category-strip,
+ .restaurant-menu-shell .menu-categories{gap:6px!important;padding-inline:2px!important}
+ .restaurant-menu-shell .menu-category-strip>button,
+ .restaurant-menu-shell .menu-categories>button,
+ .restaurant-menu-shell .menu-category-strip>a,
+ .restaurant-menu-shell .menu-categories>a{min-height:40px!important;padding:8px 13px!important;font-size:13px!important}
+}
