@@ -1003,3 +1003,15 @@ body{overflow-x:clip}
 @media(max-width:1000px){.restaurant-pos{grid-template-columns:minmax(0,1fr) 300px}}
 @media(max-width:760px){.restaurant-pos{grid-template-columns:minmax(0,1fr)}.restaurant-pos-cart{position:static}.restaurant-pos-catalog.is-locked{min-height:250px}.restaurant-pos-catalog.is-locked .restaurant-pos-feature-state{padding:15px}.restaurant-pos-products{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:380px){.restaurant-pos-products{grid-template-columns:1fr}.restaurant-pos-catalog.is-locked .restaurant-pos-feature-state{gap:9px;padding:12px}.restaurant-pos-feature-state h2{font-size:15px}}
+
+
+/* Inventory setup: compact, centered form with fields grouped in two columns */
+.restaurant-v2-workspace>section.restaurant-v2-card:has(.restaurant-inventory-form){width:min(100%,660px);margin-inline:auto}
+.restaurant-inventory-form{display:grid;gap:14px}
+.restaurant-inventory-form-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px}
+.restaurant-inventory-form-fields>label{display:grid;gap:6px;min-width:0;color:var(--foreground);font-size:12px;font-weight:750}
+.restaurant-inventory-form-fields>label:first-child{grid-column:1/-1}
+.restaurant-inventory-form-fields input{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid var(--border);border-radius:10px;background:var(--background);color:var(--foreground);font:inherit}
+.restaurant-inventory-form-fields input:focus-visible{outline:2px solid #f47719;outline-offset:1px}
+.restaurant-inventory-form-actions{display:flex;justify-content:flex-start;gap:8px;padding-top:4px}
+@media(max-width:560px){.restaurant-v2-workspace>section.restaurant-v2-card:has(.restaurant-inventory-form){width:100%}.restaurant-inventory-form-fields{grid-template-columns:minmax(0,1fr);gap:10px}.restaurant-inventory-form-fields>label:first-child{grid-column:auto}}
