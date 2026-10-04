@@ -58,6 +58,7 @@ export default function RestaurantMenu({ slug }: { slug: string }) {
     return () => { alive = false; };
   }, [slug]);
 
+  useEffect(()=>{if(!data||tableToken)return;const available=(['pickup','takeaway','dine_in','delivery','room_service','reservation'] as OrderType[]).filter(type=>data.orderTypes?.[type]!==false);if(available.length&&!available.includes(orderType))setOrderType(available[0]);},[data,tableToken,orderType]);
   const menuUrl = useMemo(() => '/menu/' + encodeURIComponent(slug), [slug]);
   const lines = Object.values(cart);
   const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
