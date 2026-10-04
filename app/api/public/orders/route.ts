@@ -11,8 +11,16 @@ const inputSchema = z.object({
   clientRequestId: z.string().uuid(), customerName: z.string().trim().min(2).max(160),
   customerPhone: z.string().trim().min(5).max(32),
   customerEmail: z.union([z.string().trim().email().max(254), z.literal('')]).optional().default(''),
-  orderType: z.enum(['pickup', 'dine_in', 'room_service']),
+  orderType: z.enum(['pickup', 'takeaway', 'dine_in', 'delivery', 'room_service', 'reservation']),
   serviceReference: z.string().trim().max(80).optional().default(''),
+  roomNumber: z.string().trim().max(40).optional().default(''),
+  pickupLabel: z.string().trim().max(160).optional().default(''),
+  pickupPointId: z.string().uuid().optional(),
+  reservationId: z.string().uuid().optional(),
+  waiterReference: z.string().trim().max(80).optional().default(''),
+  deliveryAddress: z.string().trim().max(500).optional().default(''),
+  deliveryLat: z.number().min(-90).max(90).optional(),
+  deliveryLng: z.number().min(-180).max(180).optional(),
   notes: z.string().trim().max(1000).optional().default(''), locale: z.enum(['ar', 'en', 'fr']).default('ar'),
   items: z.array(z.object({ id: z.string().uuid(), quantity: z.number().int().min(1).max(99), variantId: z.string().uuid().optional(), options: z.array(z.object({ id: z.string().uuid(), quantity: z.number().int().min(1).max(99) })).max(100).default([]) })).min(1).max(50)
 });
@@ -34,8 +42,12 @@ export async function POST(request: Request) {
     const tenant = await database().prepare("SELECT id,currency,name FROM tenants WHERE slug=? AND activity_id='restaurants' AND status='active' LIMIT 1").bind(input.slug).first<{ id: string; currency: string; name:string }>();
     if (!tenant) throw new ApiError(404, 'NOT_FOUND');
     await requireTenantFeature(tenant.id, 'orders');
-    await requireTenantFeature(tenant.id, input.orderType);
-    if (input.orderType !== 'pickup' && !input.serviceReference) throw new ApiError(400, 'SERVICE_REFERENCE_REQUIRED');
+    const featureForType:Record<string,string>={pickup:'pickup',takeaway:'pickup',dine_in:'orders',delivery:'delivery',room_service:'room_service',reservation:'reservations'};
+    const requiredFeature=featureForType[input.orderType]; if(requiredFeature&&requiredFeature!=='orders') await requireTenantFeature(tenant.id, requiredFeature);
+    if (input.orderType === 'dine_in' && !input.serviceReference) throw new ApiError(400, 'TABLE_REFERENCE_REQUIRED');
+    if (input.orderType === 'room_service' && !input.roomNumber && !input.serviceReference) throw new ApiError(400, 'ROOM_NUMBER_REQUIRED');
+    if (input.orderType === 'delivery' && !input.deliveryAddress) throw new ApiError(400, 'DELIVERY_ADDRESS_REQUIRED');
+    if (input.orderType === 'reservation' && !input.reservationId && !input.serviceReference) throw new ApiError(400, 'RESERVATION_REFERENCE_REQUIRED');
     const clientRequestId = `menu-${input.clientRequestId}`;
     const existing = await database().prepare('SELECT id,reference,status,total,currency FROM restaurant_orders WHERE tenant_id=? AND client_request_id=? LIMIT 1').bind(tenant.id, clientRequestId).first<Record<string, unknown>>();
     if (existing) return Response.json({ order: existing, duplicate: true });
@@ -69,7 +81,7 @@ export async function POST(request: Request) {
             await tx.prepare('UPDATE menu_addon_options SET stock_quantity=stock_quantity-? WHERE id=? AND tenant_id=?').bind(quantity, optionId, tenant.id).run();
           }
         }
-        await tx.prepare('INSERT INTO restaurant_orders(id,tenant_id,branch_id,reference,source,status,customer_name,customer_phone,subtotal,tax_amount,total,currency,client_request_id,order_type,service_reference,customer_email,notes,customer_locale,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, tenant.id, branch.id, reference, 'menu', 'new', input.customerName, input.customerPhone, (subtotalCents / 100).toFixed(2), (taxCents / 100).toFixed(2), amount, tenant.currency, clientRequestId, input.orderType, input.serviceReference || null, input.customerEmail || null, input.notes || null, input.locale, now, now).run();
+        await tx.prepare('INSERT INTO restaurant_orders(id,tenant_id,branch_id,reference,source,source_label,status,customer_name,customer_phone,subtotal,tax_amount,total,currency,client_request_id,order_type,service_reference,room_number,pickup_label,pickup_point_id,reservation_id,waiter_reference,delivery_address,delivery_lat,delivery_lng,customer_email,notes,customer_locale,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, tenant.id, branch.id, reference, input.waiterReference?'waiter':input.reservationId?'reservation':input.orderType==='room_service'?'hotel':input.pickupPointId?'pickup_point':'menu', input.waiterReference?'Waiter':input.reservationId?'Reservation':input.orderType==='room_service'?'Hotel':input.pickupPointId?'Pickup point':'Menu', 'new', input.customerName, input.customerPhone, (subtotalCents / 100).toFixed(2), (taxCents / 100).toFixed(2), amount, tenant.currency, clientRequestId, input.orderType, input.serviceReference || null, input.roomNumber || null, input.pickupLabel || null, input.pickupPointId || null, input.reservationId || null, input.waiterReference || null, input.deliveryAddress || null, input.deliveryLat ?? null, input.deliveryLng ?? null, input.customerEmail || null, input.notes || null, input.locale, now, now).run();
         for (const line of lines) await tx.prepare('INSERT INTO restaurant_order_items(id,order_id,menu_item_id,item_name,quantity,unit_price,line_total,tax_amount) VALUES(?,?,?,?,?,?,?,?)').bind(crypto.randomUUID(), id, line.id, line.itemName, line.quantity, (line.unitCents / 100).toFixed(2), (line.unitCents * line.quantity / 100).toFixed(2), (line.taxCents * line.quantity / 100).toFixed(2)).run();
       });
     } catch (error) {
