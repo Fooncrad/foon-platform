@@ -21,6 +21,7 @@ const inputSchema = z.object({
   deliveryAddress: z.string().trim().max(500).optional().default(''),
   deliveryLat: z.number().min(-90).max(90).optional(),
   deliveryLng: z.number().min(-180).max(180).optional(),
+  tableToken: z.string().trim().regex(/^[a-f0-9]{32}$/).optional(),
   notes: z.string().trim().max(1000).optional().default(''), locale: z.enum(['ar', 'en', 'fr']).default('ar'),
   items: z.array(z.object({ id: z.string().uuid(), quantity: z.number().int().min(1).max(99), variantId: z.string().uuid().optional(), options: z.array(z.object({ id: z.string().uuid(), quantity: z.number().int().min(1).max(99) })).max(100).default([]) })).min(1).max(50)
 });
@@ -44,7 +45,7 @@ export async function POST(request: Request) {
     await requireTenantFeature(tenant.id, 'orders');
     const featureForType:Record<string,string>={pickup:'pickup',takeaway:'pickup',dine_in:'orders',delivery:'delivery',room_service:'room_service',reservation:'reservations'};
     const requiredFeature=featureForType[input.orderType]; if(requiredFeature&&requiredFeature!=='orders') await requireTenantFeature(tenant.id, requiredFeature);
-    if (input.orderType === 'dine_in' && !input.serviceReference) throw new ApiError(400, 'TABLE_REFERENCE_REQUIRED');
+    if (input.orderType === 'dine_in' && !input.serviceReference && !input.tableToken) throw new ApiError(400, 'TABLE_REFERENCE_REQUIRED');
     if (input.orderType === 'room_service' && !input.roomNumber && !input.serviceReference) throw new ApiError(400, 'ROOM_NUMBER_REQUIRED');
     if (input.orderType === 'delivery' && !input.deliveryAddress) throw new ApiError(400, 'DELIVERY_ADDRESS_REQUIRED');
     if (input.orderType === 'reservation' && !input.reservationId && !input.serviceReference) throw new ApiError(400, 'RESERVATION_REFERENCE_REQUIRED');
@@ -56,8 +57,11 @@ export async function POST(request: Request) {
     let totalCents = 0, subtotalCents = 0, taxCents = 0;
     for (const line of lines) { totalCents += line.unitCents * line.quantity; subtotalCents += line.subtotalCents * line.quantity; taxCents += line.taxCents * line.quantity; }
     if (!Number.isSafeInteger(totalCents) || totalCents <= 0) throw new ApiError(400, 'INVALID_TOTAL');
-    const branch = await database().prepare('SELECT id FROM branches WHERE tenant_id=? ORDER BY is_primary DESC,id ASC LIMIT 1').bind(tenant.id).first<{ id: string }>();
+    let table:null|{id:string;branch_id:string;table_number:string;enabled:number}=null;
+    if(input.tableToken){table=await database().prepare('SELECT tb.id,tb.branch_id,tb.table_number,tb.enabled FROM restaurant_table_runtime rt JOIN restaurant_tables tb ON tb.id=rt.table_id AND tb.tenant_id=rt.tenant_id WHERE rt.tenant_id=? AND rt.qr_token=? LIMIT 1').bind(tenant.id,input.tableToken).first<{id:string;branch_id:string;table_number:string;enabled:number}>()||null;if(!table||!Number(table.enabled))throw new ApiError(400,'INVALID_TABLE_QR');if(input.orderType!=='dine_in')throw new ApiError(400,'TABLE_QR_REQUIRES_DINE_IN')}
+    const branch = table?{id:table.branch_id}:await database().prepare('SELECT id FROM branches WHERE tenant_id=? ORDER BY is_primary DESC,id ASC LIMIT 1').bind(tenant.id).first<{ id: string }>();
     if (!branch) throw new ApiError(409, 'BRANCH_REQUIRED');
+    const serviceReference=table?table.table_number:input.serviceReference;
     const id = crypto.randomUUID(), reference = `FN-${Date.now().toString(36).toUpperCase()}-${id.slice(0, 6).toUpperCase()}`, now = Date.now(), amount = (totalCents / 100).toFixed(2);
     try {
       await database().transaction(async tx => {
@@ -81,7 +85,8 @@ export async function POST(request: Request) {
             await tx.prepare('UPDATE menu_addon_options SET stock_quantity=stock_quantity-? WHERE id=? AND tenant_id=?').bind(quantity, optionId, tenant.id).run();
           }
         }
-        await tx.prepare('INSERT INTO restaurant_orders(id,tenant_id,branch_id,reference,source,source_label,status,customer_name,customer_phone,subtotal,tax_amount,total,currency,client_request_id,order_type,service_reference,room_number,pickup_label,pickup_point_id,reservation_id,waiter_reference,delivery_address,delivery_lat,delivery_lng,customer_email,notes,customer_locale,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, tenant.id, branch.id, reference, input.waiterReference?'waiter':input.reservationId?'reservation':input.orderType==='room_service'?'hotel':input.pickupPointId?'pickup_point':'menu', input.waiterReference?'Waiter':input.reservationId?'Reservation':input.orderType==='room_service'?'Hotel':input.pickupPointId?'Pickup point':'Menu', 'new', input.customerName, input.customerPhone, (subtotalCents / 100).toFixed(2), (taxCents / 100).toFixed(2), amount, tenant.currency, clientRequestId, input.orderType, input.serviceReference || null, input.roomNumber || null, input.pickupLabel || null, input.pickupPointId || null, input.reservationId || null, input.waiterReference || null, input.deliveryAddress || null, input.deliveryLat ?? null, input.deliveryLng ?? null, input.customerEmail || null, input.notes || null, input.locale, now, now).run();
+        await tx.prepare('INSERT INTO restaurant_orders(id,tenant_id,branch_id,reference,source,source_label,status,customer_name,customer_phone,subtotal,tax_amount,total,currency,client_request_id,order_type,service_reference,room_number,pickup_label,pickup_point_id,reservation_id,waiter_reference,delivery_address,delivery_lat,delivery_lng,customer_email,notes,customer_locale,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, tenant.id, branch.id, reference, input.waiterReference?'waiter':input.reservationId?'reservation':input.orderType==='room_service'?'hotel':input.pickupPointId?'pickup_point':'menu', input.waiterReference?'Waiter':input.reservationId?'Reservation':input.orderType==='room_service'?'Hotel':input.pickupPointId?'Pickup point':'Menu', 'new', input.customerName, input.customerPhone, (subtotalCents / 100).toFixed(2), (taxCents / 100).toFixed(2), amount, tenant.currency, clientRequestId, input.orderType, serviceReference || null, input.roomNumber || null, input.pickupLabel || null, input.pickupPointId || null, input.reservationId || null, input.waiterReference || null, input.deliveryAddress || null, input.deliveryLat ?? null, input.deliveryLng ?? null, input.customerEmail || null, input.notes || null, input.locale, now, now).run();
+        if(table)await tx.prepare("UPDATE restaurant_table_runtime SET status='busy',service_started_at=COALESCE(service_started_at,?),updated_at=? WHERE tenant_id=? AND table_id=?").bind(now,now,tenant.id,table.id).run();
         for (const line of lines) await tx.prepare('INSERT INTO restaurant_order_items(id,order_id,menu_item_id,item_name,quantity,unit_price,line_total,tax_amount) VALUES(?,?,?,?,?,?,?,?)').bind(crypto.randomUUID(), id, line.id, line.itemName, line.quantity, (line.unitCents / 100).toFixed(2), (line.unitCents * line.quantity / 100).toFixed(2), (line.taxCents * line.quantity / 100).toFixed(2)).run();
       });
     } catch (error) {
