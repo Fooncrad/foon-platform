@@ -24,7 +24,7 @@ function validateConnection(config: SmtpConnection) {
 
 function transport(config: SmtpConnection, password: string) {
   validateConnection(config);
-  const secure = Boolean(config.smtp_secure) || Number(config.smtp_port) === 465;
+  const secure = Number(config.smtp_secure) === 1 || Number(config.smtp_port) === 465;
   return nodemailer.createTransport({
     host: config.smtp_host.trim(),
     port: Number(config.smtp_port),
