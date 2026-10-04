@@ -1209,3 +1209,30 @@ html,body{max-width:100%;overflow-x:hidden}
  .menu-item-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
  .menu-item-card-square .menu-item-copy{padding:7px!important}
 }
+
+
+/* FOON public menu templates */
+.menu-template-switch{display:inline-flex;align-items:center;gap:4px;padding:4px;border:1px solid var(--border);border-radius:12px;background:var(--card);max-width:100%;overflow:auto}
+.menu-template-switch button{min-height:34px;padding:6px 12px;border:0;border-radius:9px;background:transparent;color:var(--muted-foreground);font:inherit;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer}
+.menu-template-switch button.active{background:var(--foreground);color:var(--background)}
+.menu-template-list .menu-item-grid{grid-template-columns:1fr!important}
+.menu-template-list .menu-item-card-square{aspect-ratio:auto!important;min-height:132px!important;grid-template-columns:minmax(112px,28%) minmax(0,1fr)!important;grid-template-rows:1fr!important}
+.menu-template-list .menu-item-card-square .menu-item-image{height:100%!important;min-height:132px!important}
+.menu-template-list .menu-item-card-square .menu-item-copy>p{-webkit-line-clamp:3!important;font-size:11px!important}
+.menu-template-gallery .menu-item-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.menu-template-gallery .menu-item-card-square{aspect-ratio:4/5!important;grid-template-rows:minmax(0,68%) minmax(0,32%)!important}
+.menu-template-gallery .menu-item-card-square .menu-item-copy>p,.menu-template-gallery .menu-item-badges{display:none!important}
+.menu-template-gallery .menu-item-card-square .menu-item-copy{padding:9px!important}
+@media(max-width:760px){
+ .menu-template-switch{width:100%;justify-content:center}
+ .menu-template-switch button{flex:1}
+ .menu-template-list .menu-item-grid{grid-template-columns:1fr!important;gap:8px!important}
+ .menu-template-list .menu-item-card-square{min-height:116px!important;grid-template-columns:112px minmax(0,1fr)!important}
+ .menu-template-list .menu-item-card-square .menu-item-image{min-height:116px!important}
+ .menu-template-gallery .menu-item-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .menu-template-gallery .menu-item-card-square{aspect-ratio:4/5!important}
+}
+@media(max-width:340px){
+ .menu-template-list .menu-item-card-square{grid-template-columns:96px minmax(0,1fr)!important}
+ .menu-template-switch button{padding-inline:7px}
+}
