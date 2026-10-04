@@ -92,7 +92,7 @@ export default function RestaurantMenuManager({slug}:{slug:string}){
       });
       if(ok) imported++; else rejected++;
     }
-    setMsg(L('تم استيراد '+imported+' صنف'+(rejected?'، ورفض '+rejected+' صف':''),'Imported '+imported+' items'+(rejected?', rejected '+rejected+' rows':''),'Importé '+imported+' articles'+(rejected?', '+rejected+' lignes rejetées':''));
+    setMsg(L('تم استيراد '+imported+' صنف'+(rejected?'، ورفض '+rejected+' صف':''),'Imported '+imported+' items'+(rejected?', rejected '+rejected+' rows':''),'Importé '+imported+' articles'+(rejected?', '+rejected+' lignes rejetées':'')));
   }catch(e){setMsg(e instanceof Error?e.message:'EXCEL_IMPORT_FAILED')}
   finally{setBusy(false)}
 }
