@@ -3,6 +3,7 @@ import { database } from '@/db';
 import { ApiError, sameOrigin } from '@/lib/platform/security';
 import { requireTenantFeature } from '@/lib/platform/entitlements';
 import { priceMenuSelection } from '@/lib/restaurant/menu-pricing';
+import { sendAutomaticMessage } from '@/lib/platform/delivery';
 
 export const dynamic = 'force-dynamic';
 const inputSchema = z.object({
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
     let untrusted: unknown;
     try { untrusted = JSON.parse(raw); } catch { throw new ApiError(400, 'INVALID_INPUT'); }
     const input = inputSchema.parse(untrusted);
-    const tenant = await database().prepare("SELECT id,currency FROM tenants WHERE slug=? AND activity_id='restaurants' AND status='active' LIMIT 1").bind(input.slug).first<{ id: string; currency: string }>();
+    const tenant = await database().prepare("SELECT id,currency,name FROM tenants WHERE slug=? AND activity_id='restaurants' AND status='active' LIMIT 1").bind(input.slug).first<{ id: string; currency: string; name:string }>();
     if (!tenant) throw new ApiError(404, 'NOT_FOUND');
     await requireTenantFeature(tenant.id, 'orders');
     await requireTenantFeature(tenant.id, input.orderType);
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
             await tx.prepare('UPDATE menu_addon_options SET stock_quantity=stock_quantity-? WHERE id=? AND tenant_id=?').bind(quantity, optionId, tenant.id).run();
           }
         }
-        await tx.prepare('INSERT INTO restaurant_orders(id,tenant_id,branch_id,reference,source,status,customer_name,customer_phone,subtotal,tax_amount,total,currency,client_request_id,order_type,service_reference,customer_email,notes,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, tenant.id, branch.id, reference, 'menu', 'new', input.customerName, input.customerPhone, (subtotalCents / 100).toFixed(2), (taxCents / 100).toFixed(2), amount, tenant.currency, clientRequestId, input.orderType, input.serviceReference || null, input.customerEmail || null, input.notes || null, now, now).run();
+        await tx.prepare('INSERT INTO restaurant_orders(id,tenant_id,branch_id,reference,source,status,customer_name,customer_phone,subtotal,tax_amount,total,currency,client_request_id,order_type,service_reference,customer_email,notes,customer_locale,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, tenant.id, branch.id, reference, 'menu', 'new', input.customerName, input.customerPhone, (subtotalCents / 100).toFixed(2), (taxCents / 100).toFixed(2), amount, tenant.currency, clientRequestId, input.orderType, input.serviceReference || null, input.customerEmail || null, input.notes || null, input.locale, now, now).run();
         for (const line of lines) await tx.prepare('INSERT INTO restaurant_order_items(id,order_id,menu_item_id,item_name,quantity,unit_price,line_total,tax_amount) VALUES(?,?,?,?,?,?,?,?)').bind(crypto.randomUUID(), id, line.id, line.itemName, line.quantity, (line.unitCents / 100).toFixed(2), (line.unitCents * line.quantity / 100).toFixed(2), (line.taxCents * line.quantity / 100).toFixed(2)).run();
       });
     } catch (error) {
@@ -78,6 +79,7 @@ export async function POST(request: Request) {
       }
       throw error;
     }
+    if(input.customerEmail) await sendAutomaticMessage({tenantId:tenant.id,event:'order_received',locale:input.locale,recipient:input.customerEmail,variables:{customer_name:input.customerName,store_name:tenant.name,service_name:'restaurant',service_number:reference,service_type:input.orderType,amount,currency:tenant.currency,date:new Date(now).toISOString(),plan_name:'',expires_at:''},idempotencyKey:id});
     return Response.json({ order: { id, reference, status: 'new', total: amount, currency: tenant.currency }, duplicate: false }, { status: 201 });
   } catch (error) { return fail(error); }
 }
