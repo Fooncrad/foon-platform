@@ -1,5 +1,5 @@
 'use client';
-import {FormEvent,useCallback,useEffect,useState} from 'react';
+import {useCallback,useEffect,useState,type FormEvent} from 'react';
 import {usePreferences} from '@/components/platform/preferences';
 type Row={id:string;name?:string;code?:string;discount_type:string;discount_value:number|string;min_order?:number|string;usage_limit?:number|null;used_count?:number;starts_at:number|null;ends_at:number|null;enabled:number|string};
 type Data={promotions:Row[];coupons:Row[]};
