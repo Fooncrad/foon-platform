@@ -1139,3 +1139,13 @@ body{overflow-x:clip}
  .admin-sidebar-close{display:grid;place-items:center;flex:none;width:44px;height:44px;border:1px solid rgba(148,163,184,.24);border-radius:11px;background:transparent;color:#dbeafe;z-index:130;pointer-events:auto;touch-action:manipulation;cursor:pointer}
  .admin-sidebar-backdrop{position:fixed;inset:0;z-index:110;border:0;background:rgba(3,12,24,.46);touch-action:manipulation}
 }
+
+/* Touch-first mobile drawer stacking: content overlay under drawer, close targets on top. */
+@media(max-width:900px){
+ .restaurant-v2-sidebar{z-index:400!important}
+ .restaurant-v2-sidebar .restaurant-v2-mobile-close{position:relative;z-index:410!important;min-width:48px;min-height:48px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+ .restaurant-v2-backdrop{z-index:390!important;touch-action:manipulation}
+ .workspace-sidebar{z-index:400!important}
+ .workspace-sidebar .admin-sidebar-close{position:relative;z-index:410!important;min-width:48px;min-height:48px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+ .admin-sidebar-backdrop{z-index:390!important;touch-action:manipulation}
+}
