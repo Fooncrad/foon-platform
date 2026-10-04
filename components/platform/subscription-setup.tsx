@@ -5,7 +5,7 @@ import {useSearchParams} from 'next/navigation';
 import {WalletCards,ShieldCheck,Clock3,CheckCircle2,RefreshCw} from 'lucide-react';
 import {usePreferences} from './preferences';
 type Plan={id:string;name_ar:string;name_en:string;monthly_price:number|string;yearly_price?:number|string;currency:string;description_ar?:string;description_en?:string};
-type SetupData={subscription?:{id:string;plan_id:string;status:string;name_ar:string;name_en:string;monthly_price:number|string;yearly_price:number|string|null;currency:string}|null;features?:Array<{feature_id:string;label_ar:string;label_en:string;feature_limit:number|null}>;payments?:Array<{id:string;status:string;transaction_reference:string}>;plans?:Plan[]};
+type SetupData={subscription?:{id:string;plan_id:string;billing_cycle:string;status:string;name_ar:string;name_en:string;monthly_price:number|string;yearly_price:number|string|null;currency:string}|null;features?:Array<{feature_id:string;label_ar:string;label_en:string;feature_limit:number|null}>;payments?:Array<{id:string;status:string;transaction_reference:string}>;plans?:Plan[]};
 export default function SubscriptionSetup(){
  const q=useSearchParams(),tenantId=q.get('tenant')||'',{locale}=usePreferences();
  const [data,setData]=useState<SetupData|null>(null),[loading,setLoading]=useState(true),[loadError,setLoadError]=useState(''),[ref,setRef]=useState(''),[receipt,setReceipt]=useState(''),[busy,setBusy]=useState(false),[msg,setMsg]=useState(''),[planId,setPlanId]=useState(''),[billingCycle,setBillingCycle]=useState<'monthly'|'yearly'>('monthly');
