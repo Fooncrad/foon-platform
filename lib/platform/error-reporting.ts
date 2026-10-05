@@ -20,16 +20,16 @@ export function apiErrorResponse(error: unknown, location: string, request?: Req
   const path = request ? new URL(request.url).pathname : location;
   if (error instanceof ApiError) {
     if (error.status >= 500) console.error(JSON.stringify({ level: 'error', incidentId, location: path, code: error.code, method: request?.method, detail: error.stack }));
-    return Response.json({ error: error.code, incidentId, location: path, ...extra }, { status: error.status });
+    return Response.json({ error: error.code, incidentId, location: path, status: error.status, ...extra }, { status: error.status });
   }
   if (error instanceof z.ZodError) {
     console.error(JSON.stringify({ level: 'warn', incidentId, location: path, code: 'INVALID_INPUT', issues: error.issues }));
-    return Response.json({ error: 'INVALID_INPUT', incidentId, location: path, issues: error.issues, ...extra }, { status: 400 });
+    return Response.json({ error: 'INVALID_INPUT', incidentId, location: path, status: 400, issues: error.issues, ...extra }, { status: 400 });
   }
   const code = classify(error);
   const detail = error instanceof Error ? error.stack || error.message : String(error);
   console.error(JSON.stringify({ level: 'error', incidentId, location: path, code, method: request?.method, detail }));
-  return Response.json({ error: code, incidentId, location: path, ...extra }, { status: 503 });
+  return Response.json({ error: code, incidentId, location: path, status: 503, ...extra }, { status: 503 });
 }
 
 export function classifyRuntimeError(error: unknown): string { return classify(error); }
