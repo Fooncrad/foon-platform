@@ -1377,3 +1377,34 @@ html,body{max-width:100%;overflow-x:hidden}
 .restaurant-menu-shell .menu-add-button{background:var(--menu-accent,#f28c28)}
 .restaurant-menu-shell.menu-corners-square .menu-item-card,.restaurant-menu-shell.menu-corners-square .menu-item-card-square,.restaurant-menu-shell.menu-corners-square .menu-add-button{border-radius:0!important}
 .restaurant-menu-shell.menu-corners-soft .menu-item-card,.restaurant-menu-shell.menu-corners-soft .menu-item-card-square{border-radius:10px!important}
+
+/* Mobile product cards v3: content defines height; never clip CTA into next row */
+@media(max-width:760px){
+ .restaurant-menu-shell.menu-template-grid .menu-item-card-square{
+  aspect-ratio:auto!important;display:flex!important;flex-direction:column!important;
+  grid-template-rows:none!important;overflow:visible!important;contain:none!important;height:auto!important;
+ }
+ .restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-image{
+  display:block!important;width:100%!important;height:auto!important;aspect-ratio:1.45/1!important;
+  min-height:0!important;max-height:none!important;object-fit:cover!important;flex:0 0 auto!important;
+ }
+ .restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-image-empty{
+  height:auto!important;aspect-ratio:1.45/1!important;min-height:0!important;
+ }
+ .restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-copy{
+  display:flex!important;flex:1 0 auto!important;overflow:visible!important;padding:9px!important;min-height:128px!important;
+ }
+ .restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-copy>p{
+  -webkit-line-clamp:1!important;min-height:14px!important;
+ }
+ .restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-bottom{
+  position:static!important;margin-top:auto!important;padding-top:7px!important;overflow:visible!important;
+ }
+ .restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-add-button{
+  display:flex!important;position:static!important;width:100%!important;min-height:36px!important;height:36px!important;
+  margin:0!important;overflow:hidden!important;flex:0 0 36px!important;
+ }
+ .restaurant-menu-shell.menu-template-grid .menu-item-grid{
+  align-items:start!important;grid-auto-rows:auto!important;column-gap:8px!important;row-gap:12px!important;
+ }
+}
