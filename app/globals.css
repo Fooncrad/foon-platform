@@ -1306,3 +1306,11 @@ html,body{max-width:100%;overflow-x:hidden}
  .restaurant-menu-shell .menu-category-strip>a,
  .restaurant-menu-shell .menu-categories>a{min-height:40px!important;padding:8px 13px!important;font-size:13px!important}
 }
+
+
+.restaurant-brand-tabs{max-width:100%;overflow-x:auto;scrollbar-width:none}.restaurant-brand-tabs::-webkit-scrollbar{display:none}
+.restaurant-brand-tabs button{flex:0 0 auto}
+.brand-action-list{display:grid;gap:8px}.brand-action-list>div{display:grid;grid-template-columns:minmax(180px,1fr) auto minmax(150px,220px);align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--border);border-radius:12px;background:var(--background)}
+.brand-action-list>div>span,.brand-action-list>div>label{display:flex;align-items:center;gap:8px}.brand-action-list svg,.brand-setting-grid label>svg{width:18px;height:18px}.brand-action-list select{min-height:38px;border:1px solid var(--border);border-radius:9px;background:var(--card);color:inherit;padding:6px}
+.brand-setting-grid label>button{min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--background);color:inherit;font:inherit;font-weight:800}
+@media(max-width:700px){.brand-action-list>div{grid-template-columns:1fr auto}.brand-action-list>div>select{grid-column:1/-1;width:100%}.restaurant-brand-tabs{justify-content:flex-start}}
