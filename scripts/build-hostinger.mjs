@@ -12,8 +12,8 @@ for(const name of ['.env','.env.local','.env.production','.env.production.local'
 writeFileSync('dist/.build-complete','FOON Node.js standalone build\n');
 console.log('Hostinger output: dist; entry: dist/server.js');
 // Keep deployment builds independent from database network/auth availability.
-// Run migrations only when explicitly requested in an environment that can reach MySQL.
-if(process.env.RUN_DB_MIGRATIONS==='true'){
+// Production schema is part of the release. Migrate by default; set RUN_DB_MIGRATIONS=false only for an intentionally database-less build.
+if(process.env.RUN_DB_MIGRATIONS!=='false'){
  const child=spawnSync(process.execPath,['scripts/migrate-mysql.mjs'],{stdio:'inherit',env:process.env});
  if(child.status!==0)process.exit(child.status??1);
  if(process.env.ADMIN_INITIAL_PASSWORD){
