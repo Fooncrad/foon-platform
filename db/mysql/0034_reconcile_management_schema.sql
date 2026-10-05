@@ -1,6 +1,5 @@
 -- Reconcile columns/indexes skipped because 0018 created these tables before 0020.
 -- Additive only; based on deterministic migration order.
-ALTER TABLE inventory_items ADD UNIQUE KEY inventory_tenant_sku(tenant_id,sku);
 ALTER TABLE suppliers ADD COLUMN address VARCHAR(500) NULL AFTER tax_number;
 ALTER TABLE suppliers ADD COLUMN active TINYINT(1) NOT NULL DEFAULT 1 AFTER address;
 ALTER TABLE purchase_orders ADD COLUMN notes VARCHAR(1000) NULL AFTER total;
