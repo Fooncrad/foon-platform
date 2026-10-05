@@ -1765,7 +1765,7 @@ code {
 /* Runtime-backed viewport contract. visualViewport updates these values when
    browser chrome or the software keyboard changes the usable mobile area. */
 :root{
-  --foon-visual-width:100%;
+  --foon-layout-width:100%;
   --foon-visual-height:100dvh;
 }
 html[data-foon-overflow] body{
@@ -1775,12 +1775,35 @@ html[data-foon-overflow] body{
 @media(max-width:900px){
   .menu-checkout-backdrop,
   .menu-customize-backdrop{
-    inline-size:min(100%,var(--foon-visual-width))!important;
+    inline-size:100%!important;
     max-inline-size:100%!important;
   }
   .menu-checkout,
   .menu-reservation-dialog,
   .menu-customize-panel{
     max-block-size:var(--foon-visual-height)!important;
+  }
+}
+
+
+/* iOS keyboard jitter hardening: horizontal geometry never follows visualViewport. */
+html,body{
+  touch-action:pan-y pinch-zoom;
+}
+@media(max-width:900px){
+  body,
+  #__next,
+  main,
+  .restaurant-menu-shell,
+  .menu-checkout-backdrop{
+    inline-size:100%!important;
+    max-inline-size:100%!important;
+    min-inline-size:0!important;
+  }
+  .menu-checkout,
+  .menu-reservation-dialog{
+    inset-inline:0!important;
+    transform:none!important;
+    margin-inline:0!important;
   }
 }
