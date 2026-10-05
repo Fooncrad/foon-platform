@@ -1433,3 +1433,30 @@ html,body{max-width:100%;overflow-x:hidden}
  .restaurant-menu-shell .menu-category-strip>button img{width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important}
  .restaurant-menu-shell .menu-category-strip>button span{max-width:116px!important;font-size:13px!important}
 }
+
+/* Desktop/grid card normalization v4 */
+.restaurant-menu-shell.menu-template-grid .menu-item-grid{align-items:stretch!important;grid-auto-rows:auto!important}
+.restaurant-menu-shell.menu-template-grid .menu-item-card-square{
+ aspect-ratio:auto!important;display:flex!important;flex-direction:column!important;height:auto!important;min-height:330px!important;overflow:hidden!important;
+}
+.restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-image{
+ width:100%!important;height:180px!important;min-height:180px!important;max-height:180px!important;aspect-ratio:auto!important;object-fit:cover!important;flex:0 0 180px!important;
+}
+.restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-image-empty{
+ display:grid!important;place-items:center!important;background:color-mix(in srgb,var(--menu-accent,#f28c28) 5%,var(--card))!important;
+}
+.restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-image-empty svg{width:32px!important;height:32px!important;opacity:.32}
+.restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-copy{display:flex!important;flex:1 1 auto!important;overflow:visible!important}
+.restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-bottom{margin-top:auto!important;overflow:visible!important}
+.restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-add-button{
+ position:static!important;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;height:38px!important;min-height:38px!important;overflow:hidden!important;
+}
+.restaurant-menu-shell .menu-category-strip>button>b{
+ grid-column:1!important;display:grid!important;place-items:center!important;width:38px!important;height:38px!important;min-width:38px!important;
+ border-radius:50%!important;font-size:10px!important;position:static!important;transform:none!important;
+}
+@media(max-width:760px){
+ .restaurant-menu-shell.menu-template-grid .menu-item-card-square{min-height:0!important}
+ .restaurant-menu-shell.menu-template-grid .menu-item-card-square .menu-item-image{height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:1.45/1!important;flex:0 0 auto!important}
+ .restaurant-menu-shell .menu-category-strip>button>b{width:38px!important;height:38px!important;min-width:38px!important}
+}
