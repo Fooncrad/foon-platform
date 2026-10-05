@@ -16,7 +16,7 @@ const settingsSchema=z.object({
  actions:z.record(z.string(),action).default({}),
  header:z.enum(['compact','full']).default('compact'),
  footer:z.enum(['compact','full']).default('full'),
- pages:z.record(z.string(),z.object({enabled:z.boolean().default(true),title:z.string().max(120),content:z.string().max(8000)})).default({}),
+ pages:z.record(z.string(),z.object({enabled:z.boolean().default(true),title:z.string().max(120),title_en:z.string().max(120).optional(),title_fr:z.string().max(120).optional(),content:z.string().max(8000),content_en:z.string().max(8000).optional(),content_fr:z.string().max(8000).optional()})).default({}),
  contact:z.object({
   phone:z.string().max(40).default(''),email:z.string().max(180).default(''),
   whatsapp:z.string().max(40).default(''),location:z.string().max(500).default(''),
@@ -27,11 +27,11 @@ const settingsSchema=z.object({
 
 const defaults=settingsSchema.parse({
  pages:{
-  about:{enabled:true,title:'من نحن',content:'مرحبًا بكم في مطعمنا. نحرص على تقديم تجربة ضيافة مميزة وأطباق مختارة بعناية وجودة ثابتة. هدفنا أن تكون كل زيارة تجربة تستحق التكرار.'},
-  contact:{enabled:true,title:'تواصل معنا',content:'يسعدنا تواصلكم معنا للاستفسارات والملاحظات والحجوزات. يمكنكم استخدام بيانات التواصل المعروضة في المنيو وسنكون سعداء بخدمتكم.'},
-  terms:{enabled:true,title:'الشروط والأحكام',content:'باستخدام خدمات المطعم أو تنفيذ الطلب، يوافق العميل على تفاصيل الطلب والأسعار والرسوم الظاهرة قبل التأكيد. قد تختلف أوقات التجهيز حسب ضغط الطلبات وتوفر الأصناف.'},
-  privacy:{enabled:true,title:'سياسة الخصوصية',content:'نستخدم بيانات العميل اللازمة لتنفيذ الطلب أو الحجز وتقديم الخدمة والتواصل بشأنها. لا نستخدم البيانات خارج أغراض التشغيل إلا وفق الأنظمة المعمول بها.'},
-  refund:{enabled:true,title:'سياسة الإلغاء والاسترجاع',content:'يمكن طلب الإلغاء قبل بدء تجهيز الطلب وفق حالة الطلب. تتم مراجعة طلبات الاسترجاع بحسب وسيلة الدفع وحالة الخدمة، وتوضح أي رسوم أو استثناءات قبل إتمام العملية.'}
+  about:{enabled:true,title:'من نحن',title_en:'About us',title_fr:'À propos',content:'مرحبًا بكم في مطعمنا. نحرص على تقديم تجربة ضيافة مميزة وأطباق مختارة بعناية وجودة ثابتة. هدفنا أن تكون كل زيارة تجربة تستحق التكرار.',content_en:'Welcome to our restaurant. We focus on warm hospitality, carefully selected dishes and consistent quality.',content_fr:'Bienvenue dans notre restaurant. Nous privilégions un accueil chaleureux, des plats soigneusement sélectionnés et une qualité constante.'},
+  contact:{enabled:true,title:'تواصل معنا',title_en:'Contact us',title_fr:'Contact',content:'يسعدنا تواصلكم معنا للاستفسارات والملاحظات والحجوزات. يمكنكم استخدام بيانات التواصل المعروضة في المنيو وسنكون سعداء بخدمتكم.',content_en:'We are happy to hear from you for questions, feedback and reservations.',content_fr:'Nous sommes à votre écoute pour vos questions, remarques et réservations.'},
+  terms:{enabled:true,title:'الشروط والأحكام',title_en:'Terms & conditions',title_fr:'Conditions générales',content:'باستخدام خدمات المطعم أو تنفيذ الطلب، يوافق العميل على تفاصيل الطلب والأسعار والرسوم الظاهرة قبل التأكيد. قد تختلف أوقات التجهيز حسب ضغط الطلبات وتوفر الأصناف.',content_en:'By using the restaurant services or placing an order, the customer accepts the order details, prices and displayed fees before confirmation.',content_fr:'En utilisant les services du restaurant ou en passant commande, le client accepte les détails, prix et frais affichés avant confirmation.'},
+  privacy:{enabled:true,title:'سياسة الخصوصية',title_en:'Privacy policy',title_fr:'Politique de confidentialité',content:'نستخدم بيانات العميل اللازمة لتنفيذ الطلب أو الحجز وتقديم الخدمة والتواصل بشأنها. لا نستخدم البيانات خارج أغراض التشغيل إلا وفق الأنظمة المعمول بها.',content_en:'We use only the customer information needed to fulfil orders, reservations and related service communication.',content_fr:'Nous utilisons uniquement les informations nécessaires aux commandes, réservations et communications associées.'},
+  refund:{enabled:true,title:'سياسة الإلغاء والاسترجاع',title_en:'Cancellation & refunds',title_fr:'Annulation et remboursement',content:'يمكن طلب الإلغاء قبل بدء تجهيز الطلب وفق حالة الطلب. تتم مراجعة طلبات الاسترجاع بحسب وسيلة الدفع وحالة الخدمة، وتوضح أي رسوم أو استثناءات قبل إتمام العملية.',content_en:'Cancellation may be requested before preparation starts. Refund requests are reviewed according to payment method and service status.',content_fr:'Une annulation peut être demandée avant la préparation. Les remboursements sont examinés selon le paiement et le statut du service.'}
  },
  actions:{
   waiter:{visible:true,position:'cover'},reservation:{visible:true,position:'cover'},
