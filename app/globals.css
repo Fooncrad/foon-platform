@@ -1346,3 +1346,12 @@ html,body{max-width:100%;overflow-x:hidden}
 
 .restaurant-brand-publish{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.restaurant-brand-publish button{min-height:40px;padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:inherit;font:inherit;font-weight:800;cursor:pointer}.restaurant-brand-publish button:nth-child(2){background:var(--foreground);color:var(--background)}.restaurant-brand-publish span{font-size:12px;font-weight:700}
 @media(max-width:600px){.restaurant-brand-publish{justify-content:stretch}.restaurant-brand-publish button{flex:1}}
+
+/* Public menu cover: image only; restaurant identity lives below it */
+.menu-cover{overflow:hidden!important}
+.menu-cover-copy,.menu-cover>.menu-qr-card{display:none!important}
+.menu-store-summary{width:min(1180px,calc(100% - 32px));margin:12px auto 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;min-width:0}
+.menu-store-summary h1{margin:0;font-size:clamp(20px,4vw,30px);line-height:1.2;overflow-wrap:anywhere}
+.menu-store-summary p{margin:2px 0 0;display:flex;align-items:center;gap:6px;min-width:0;color:var(--muted-foreground);font-size:13px}
+.menu-store-summary p svg{width:16px;height:16px;flex:0 0 auto}.menu-store-summary p span{overflow-wrap:anywhere}
+@media(max-width:600px){.menu-store-summary{width:calc(100% - 24px);margin-top:10px;display:block}.menu-store-summary p{margin-top:6px}}
