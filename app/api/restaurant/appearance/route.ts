@@ -8,6 +8,7 @@ const position=z.enum(['cover','menu','bottom']);
 const action=z.object({visible:z.boolean(),position});
 const settingsSchema=z.object({
  template:z.enum(['grid','list','gallery']).default('grid'),
+ branding:z.object({logoUrl:z.string().max(1000).default(''),coverUrl:z.string().max(1000).default('')}).default({logoUrl:'',coverUrl:''}),
  theme:z.object({
   primary:z.string().regex(/^#[0-9a-fA-F]{6}$/).default('#f28c28'),
   background:z.string().regex(/^#[0-9a-fA-F]{6}$/).default('#ffffff'),
@@ -26,6 +27,7 @@ const settingsSchema=z.object({
 }).strip();
 
 const defaults=settingsSchema.parse({
+ branding:{logoUrl:'',coverUrl:''},
  pages:{
   about:{enabled:true,title:'من نحن',title_en:'About us',title_fr:'À propos',content:'مرحبًا بكم في مطعمنا. نحرص على تقديم تجربة ضيافة مميزة وأطباق مختارة بعناية وجودة ثابتة. هدفنا أن تكون كل زيارة تجربة تستحق التكرار.',content_en:'Welcome to our restaurant. We focus on warm hospitality, carefully selected dishes and consistent quality.',content_fr:'Bienvenue dans notre restaurant. Nous privilégions un accueil chaleureux, des plats soigneusement sélectionnés et une qualité constante.'},
   contact:{enabled:true,title:'تواصل معنا',title_en:'Contact us',title_fr:'Contact',content:'يسعدنا تواصلكم معنا للاستفسارات والملاحظات والحجوزات. يمكنكم استخدام بيانات التواصل المعروضة في المنيو وسنكون سعداء بخدمتكم.',content_en:'We are happy to hear from you for questions, feedback and reservations.',content_fr:'Nous sommes à votre écoute pour vos questions, remarques et réservations.'},
