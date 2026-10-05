@@ -1343,3 +1343,6 @@ html,body{max-width:100%;overflow-x:hidden}
  }
  .restaurant-menu-shell .menu-item-grid{row-gap:12px!important}
 }
+
+.restaurant-brand-publish{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.restaurant-brand-publish button{min-height:40px;padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:inherit;font:inherit;font-weight:800;cursor:pointer}.restaurant-brand-publish button:nth-child(2){background:var(--foreground);color:var(--background)}.restaurant-brand-publish span{font-size:12px;font-weight:700}
+@media(max-width:600px){.restaurant-brand-publish{justify-content:stretch}.restaurant-brand-publish button{flex:1}}
