@@ -4,7 +4,8 @@ function connectionOptions(){
  const {DATABASE_URL,DB_HOST,DB_PORT,DB_USER,DB_PASSWORD,DB_NAME,DB_SSL}=process.env;
  if(DATABASE_URL){
   const url=new URL(DATABASE_URL);
-  return {host:url.hostname,port:Number(url.port||3306),user:decodeURIComponent(url.username),password:decodeURIComponent(url.password),database:url.pathname.replace(/^\//,''),ssl:url.searchParams.get('ssl')==='true'?{rejectUnauthorized:true}:undefined};
+  const secure=url.searchParams.get('ssl')!=='false'&&url.searchParams.get('ssl-mode')!=='DISABLED';
+  return {host:url.hostname,port:Number(url.port||3306),user:decodeURIComponent(url.username),password:decodeURIComponent(url.password),database:url.pathname.replace(/^\//,''),ssl:secure?{rejectUnauthorized:true}:undefined};
  }
  if(!DB_HOST||!DB_USER||!DB_NAME)throw new Error('DATABASE_NOT_CONFIGURED');
  return {host:DB_HOST,port:Number(DB_PORT||3306),user:DB_USER,password:DB_PASSWORD,database:DB_NAME,ssl:DB_SSL==='true'?{rejectUnauthorized:true}:undefined};
