@@ -6,6 +6,7 @@ import { requireTenantFeature } from '@/lib/platform/entitlements';
 import { priceMenuSelection } from '@/lib/restaurant/menu-pricing';
 import { sendAutomaticMessage } from '@/lib/platform/delivery';
 import {enforceOrderLimit} from '@/lib/restaurant/order-quota';
+import {emitNotification} from '@/lib/platform/notifications';
 
 export const dynamic = 'force-dynamic';
 const inputSchema = z.object({
@@ -106,6 +107,7 @@ export async function POST(request: Request) {
       }
       throw error;
     }
+    await emitNotification({tenantId:tenant.id,event:'order_received',entityType:'order',entityId:id,title:`طلب جديد ${reference}`,body:`${input.customerName} · ${input.orderType} · ${amount} ${tenant.currency}`,priority:'high'});
     if(input.customerEmail) await sendAutomaticMessage({tenantId:tenant.id,event:'order_received',locale:input.locale,recipient:input.customerEmail,variables:{customer_name:input.customerName,store_name:tenant.name,service_name:'restaurant',service_number:reference,service_type:input.orderType,amount,currency:tenant.currency,date:new Date(now).toISOString(),plan_name:'',expires_at:''},idempotencyKey:id});
     return Response.json({ order: { id, reference, status: 'new', total: amount, currency: tenant.currency }, duplicate: false }, { status: 201 });
   } catch (error) { return fail(error); }
