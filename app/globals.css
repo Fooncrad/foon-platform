@@ -1374,7 +1374,7 @@ html,body{max-width:100%;overflow-x:hidden}
 /* Published restaurant appearance */
 .restaurant-menu-shell{background:var(--menu-surface,var(--background))}
 .restaurant-menu-shell .menu-reservation-button,.restaurant-menu-shell .menu-add-button,.restaurant-menu-shell .menu-category-strip button.active{border-color:var(--menu-accent,#f28c28)}
-.restaurant-menu-shell .menu-add-button{background:var(--menu-accent,#f28c28)}
+.restaurant-menu-shell .menu-add-button{background:var(--menu-accent,#f28c28);color:#fff!important;opacity:1!important}.restaurant-menu-shell .menu-add-button svg{color:currentColor!important;stroke:currentColor!important}
 .restaurant-menu-shell.menu-corners-square .menu-item-card,.restaurant-menu-shell.menu-corners-square .menu-item-card-square,.restaurant-menu-shell.menu-corners-square .menu-add-button{border-radius:0!important}
 .restaurant-menu-shell.menu-corners-soft .menu-item-card,.restaurant-menu-shell.menu-corners-soft .menu-item-card-square{border-radius:10px!important}
 
