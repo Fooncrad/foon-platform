@@ -1823,3 +1823,41 @@ html,body{
 .table-policy-inline{grid-column:1/-1;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px!important}
 @media(max-width:900px){.restaurant-v2-card .subscription-form,.table-bulk-create{grid-template-columns:repeat(2,minmax(0,1fr))}.restaurant-v2-orders{grid-template-columns:1fr}.restaurant-v2-orders>div{grid-template-columns:1fr 1fr}.table-policy-inline{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.restaurant-v2-workspace{padding:8px}.restaurant-v2-card .subscription-form,.table-bulk-create,.restaurant-v2-orders>div,.table-policy-inline{grid-template-columns:1fr!important}}
+
+
+/* FOON isolated action/form contract — every add/settings/security/mail block owns its layout. */
+:where(.restaurant-main,.admin-main,.dashboard-main) form{
+  min-inline-size:0;
+}
+:where(.restaurant-main,.admin-main,.dashboard-main) form:has(button[type="submit"]),
+:where(.restaurant-main,.admin-main,.dashboard-main) .subscription-form,
+:where(.restaurant-main,.admin-main,.dashboard-main) .table-bulk-create{
+  inline-size:100%;
+  max-inline-size:100%;
+  box-sizing:border-box;
+  padding:14px;
+  margin-block:10px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--card);
+  overflow:clip;
+  isolation:isolate;
+}
+:where(.restaurant-main,.admin-main,.dashboard-main) form button[type="submit"]{
+  position:relative;
+  inline-size:auto;
+  max-inline-size:100%;
+  min-inline-size:120px;
+  margin:8px 0 0;
+  justify-self:start;
+}
+:where(.restaurant-main,.admin-main,.dashboard-main) form button:not([type]){
+  /* A button inside a form must opt in explicitly before it can submit. */
+  pointer-events:none;
+}
+@media(max-width:600px){
+  :where(.restaurant-main,.admin-main,.dashboard-main) form:has(button[type="submit"]),
+  :where(.restaurant-main,.admin-main,.dashboard-main) .subscription-form,
+  :where(.restaurant-main,.admin-main,.dashboard-main) .table-bulk-create{padding:10px;border-radius:12px}
+  :where(.restaurant-main,.admin-main,.dashboard-main) form button[type="submit"]{inline-size:100%;min-inline-size:0}
+}
