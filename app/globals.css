@@ -1506,3 +1506,29 @@ html,body{max-width:100%;overflow-x:hidden}
 .menu-public-page header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.menu-public-page h2,.menu-public-page p{margin:0}.menu-public-page p{white-space:pre-wrap;line-height:1.9;color:var(--muted-foreground)}
 .menu-public-page header button{width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--border);border-radius:10px;background:var(--background);color:inherit}
 .menu-public-page header svg{width:18px}
+
+
+/* Public restaurant footer UX: compact, balanced, mobile-first */
+.menu-restaurant-footer{
+ width:min(1180px,calc(100% - 32px))!important;margin:18px auto 0!important;
+ display:grid!important;grid-template-columns:minmax(220px,1.2fr) minmax(260px,1fr) minmax(180px,.7fr)!important;
+ gap:24px!important;align-items:start!important;padding:22px 0!important;
+ border-top:1px solid var(--border)!important;
+}
+.menu-restaurant-footer>div,.menu-restaurant-footer>nav{min-width:0!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:8px!important}
+[dir="rtl"] .menu-restaurant-footer>div,[dir="rtl"] .menu-restaurant-footer>nav{align-items:flex-start!important;text-align:right!important}
+.menu-restaurant-footer strong{font-size:14px!important;margin:0 0 3px!important}
+.menu-restaurant-footer p,.menu-restaurant-footer a,.menu-footer-page-link{font-size:13px!important;line-height:1.5!important}
+.menu-restaurant-footer p{margin:0!important;color:var(--muted-foreground)!important}
+.menu-restaurant-footer nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:18px!important;row-gap:8px!important}
+.menu-restaurant-footer nav>strong{grid-column:1/-1!important}
+.menu-footer-page-link,.menu-restaurant-footer a{display:inline-flex!important;align-items:center!important;gap:6px!important;text-decoration:none!important}
+.menu-footer-page-link{width:max-content!important;max-width:100%!important;border:0!important;background:none!important;padding:0!important;cursor:pointer!important}
+.menu-footer-social{flex-direction:row!important;flex-wrap:wrap!important;gap:7px!important}
+.menu-footer-social a{border:1px solid var(--border)!important;border-radius:999px!important;padding:6px 10px!important;font-size:12px!important}
+@media(max-width:760px){
+ .menu-restaurant-footer{width:calc(100% - 24px)!important;grid-template-columns:1fr!important;gap:18px!important;padding:18px 0 88px!important}
+ .menu-restaurant-footer nav{grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important}
+ .menu-footer-social{width:100%!important}
+}
+@media(max-width:360px){.menu-restaurant-footer nav{grid-template-columns:1fr!important}}
