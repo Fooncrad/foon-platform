@@ -1545,3 +1545,9 @@ html,body{max-width:100%;overflow-x:hidden}
 .menu-appearance-actions svg{width:17px;height:17px}.menu-inline-language select{border:0;background:transparent;color:inherit;font:inherit;outline:0}
 .menu-appearance-actions-bottom{margin-top:14px;margin-bottom:4px}
 @media(max-width:600px){.menu-appearance-actions{width:calc(100% - 16px);gap:6px}.menu-appearance-actions>*{min-height:36px;padding:6px 8px;font-size:12px}}
+
+
+.restaurant-brand-media{display:grid;gap:10px;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--card)}.restaurant-brand-media h2,.restaurant-brand-media p{margin:0}.restaurant-brand-media p{font-size:12px;color:var(--muted-foreground)}
+.restaurant-brand-media-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.restaurant-brand-media-grid label{display:grid;gap:8px;padding:10px;border:1px solid var(--border);border-radius:11px}.restaurant-brand-media-grid img{width:100%;height:120px;object-fit:cover;border-radius:9px}.restaurant-brand-media-grid label:first-child img{width:84px;height:84px;border-radius:18px}.restaurant-brand-media-grid input{font-size:12px}
+.menu-brand .brand-mark img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+@media(max-width:600px){.restaurant-brand-media-grid{grid-template-columns:1fr}.restaurant-brand-media-grid img{height:100px}}
