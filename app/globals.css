@@ -1370,3 +1370,10 @@ html,body{max-width:100%;overflow-x:hidden}
 .menu-add-button{position:static!important;inset:auto!important;width:100%!important;min-height:38px!important;margin:0!important;transform:none!important}
 .menu-item-grid{align-items:stretch!important;grid-auto-rows:1fr!important;row-gap:14px!important}
 @media(max-width:600px){.menu-store-summary{width:calc(100% - 16px)!important;display:flex!important;gap:8px!important}.menu-store-summary>div:first-child{min-width:0}.menu-store-summary p{font-size:11px!important}.menu-store-hours{display:block;text-align:end}.menu-store-hours strong,.menu-store-hours span{display:block}.menu-store-hours span{margin-top:4px;font-size:10px}.menu-cover-actions{width:calc(100% - 16px)!important}.menu-toolbar{padding-top:0!important}.menu-item-grid{row-gap:16px!important;grid-auto-rows:auto!important}.menu-item-card,.menu-item-card-square{height:auto!important}.menu-item-bottom{margin-top:auto!important;padding-top:8px!important}.menu-add-button{font-size:12px!important;padding:7px 8px!important}}
+
+/* Published restaurant appearance */
+.restaurant-menu-shell{background:var(--menu-surface,var(--background))}
+.restaurant-menu-shell .menu-reservation-button,.restaurant-menu-shell .menu-add-button,.restaurant-menu-shell .menu-category-strip button.active{border-color:var(--menu-accent,#f28c28)}
+.restaurant-menu-shell .menu-add-button{background:var(--menu-accent,#f28c28)}
+.restaurant-menu-shell.menu-corners-square .menu-item-card,.restaurant-menu-shell.menu-corners-square .menu-item-card-square,.restaurant-menu-shell.menu-corners-square .menu-add-button{border-radius:0!important}
+.restaurant-menu-shell.menu-corners-soft .menu-item-card,.restaurant-menu-shell.menu-corners-soft .menu-item-card-square{border-radius:10px!important}
