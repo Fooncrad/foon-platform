@@ -20,6 +20,7 @@ const known: Record<string,{message:string;entity?:string}> = {
  RESERVATIONS_DISABLED:{message:'الحجوزات المسبقة متوقفة حاليًا من إعدادات المطعم.',entity:'الحجز'},
  RESERVATION_PARTY_SIZE_OUT_OF_RANGE:{message:'عدد الضيوف خارج الحد المسموح به في إعدادات الحجز.',entity:'عدد الضيوف'},
  RESERVATION_TIME_IN_PAST:{message:'موعد الحجز يجب أن يكون في وقت مستقبلي.',entity:'موعد الحجز'},
+ RESERVATION_MIN_ADVANCE:{message:'موعد الحجز أقرب من مهلة الحجز المسبق التي حددها المطعم.',entity:'موعد الحجز'},
  RESERVATION_ADVANCE_LIMIT:{message:'موعد الحجز يتجاوز الحد الأقصى للحجز المسبق المحدد من المطعم.',entity:'تاريخ الحجز'},
  TABLE_REQUIRED:{message:'يجب اختيار طاولة قبل تغيير الحالة إلى تم الجلوس.',entity:'الانتظار'},
  INVALID_WAITER:{message:'النادل المحدد غير متاح أو غير صالح.',entity:'النادل'},
