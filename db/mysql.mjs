@@ -1,10 +1,17 @@
 import mysql from 'mysql2/promise';
 let pool;
+function connectionOptions(){
+ const {DATABASE_URL,DB_HOST,DB_PORT,DB_USER,DB_PASSWORD,DB_NAME,DB_SSL}=process.env;
+ if(DATABASE_URL){
+  const url=new URL(DATABASE_URL);
+  return {host:url.hostname,port:Number(url.port||3306),user:decodeURIComponent(url.username),password:decodeURIComponent(url.password),database:url.pathname.replace(/^\//,''),ssl:url.searchParams.get('ssl')==='true'?{rejectUnauthorized:true}:undefined};
+ }
+ if(!DB_HOST||!DB_USER||!DB_NAME)throw new Error('DATABASE_NOT_CONFIGURED');
+ return {host:DB_HOST,port:Number(DB_PORT||3306),user:DB_USER,password:DB_PASSWORD,database:DB_NAME,ssl:DB_SSL==='true'?{rejectUnauthorized:true}:undefined};
+}
 export function getPool(){
  if(pool)return pool;
- const {DB_HOST,DB_PORT,DB_USER,DB_PASSWORD,DB_NAME,DB_SSL}=process.env;
- if(!DB_HOST||!DB_USER||!DB_NAME)throw new Error('DATABASE_NOT_CONFIGURED');
- pool=mysql.createPool({host:DB_HOST,port:Number(DB_PORT||3306),user:DB_USER,password:DB_PASSWORD,database:DB_NAME,charset:'utf8mb4',connectionLimit:5,waitForConnections:true,queueLimit:100,supportBigNumbers:true,bigNumberStrings:false,...(DB_SSL==='true'?{ssl:{rejectUnauthorized:true}}:{})});
+ pool=mysql.createPool({charset:'utf8mb4',connectionLimit:5,waitForConnections:true,queueLimit:100,supportBigNumbers:true,bigNumberStrings:false,...connectionOptions()});
  return pool;
 }
 export function mysqlSql(sql){
