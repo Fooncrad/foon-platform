@@ -27,7 +27,10 @@ export async function GET(request: Request) {
     let appearance:Record<string,unknown>={template:'grid'};try{const row=await database().prepare('SELECT published_json FROM restaurant_appearance_settings WHERE tenant_id=?').bind(store.id).first<{published_json:string|null}>();if(row?.published_json)appearance=JSON.parse(row.published_json);}catch{}
     let whatsappOrderEnabled=0;
     try{const grant=await database().prepare("SELECT pf.enabled FROM subscriptions s JOIN package_plan_features pf ON pf.plan_id=s.plan_id AND pf.feature_id='whatsapp_order' WHERE s.tenant_id=? AND s.status='active' AND (s.expires_at IS NULL OR s.expires_at>?) ORDER BY s.created_at DESC LIMIT 1").bind(store.id,Date.now()).first<{enabled:number|string}>();whatsappOrderEnabled=Number(grant?.enabled??0);}catch{}
-    return Response.json({ store, appearance, businessHours, whatsappOrderEnabled:Boolean(whatsappOrderEnabled), orderTypes, orderPolicies, pages:pages.results, categories: categories.results, items:(items.results as Array<{id:string}>).map(item=>({...item,image_urls:imagesByItem.get(item.id)||[],variants:variantsByItem.get(item.id)||[],addon_groups:groupsByItem.get(item.id)||[]})) },{headers:{'Cache-Control':'no-store'}});
+    const configuredPages=appearance&&typeof appearance==='object'&&'pages' in appearance?(appearance as {pages?:Record<string,{enabled?:boolean;title?:string;content?:string}>}).pages||{}:{};
+    const appearancePages=Object.entries(configuredPages).filter(([,page])=>page?.enabled!==false&&page?.title).map(([slug,page])=>({slug,title_ar:page.title||slug,title_en:page.title||slug,title_fr:page.title||slug,content:page.content||'',source:'appearance'}));
+    const legacyPages=(pages.results as Array<Record<string,unknown>>).filter(page=>!appearancePages.some(p=>p.slug===String(page.slug)));
+    return Response.json({ store, appearance, businessHours, whatsappOrderEnabled:Boolean(whatsappOrderEnabled), orderTypes, orderPolicies, pages:[...appearancePages,...legacyPages], categories: categories.results, items:(items.results as Array<{id:string}>).map(item=>({...item,image_urls:imagesByItem.get(item.id)||[],variants:variantsByItem.get(item.id)||[],addon_groups:groupsByItem.get(item.id)||[]})) },{headers:{'Cache-Control':'no-store'}});
   } catch {
     return Response.json({ error: 'SERVICE_UNAVAILABLE' }, { status: 503 });
   }
