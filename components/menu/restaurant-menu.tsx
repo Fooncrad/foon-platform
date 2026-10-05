@@ -64,6 +64,8 @@ export default function RestaurantMenu({ slug }: { slug: string }) {
   }, [slug]);
 
   useEffect(()=>{if(!data||tableToken)return;const available=(['pickup','takeaway','dine_in','delivery','room_service','reservation'] as OrderType[]).filter(type=>data.orderTypes?.[type]!==false);if(available.length&&!available.includes(orderType))setOrderType(available[0]);},[data,tableToken,orderType]);
+  useEffect(()=>{try{const raw=localStorage.getItem('foon-checkout:'+slug);if(!raw)return;const saved=JSON.parse(raw) as {cart?:Record<string,CartLine>;name?:string;phone?:string;email?:string;orderType?:OrderType;reference?:string;notes?:string;splitBill?:boolean;splitCount?:number};if(saved.cart)setCart(saved.cart);if(saved.name)setName(saved.name);if(saved.phone)setPhone(saved.phone);if(saved.email)setEmail(saved.email);if(saved.orderType)setOrderType(saved.orderType);if(saved.reference)setReference(saved.reference);if(saved.notes)setNotes(saved.notes);if(typeof saved.splitBill==='boolean')setSplitBill(saved.splitBill);if(saved.splitCount)setSplitCount(saved.splitCount)}catch{}},[slug]);
+  useEffect(()=>{try{if(lastReference){localStorage.removeItem('foon-checkout:'+slug);return}localStorage.setItem('foon-checkout:'+slug,JSON.stringify({cart,name,phone,email,orderType,reference,notes,splitBill,splitCount}))}catch{}},[slug,cart,name,phone,email,orderType,reference,notes,splitBill,splitCount,lastReference]);
   const menuUrl = useMemo(() => '/menu/' + encodeURIComponent(slug), [slug]);
   const currency=data?.store?.currency||'SAR';
   const money=(value:number)=>{try{return new Intl.NumberFormat(lang,{style:'currency',currency,maximumFractionDigits:2}).format(value)}catch{return Number(value).toFixed(2)+' '+currency}};
@@ -112,14 +114,14 @@ export default function RestaurantMenu({ slug }: { slug: string }) {
   async function submitOrder(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!lines.length || submitting) return;
-    if(checkoutStage===2){if(!name.trim()||!phone.trim()){setFeedback(t.required);return}if(!['pickup','takeaway'].includes(orderType)&&!reference.trim()&&!tableToken){setFeedback(t.required);return}setFeedback('');setCheckoutStage(3);return;}
+    if(checkoutStage===2){if(!name.trim()||!phone.trim()){setFeedback(t.required);return}if(orderType!=='takeaway'&&!reference.trim()&&!tableToken){setFeedback(t.required);return}setFeedback('');setCheckoutStage(3);return;}
     if (!enabledOrderTypes.includes(orderType)) { setFeedback(t.error); return; }
-    if (!['pickup','takeaway'].includes(orderType) && !reference.trim() && !tableToken) { setFeedback(t.required); return; }
+    if (orderType!=='takeaway' && !reference.trim() && !tableToken) { setFeedback(t.required); return; }
     setSubmitting(true); setFeedback('');
     const key = requestId || crypto.randomUUID();
     setRequestId(key);
     try {
-      const response = await fetch('/api/public/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, clientRequestId: key, customerName: name, customerPhone: phone, customerEmail: email, orderType, serviceReference: tableToken?'':(['dine_in','reservation'].includes(orderType)?reference:''), roomNumber:orderType==='room_service'?reference:'', deliveryAddress:orderType==='delivery'?reference:'', tableToken:tableToken||undefined, notes,locale,items: lines.map(line => ({ id: line.item.id, quantity: line.quantity,variantId:line.variantId,options:line.options })) }) });
+      const response = await fetch('/api/public/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, clientRequestId: key, customerName: name, customerPhone: phone, customerEmail: email, orderType, serviceReference: tableToken?'':(['dine_in','reservation'].includes(orderType)?reference:''), roomNumber:orderType==='room_service'?reference:'', deliveryAddress:orderType==='delivery'?reference:'', pickupLabel:orderType==='pickup'?reference:'', tableToken:tableToken||undefined, notes,locale,items: lines.map(line => ({ id: line.item.id, quantity: line.quantity,variantId:line.variantId,options:line.options })) }) });
       const body = await response.json() as { error?: string; order?: { reference?: string } };
       if (!response.ok || !body.order?.reference) throw new Error(body.error || 'ORDER_FAILED');
       setLastReference(body.order.reference); setCart({}); setRequestId(''); setFeedback('');
