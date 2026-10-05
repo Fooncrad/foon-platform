@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS restaurant_order_payments (
+  id VARCHAR(36) NOT NULL,
+  tenant_id VARCHAR(36) NOT NULL,
+  order_id VARCHAR(36) NOT NULL,
+  split_id VARCHAR(36) NULL,
+  method VARCHAR(30) NOT NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'paid',
+  transaction_reference VARCHAR(160) NULL,
+  actor_id VARCHAR(36) NULL,
+  paid_at BIGINT NOT NULL,
+  created_at BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY order_payment_split_unique (split_id),
+  KEY order_payments_order (tenant_id,order_id,paid_at),
+  CONSTRAINT fk_order_payments_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+  CONSTRAINT fk_order_payments_order FOREIGN KEY (order_id) REFERENCES restaurant_orders(id) ON DELETE CASCADE,
+  CONSTRAINT fk_order_payments_split FOREIGN KEY (split_id) REFERENCES restaurant_order_splits(id) ON DELETE SET NULL,
+  CONSTRAINT fk_order_payments_actor FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
