@@ -3,44 +3,51 @@
 import { useEffect } from 'react';
 
 /**
- * Last-line viewport guard.
- * CSS remains the source of truth; this catches regressions from future
- * templates/components and keeps focused controls visible above mobile keyboards.
+ * FOON viewport guard.
+ * Width is intentionally based on the layout viewport (clientWidth), which stays
+ * stable while iOS animates the software keyboard. visualViewport is used only
+ * for usable height so keyboard animation cannot make the page wobble sideways.
  */
 export function ViewportStabilityGuard() {
   useEffect(() => {
     const root = document.documentElement;
     let raf = 0;
+    let focusTimer = 0;
 
     const stabilize = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const viewport = window.visualViewport;
-        const width = Math.round(viewport?.width ?? root.clientWidth);
+        const width = root.clientWidth;
         const height = Math.round(viewport?.height ?? window.innerHeight);
-        root.style.setProperty('--foon-visual-width', width + 'px');
+        root.style.setProperty('--foon-layout-width', width + 'px');
         root.style.setProperty('--foon-visual-height', height + 'px');
-
-        // Do not mask intentional component scrollers; only flag document overflow.
-        const overflow = Math.max(0, root.scrollWidth - root.clientWidth);
-        root.toggleAttribute('data-foon-overflow', overflow > 1);
+        root.toggleAttribute('data-foon-overflow', root.scrollWidth - width > 1);
       });
     };
 
     const keepFocusedControlVisible = (event: FocusEvent) => {
       const target = event.target;
       if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)) return;
-      window.setTimeout(() => {
-        target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' });
+      window.clearTimeout(focusTimer);
+      focusTimer = window.setTimeout(() => {
+        // Vertical correction only. Avoid smooth/inline scrolling: on iOS those
+        // animations can create a visible horizontal shake during keyboard entry.
+        const vv = window.visualViewport;
+        const rect = target.getBoundingClientRect();
+        const top = vv?.offsetTop ?? 0;
+        const bottom = top + (vv?.height ?? window.innerHeight);
+        if (rect.bottom > bottom - 24 || rect.top < top + 24) {
+          target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'auto' });
+        }
         stabilize();
-      }, 180);
+      }, 260);
     };
 
     stabilize();
     window.addEventListener('resize', stabilize, { passive: true });
     window.addEventListener('orientationchange', stabilize, { passive: true });
     window.visualViewport?.addEventListener('resize', stabilize, { passive: true });
-    window.visualViewport?.addEventListener('scroll', stabilize, { passive: true });
     document.addEventListener('focusin', keepFocusedControlVisible);
 
     const observer = new ResizeObserver(stabilize);
@@ -48,11 +55,11 @@ export function ViewportStabilityGuard() {
 
     return () => {
       cancelAnimationFrame(raf);
+      window.clearTimeout(focusTimer);
       observer.disconnect();
       window.removeEventListener('resize', stabilize);
       window.removeEventListener('orientationchange', stabilize);
       window.visualViewport?.removeEventListener('resize', stabilize);
-      window.visualViewport?.removeEventListener('scroll', stabilize);
       document.removeEventListener('focusin', keepFocusedControlVisible);
     };
   }, []);
