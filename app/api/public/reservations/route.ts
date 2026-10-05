@@ -1,43 +1,6 @@
-import { apiErrorResponse } from '@/lib/platform/error-reporting';
-import {z} from 'zod';
-import {database} from '@/db';
-import {ApiError,sameOrigin} from '@/lib/platform/security';
-import {requireTenantFeature} from '@/lib/platform/entitlements';
-
+import {apiErrorResponse} from '@/lib/platform/error-reporting';
+import {z} from 'zod';import {database} from '@/db';import {ApiError,sameOrigin} from '@/lib/platform/security';import {requireTenantFeature} from '@/lib/platform/entitlements';
 export const dynamic='force-dynamic';
-const inputSchema=z.object({
- slug:z.string().regex(/^[a-z0-9][a-z0-9-]{1,59}$/),
- customerName:z.string().trim().min(2).max(160),
- customerPhone:z.string().trim().min(5).max(32),
- customerEmail:z.union([z.string().trim().email().max(254),z.literal('')]).optional().default(''),
- reservationAt:z.number().int().positive(),
- guests:z.number().int().min(1).max(30),
- notes:z.string().trim().max(1000).optional().default(''),
- locale:z.enum(['ar','en','fr']).default('ar')
-});
-function fail(error: unknown) { return apiErrorResponse(error, '/app/api/public/reservations'); }
-export async function POST(request:Request){
- try{
-  sameOrigin(request);
-  const raw=await request.text();
-  if(raw.length>8000)throw new ApiError(413,'INPUT_TOO_LARGE');
-  let untrusted:unknown;
-  try{untrusted=JSON.parse(raw)}catch{throw new ApiError(400,'INVALID_INPUT')}
-  const input=inputSchema.parse(untrusted);
-  const now=Date.now();
-  if(input.reservationAt<=now||input.reservationAt>now+7*86400000)throw new ApiError(400,'RESERVATION_DATE_OUT_OF_RANGE');
-  const tenant=await database().prepare("SELECT id FROM tenants WHERE slug=? AND activity_id='restaurants' AND status='active' LIMIT 1").bind(input.slug).first<{id:string}>();
-  if(!tenant)throw new ApiError(404,'NOT_FOUND');
-  const typeSetting=await database().prepare("SELECT enabled FROM restaurant_order_type_settings WHERE tenant_id=? AND order_type='reservation' LIMIT 1").bind(tenant.id).first<{enabled:number|string}>().catch(()=>null);
-  if(typeSetting&&!Number(typeSetting.enabled))throw new ApiError(403,'RESERVATIONS_DISABLED');
-  await requireTenantFeature(tenant.id,'reservations');
-  const branch=await database().prepare('SELECT id FROM branches WHERE tenant_id=? ORDER BY is_primary DESC,id ASC LIMIT 1').bind(tenant.id).first<{id:string}>();
-  if(!branch)throw new ApiError(409,'BRANCH_REQUIRED');
-  const duplicate=await database().prepare("SELECT id FROM restaurant_reservations WHERE tenant_id=? AND customer_phone=? AND reservation_at BETWEEN ? AND ? AND status IN ('pending','confirmed','seated') LIMIT 1").bind(tenant.id,input.customerPhone,input.reservationAt-15*60000,input.reservationAt+15*60000).first();
-  if(duplicate)throw new ApiError(409,'DUPLICATE_RESERVATION');
-  const id=crypto.randomUUID();
-  const reference='FR-'+Date.now().toString(36).toUpperCase()+'-'+id.slice(0,6).toUpperCase();
-  await database().prepare("INSERT INTO restaurant_reservations(id,tenant_id,branch_id,table_id,reference,status,customer_name,customer_email,customer_phone,guests,reservation_at,notes,created_at,updated_at) VALUES(?,?,?,NULL,?,'pending',?,?,?,?,?,?,?,?)").bind(id,tenant.id,branch.id,reference,input.customerName,input.customerEmail||null,input.customerPhone,input.guests,input.reservationAt,input.notes||null,now,now).run();
-  return Response.json({id,reference,status:'pending'},{status:201});
- }catch(error){return fail(error)}
-}
+const inputSchema=z.object({slug:z.string().regex(/^[a-z0-9][a-z0-9-]{1,59}$/),customerName:z.string().trim().min(2).max(160),customerPhone:z.string().trim().min(5).max(32),customerEmail:z.union([z.string().trim().email().max(254),z.literal('')]).optional().default(''),reservationAt:z.number().int().positive(),guests:z.number().int().min(1).max(30),notes:z.string().trim().max(1000).optional().default(''),locale:z.enum(['ar','en','fr']).default('ar')});
+function fail(error:unknown){return apiErrorResponse(error,'/app/api/public/reservations')}
+export async function POST(request:Request){try{sameOrigin(request);const raw=await request.text();if(raw.length>8000)throw new ApiError(413,'INPUT_TOO_LARGE');let untrusted:unknown;try{untrusted=JSON.parse(raw)}catch{throw new ApiError(400,'INVALID_INPUT')}const input=inputSchema.parse(untrusted),now=Date.now();const tenant=await database().prepare("SELECT id FROM tenants WHERE slug=? AND activity_id='restaurants' AND status='active' LIMIT 1").bind(input.slug).first<{id:string}>();if(!tenant)throw new ApiError(404,'NOT_FOUND');const typeSetting=await database().prepare("SELECT enabled FROM restaurant_order_type_settings WHERE tenant_id=? AND order_type='reservation' LIMIT 1").bind(tenant.id).first<{enabled:number|string}>().catch(()=>null);if(typeSetting&&!Number(typeSetting.enabled))throw new ApiError(403,'RESERVATIONS_DISABLED');await requireTenantFeature(tenant.id,'reservations');const settings=await database().prepare('SELECT advance_days FROM restaurant_reservation_settings WHERE tenant_id=? LIMIT 1').bind(tenant.id).first<{advance_days:number|string}>();const advance=Math.max(1,Math.min(30,Number(settings?.advance_days||7)));if(input.reservationAt<=now||input.reservationAt>now+advance*86400000)throw new ApiError(400,'RESERVATION_DATE_OUT_OF_RANGE');const branch=await database().prepare('SELECT id FROM branches WHERE tenant_id=? ORDER BY is_primary DESC,id ASC LIMIT 1').bind(tenant.id).first<{id:string}>();if(!branch)throw new ApiError(409,'BRANCH_REQUIRED');const dt=new Date(input.reservationAt),day=dt.getDay(),hh=String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');const slots=await database().prepare('SELECT start_time,end_time FROM restaurant_reservation_slots WHERE tenant_id=? AND branch_id=? AND day_of_week=? AND enabled=1').bind(tenant.id,branch.id,day).all<{start_time:string;end_time:string}>();if(slots.results.length){const inside=slots.results.some(s=>{const a=s.start_time.slice(0,5),b=s.end_time.slice(0,5);return a===b||a<b?(hh>=a&&hh<b):(hh>=a||hh<b)});if(!inside)throw new ApiError(409,'RESERVATION_SLOT_UNAVAILABLE')}const activeWait=await database().prepare("SELECT id FROM restaurant_waitlist WHERE tenant_id=? AND customer_phone=? AND status IN ('waiting','accepted') AND expires_at>? LIMIT 1").bind(tenant.id,input.customerPhone,now).first();if(activeWait)throw new ApiError(409,'ACTIVE_WAITLIST_EXISTS');const duplicate=await database().prepare("SELECT id FROM restaurant_reservations WHERE tenant_id=? AND customer_phone=? AND reservation_at BETWEEN ? AND ? AND status IN ('pending','confirmed','seated') LIMIT 1").bind(tenant.id,input.customerPhone,input.reservationAt-15*60000,input.reservationAt+15*60000).first();if(duplicate)throw new ApiError(409,'DUPLICATE_RESERVATION');const id=crypto.randomUUID(),reference='FR-'+Date.now().toString(36).toUpperCase()+'-'+id.slice(0,6).toUpperCase();await database().prepare("INSERT INTO restaurant_reservations(id,tenant_id,branch_id,table_id,reference,status,customer_name,customer_email,customer_phone,guests,reservation_at,notes,created_at,updated_at) VALUES(?,?,?,NULL,?,'pending',?,?,?,?,?,?,?,?)").bind(id,tenant.id,branch.id,reference,input.customerName,input.customerEmail||null,input.customerPhone,input.guests,input.reservationAt,input.notes||null,now,now).run();return Response.json({id,reference,status:'pending'},{status:201})}catch(error){return fail(error)}}
