@@ -1760,3 +1760,27 @@ code {
     scroll-margin-block:96px 180px;
   }
 }
+
+
+/* Runtime-backed viewport contract. visualViewport updates these values when
+   browser chrome or the software keyboard changes the usable mobile area. */
+:root{
+  --foon-visual-width:100%;
+  --foon-visual-height:100dvh;
+}
+html[data-foon-overflow] body{
+  max-inline-size:100%!important;
+  overflow-x:clip!important;
+}
+@media(max-width:900px){
+  .menu-checkout-backdrop,
+  .menu-customize-backdrop{
+    inline-size:min(100%,var(--foon-visual-width))!important;
+    max-inline-size:100%!important;
+  }
+  .menu-checkout,
+  .menu-reservation-dialog,
+  .menu-customize-panel{
+    max-block-size:var(--foon-visual-height)!important;
+  }
+}
