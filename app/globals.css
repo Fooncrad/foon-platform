@@ -1698,3 +1698,65 @@ code {
     max-inline-size: 100%;
   }
 }
+
+
+/* Mobile keyboard invariant — checkout/reservation must stay inside the visual viewport while typing. */
+.menu-checkout-backdrop{
+  max-width:100%!important;
+  overflow-x:clip!important;
+}
+.menu-checkout{
+  width:min(100%,560px)!important;
+  max-width:100%!important;
+  min-width:0!important;
+}
+.menu-checkout header,
+.menu-checkout-form,
+.menu-checkout-form>label,
+.menu-checkout-form>div{
+  min-width:0!important;
+  max-width:100%!important;
+}
+.menu-checkout-form input:not([type="checkbox"]):not([type="radio"]),
+.menu-checkout-form select,
+.menu-checkout-form textarea{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  font-size:16px!important; /* prevents iOS focus zoom */
+}
+@media(max-width:600px){
+  .menu-checkout-backdrop{
+    align-items:flex-end!important;
+    padding:0!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+  .menu-checkout,
+  .menu-reservation-dialog{
+    width:100%!important;
+    max-width:100%!important;
+    max-height:100dvh!important;
+    min-height:0!important;
+    margin:0!important;
+    overflow-x:clip!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch;
+    border-end-start-radius:0!important;
+    border-end-end-radius:0!important;
+  }
+  .menu-checkout-form{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:clip!important;
+    padding-bottom:max(24px,env(safe-area-inset-bottom))!important;
+  }
+  .menu-checkout-form input:not([type="checkbox"]):not([type="radio"]),
+  .menu-checkout-form select,
+  .menu-checkout-form textarea{
+    scroll-margin-block:96px 180px;
+  }
+}
