@@ -16,6 +16,7 @@ const settingsSchema=z.object({
  actions:z.record(z.string(),action).default({}),
  header:z.enum(['compact','full']).default('compact'),
  footer:z.enum(['compact','full']).default('full'),
+ pages:z.record(z.string(),z.object({enabled:z.boolean().default(true),title:z.string().max(120),content:z.string().max(8000)})).default({}),
  contact:z.object({
   phone:z.string().max(40).default(''),email:z.string().max(180).default(''),
   whatsapp:z.string().max(40).default(''),location:z.string().max(500).default(''),
@@ -25,6 +26,13 @@ const settingsSchema=z.object({
 }).strip();
 
 const defaults=settingsSchema.parse({
+ pages:{
+  about:{enabled:true,title:'من نحن',content:'مرحبًا بكم في مطعمنا. نحرص على تقديم تجربة ضيافة مميزة وأطباق مختارة بعناية وجودة ثابتة. هدفنا أن تكون كل زيارة تجربة تستحق التكرار.'},
+  contact:{enabled:true,title:'تواصل معنا',content:'يسعدنا تواصلكم معنا للاستفسارات والملاحظات والحجوزات. يمكنكم استخدام بيانات التواصل المعروضة في المنيو وسنكون سعداء بخدمتكم.'},
+  terms:{enabled:true,title:'الشروط والأحكام',content:'باستخدام خدمات المطعم أو تنفيذ الطلب، يوافق العميل على تفاصيل الطلب والأسعار والرسوم الظاهرة قبل التأكيد. قد تختلف أوقات التجهيز حسب ضغط الطلبات وتوفر الأصناف.'},
+  privacy:{enabled:true,title:'سياسة الخصوصية',content:'نستخدم بيانات العميل اللازمة لتنفيذ الطلب أو الحجز وتقديم الخدمة والتواصل بشأنها. لا نستخدم البيانات خارج أغراض التشغيل إلا وفق الأنظمة المعمول بها.'},
+  refund:{enabled:true,title:'سياسة الإلغاء والاسترجاع',content:'يمكن طلب الإلغاء قبل بدء تجهيز الطلب وفق حالة الطلب. تتم مراجعة طلبات الاسترجاع بحسب وسيلة الدفع وحالة الخدمة، وتوضح أي رسوم أو استثناءات قبل إتمام العملية.'}
+ },
  actions:{
   waiter:{visible:true,position:'cover'},reservation:{visible:true,position:'cover'},
   language:{visible:true,position:'menu'},dark:{visible:true,position:'menu'},account:{visible:true,position:'menu'}
