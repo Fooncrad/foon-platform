@@ -11,10 +11,9 @@ INSERT IGNORE INTO feature_definitions(id,label_ar,label_en,label_fr,description
 ('printing','الطباعة','Printing','Impression','الطابعات ومحطات التحضير والتوجيه.','Printers, preparation stations and routing.','Imprimantes, stations et routage.',UNIX_TIMESTAMP()*1000),
 ('restaurant_settings','إعداد المطعم','Restaurant settings','Réglages restaurant','هوية المطعم والعملات واللغات وإعدادات الخدمة.','Restaurant identity, currency, languages and service settings.','Identité, devise, langues et réglages.',UNIX_TIMESTAMP()*1000);
 
-INSERT INTO package_plan_features(plan_id,feature_id,enabled,feature_limit,updated_at)
+INSERT IGNORE INTO package_plan_features(plan_id,feature_id,enabled,feature_limit,updated_at)
 SELECT p.id,f.id,1,NULL,UNIX_TIMESTAMP()*1000
-FROM package_plans p CROSS JOIN feature_definitions f
-ON DUPLICATE KEY UPDATE updated_at=VALUES(updated_at);
+FROM package_plans p CROSS JOIN feature_definitions f;
 
 -- Explicitly activate operational capabilities in all current plans.
 -- This is a one-time reconciliation; future admin changes remain respected.

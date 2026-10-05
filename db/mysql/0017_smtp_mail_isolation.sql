@@ -25,4 +25,8 @@ ALTER TABLE activity_email_settings
 UPDATE platform_email_settings SET provider='smtp',secret_ciphertext=NULL,enabled=0;
 UPDATE tenant_email_settings SET mode='custom',provider='smtp',secret_ciphertext=NULL,enabled=0;
 UPDATE activity_email_settings SET provider='smtp',secret_ciphertext=NULL,enabled=0;
-\nALTER TABLE restaurant_orders ADD COLUMN customer_locale VARCHAR(2) NOT NULL DEFAULT 'ar';\n\nALTER TABLE platform_email_settings ALTER COLUMN provider SET DEFAULT 'smtp';\nALTER TABLE tenant_email_settings ALTER COLUMN provider SET DEFAULT 'smtp';\nALTER TABLE activity_email_settings ALTER COLUMN provider SET DEFAULT 'smtp';\nALTER TABLE tenant_email_settings ALTER COLUMN mode SET DEFAULT 'custom';\n
+ALTER TABLE restaurant_orders ADD COLUMN customer_locale VARCHAR(2) NOT NULL DEFAULT 'ar';
+ALTER TABLE platform_email_settings ALTER COLUMN provider SET DEFAULT 'smtp';
+ALTER TABLE tenant_email_settings ALTER COLUMN provider SET DEFAULT 'smtp';
+ALTER TABLE activity_email_settings ALTER COLUMN provider SET DEFAULT 'smtp';
+ALTER TABLE tenant_email_settings ALTER COLUMN mode SET DEFAULT 'custom';

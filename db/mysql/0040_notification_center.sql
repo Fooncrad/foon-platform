@@ -15,13 +15,12 @@ CREATE TABLE IF NOT EXISTS platform_notification_settings (
  PRIMARY KEY(event)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE restaurant_notification_settings
- ADD COLUMN browser_push TINYINT(1) NOT NULL DEFAULT 1 AFTER in_app,
- ADD COLUMN sound_key VARCHAR(60) NOT NULL DEFAULT 'default' AFTER sound,
- ADD COLUMN volume INT NOT NULL DEFAULT 80 AFTER sound_key,
- ADD COLUMN priority VARCHAR(20) NOT NULL DEFAULT 'normal' AFTER volume,
- ADD COLUMN repeat_count INT NOT NULL DEFAULT 1 AFTER priority,
- ADD COLUMN recipient_roles VARCHAR(500) NOT NULL DEFAULT 'owner,manager' AFTER whatsapp;
+ALTER TABLE restaurant_notification_settings ADD COLUMN browser_push TINYINT(1) NOT NULL DEFAULT 1 AFTER in_app;
+ALTER TABLE restaurant_notification_settings ADD COLUMN sound_key VARCHAR(60) NOT NULL DEFAULT 'default' AFTER sound;
+ALTER TABLE restaurant_notification_settings ADD COLUMN volume INT NOT NULL DEFAULT 80 AFTER sound_key;
+ALTER TABLE restaurant_notification_settings ADD COLUMN priority VARCHAR(20) NOT NULL DEFAULT 'normal' AFTER volume;
+ALTER TABLE restaurant_notification_settings ADD COLUMN repeat_count INT NOT NULL DEFAULT 1 AFTER priority;
+ALTER TABLE restaurant_notification_settings ADD COLUMN recipient_roles VARCHAR(500) NOT NULL DEFAULT 'owner,manager' AFTER whatsapp;
 
 CREATE TABLE IF NOT EXISTS notification_events (
  id VARCHAR(36) NOT NULL,

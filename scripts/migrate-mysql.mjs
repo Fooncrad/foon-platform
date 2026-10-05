@@ -7,10 +7,34 @@ const conn=await pool.getConnection();
 let locked=false;
 
 const harmlessExistingSchemaErrors=new Set([
-  'ER_DUP_FIELDNAME', // column already exists
-  'ER_DUP_KEYNAME',   // index/key already exists
-  'ER_TABLE_EXISTS_ERROR',
+ 'ER_DUP_FIELDNAME', // column already exists
+ 'ER_DUP_KEYNAME',   // index/key already exists
+ 'ER_TABLE_EXISTS_ERROR',
 ]);
+function splitSqlStatements(sql){
+ const statements=[];let start=0;let quote=null;let escaped=false;
+ for(let i=0;i<sql.length;i++){
+  const char=sql[i];
+  if(quote){
+   if(escaped){escaped=false;continue;}
+   if(char==='\\'){escaped=true;continue;}
+   if(char===quote){
+    if(sql[i+1]===quote){i++;continue;}
+    quote=null;
+   }
+   continue;
+  }
+  if(char==="'"||char==='"'||char==='`'){quote=char;continue;}
+  if(char===';'){
+   const statement=sql.slice(start,i).trim();
+   if(statement)statements.push(statement);
+   start=i+1;
+  }
+ }
+ const last=sql.slice(start).trim();
+ if(last)statements.push(last);
+ return statements;
+}
 
 try{
  const [[lock]]=await conn.execute("SELECT GET_LOCK('foon_schema_migration',30) AS acquired");
@@ -34,7 +58,7 @@ try{
    continue;
   }
 
-  for(const statement of sql.replace(/^--.*$/gm,'').split(';').map(x=>x.trim()).filter(Boolean)){
+  for(const statement of splitSqlStatements(sql.replace(/^--.*$/gm,''))){
    try{
     await conn.query(statement);
    }catch(error){

@@ -1,21 +1,20 @@
 -- FOON public restaurant profile, cover, contact and custom pages.
 -- Additive migration; does not remove existing tenant data.
-ALTER TABLE tenants
-  ADD COLUMN cover_image_url VARCHAR(1000) NULL AFTER status,
-  ADD COLUMN phone VARCHAR(32) NULL AFTER cover_image_url,
-  ADD COLUMN whatsapp VARCHAR(32) NULL AFTER phone,
-  ADD COLUMN email_public VARCHAR(254) NULL AFTER whatsapp,
-  ADD COLUMN address_ar VARCHAR(500) NULL AFTER email_public,
-  ADD COLUMN address_en VARCHAR(500) NULL AFTER address_ar,
-  ADD COLUMN address_fr VARCHAR(500) NULL AFTER address_en,
-  ADD COLUMN about_ar TEXT NULL AFTER address_fr,
-  ADD COLUMN about_en TEXT NULL AFTER about_ar,
-  ADD COLUMN about_fr TEXT NULL AFTER about_en,
-  ADD COLUMN instagram_url VARCHAR(1000) NULL AFTER about_fr,
-  ADD COLUMN tiktok_url VARCHAR(1000) NULL AFTER instagram_url,
-  ADD COLUMN snapchat_url VARCHAR(1000) NULL AFTER tiktok_url,
-  ADD COLUMN website_url VARCHAR(1000) NULL AFTER snapchat_url,
-  ADD COLUMN waiter_call_enabled BIGINT NOT NULL DEFAULT 0 AFTER website_url;
+ALTER TABLE tenants ADD COLUMN cover_image_url VARCHAR(1000) NULL AFTER status;
+ALTER TABLE tenants ADD COLUMN phone VARCHAR(32) NULL AFTER cover_image_url;
+ALTER TABLE tenants ADD COLUMN whatsapp VARCHAR(32) NULL AFTER phone;
+ALTER TABLE tenants ADD COLUMN email_public VARCHAR(254) NULL AFTER whatsapp;
+ALTER TABLE tenants ADD COLUMN address_ar VARCHAR(500) NULL AFTER email_public;
+ALTER TABLE tenants ADD COLUMN address_en VARCHAR(500) NULL AFTER address_ar;
+ALTER TABLE tenants ADD COLUMN address_fr VARCHAR(500) NULL AFTER address_en;
+ALTER TABLE tenants ADD COLUMN about_ar TEXT NULL AFTER address_fr;
+ALTER TABLE tenants ADD COLUMN about_en TEXT NULL AFTER about_ar;
+ALTER TABLE tenants ADD COLUMN about_fr TEXT NULL AFTER about_en;
+ALTER TABLE tenants ADD COLUMN instagram_url VARCHAR(1000) NULL AFTER about_fr;
+ALTER TABLE tenants ADD COLUMN tiktok_url VARCHAR(1000) NULL AFTER instagram_url;
+ALTER TABLE tenants ADD COLUMN snapchat_url VARCHAR(1000) NULL AFTER tiktok_url;
+ALTER TABLE tenants ADD COLUMN website_url VARCHAR(1000) NULL AFTER snapchat_url;
+ALTER TABLE tenants ADD COLUMN waiter_call_enabled BIGINT NOT NULL DEFAULT 0 AFTER website_url;
 
 CREATE TABLE IF NOT EXISTS restaurant_public_pages (
  id VARCHAR(36) NOT NULL,
