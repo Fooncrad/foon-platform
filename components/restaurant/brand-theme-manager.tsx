@@ -1,5 +1,5 @@
 'use client';
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 import Link from 'next/link';
 import {BellRing,CalendarDays,Check,Globe2,LayoutGrid,List,MapPin,Palette,PanelTop,Phone,Shapes,UserRound} from 'lucide-react';
 import {usePreferences} from '@/components/platform/preferences';
@@ -9,8 +9,11 @@ export default function BrandThemeManager({slug}:{slug:string}){
  const {locale}=usePreferences(); const ar=locale==='ar',fr=locale==='fr';
  const L=(a:string,e:string,f=e)=>ar?a:fr?f:e;
  const [tab,setTab]=useState<'templates'|'themes'|'identity'|'actions'|'pages'|'contact'>('templates');
- const [template,setTemplate]=useState<Template>(()=>typeof window==='undefined'?'grid':((localStorage.getItem('foon-menu-template-'+slug) as Template)||'grid'));
- const select=(v:Template)=>{setTemplate(v);localStorage.setItem('foon-menu-template-'+slug,v)};
+ const [template,setTemplate]=useState<Template>('grid');
+ const [saving,setSaving]=useState(false);const [message,setMessage]=useState('');
+ useEffect(()=>{fetch('/api/restaurant/appearance?slug='+encodeURIComponent(slug)).then(r=>r.json()).then(v=>{const t=v?.draft?.template||v?.published?.template;if(t==='grid'||t==='list'||t==='gallery')setTemplate(t)}).catch(()=>{})},[slug]);
+ const select=(v:Template)=>setTemplate(v);
+ async function persist(action:'save'|'publish'){setSaving(true);setMessage('');try{const response=await fetch('/api/restaurant/appearance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug,action,settings:{template}})});if(!response.ok)throw new Error();setMessage(action==='publish'?L('تم نشر القالب','Template published','Modèle publié'):L('تم حفظ المسودة','Draft saved','Brouillon enregistré'))}catch{setMessage(L('تعذر الحفظ','Could not save','Enregistrement impossible'))}finally{setSaving(false)}}
  const templates:[Template,string,string,typeof LayoutGrid][]=[
   ['grid',L('شبكة','Grid','Grille'),L('بطاقات متوازنة وسريعة للتسوق.','Balanced cards for fast shopping.','Cartes équilibrées pour commander rapidement.'),LayoutGrid],
   ['list',L('قائمة','List','Liste'),L('عرض أفقي واضح للأصناف والتفاصيل.','Clear horizontal item layout.','Présentation horizontale claire.'),List],
@@ -18,6 +21,7 @@ export default function BrandThemeManager({slug}:{slug:string}){
  ];
  return <div className="restaurant-brand-page">
   <header className="restaurant-v2-page-heading"><div><span className="restaurant-v2-eyebrow">{L('المظهر العام','Appearance','Apparence')}</span><h1>{L('المظهر والواجهة','Appearance & interface','Apparence et interface')}</h1><p>{L('تحكم بقالب المنيو والسمات وهوية المطعم من مكان واحد.','Manage menu templates, themes and restaurant identity in one place.','Gérez les modèles, thèmes et identité du restaurant.')}</p></div><Link className="primary-button" href={'/menu/'+encodeURIComponent(slug)+'?template='+template} target="_blank">{L('معاينة المنيو','Preview menu','Aperçu du menu')}</Link></header>
+  <div className="restaurant-brand-publish"><button type="button" disabled={saving} onClick={()=>persist('save')}>{L('حفظ مسودة','Save draft','Enregistrer')}</button><button type="button" disabled={saving} onClick={()=>persist('publish')}>{L('نشر التغييرات','Publish changes','Publier')}</button>{message&&<span role="status">{message}</span>}</div>
   <nav className="restaurant-brand-tabs">{([['templates',L('القوالب','Templates','Modèles'),Shapes],['themes',L('الهوية والسمات','Brand & themes','Identité et thèmes'),Palette],['actions',L('عناصر المنيو','Menu elements','Éléments du menu'),BellRing],['pages',L('الهيدر والفوتر والصفحات','Header, footer & pages','En-tête, pied et pages'),LayoutGrid],['contact',L('بيانات التواصل','Contact details','Coordonnées'),MapPin]] as const).map(([key,label,Icon])=><button key={key} className={tab===key?'active':''} onClick={()=>setTab(key)}><Icon/>{label}</button>)}</nav>
   {tab==='templates'&&<section className="restaurant-template-grid">{templates.map(([id,title,desc,Icon])=><article key={id} className={template===id?'selected':''}><div className={'restaurant-template-preview '+id}><Icon/></div><div><h2>{title}</h2><p>{desc}</p></div><button type="button" onClick={()=>select(id)}>{template===id?<><Check/>{L('محدد','Selected','Sélectionné')}</>:L('اختيار القالب','Select template','Choisir')}</button></article>)}</section>}
   {tab==='themes'&&<section className="restaurant-v2-card restaurant-brand-settings"><h2>{L('السمات','Themes','Thèmes')}</h2><p>{L('ألوان المنيو والخلفية والخطوط والحواف والوضع الليلي ستدار من هنا.','Menu colors, backgrounds, fonts, radius and dark mode are managed here.','Couleurs, arrière-plans, polices, rayons et mode sombre.')}</p><div className="brand-setting-grid"><label>{L('اللون الرئيسي','Primary color','Couleur principale')}<input type="color" defaultValue="#f28c28"/></label><label>{L('لون الخلفية','Background','Arrière-plan')}<input type="color" defaultValue="#ffffff"/></label><label>{L('شكل الحواف','Corner style','Coins')}<select defaultValue="rounded"><option value="rounded">{L('دائري','Rounded','Arrondis')}</option><option value="soft">{L('ناعم','Soft','Doux')}</option><option value="square">{L('مربع','Square','Carrés')}</option></select></label></div></section>}
