@@ -22,7 +22,13 @@ export function ViewportStabilityGuard() {
         const height = Math.round(viewport?.height ?? window.innerHeight);
         root.style.setProperty('--foon-layout-width', width + 'px');
         root.style.setProperty('--foon-visual-height', height + 'px');
-        root.toggleAttribute('data-foon-overflow', root.scrollWidth - width > 1);
+        const overflow = root.scrollWidth - width;
+        root.toggleAttribute('data-foon-overflow', overflow > 1);
+        if (overflow > 1) {
+          // Self-heal accidental horizontal document drift without touching
+          // intentional nested scrollers such as category strips.
+          if (window.scrollX !== 0) window.scrollTo({ left: 0, top: window.scrollY, behavior: 'auto' });
+        }
       });
     };
 
