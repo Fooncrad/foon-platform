@@ -8,7 +8,8 @@ const settings=z.object({
  template,
  theme:z.object({primary:z.string().max(20).default('#f28c28'),background:z.string().max(20).default('#ffffff'),corners:z.enum(['rounded','soft','square']).default('rounded')}).optional(),
  actions:z.record(z.string(),z.object({visible:z.boolean(),position:z.enum(['cover','menu','bottom'])})).optional(),
- header:z.enum(['compact','full']).optional(),footer:z.enum(['compact','full']).optional()
+ header:z.enum(['compact','full']).optional(),footer:z.enum(['compact','full']).optional(),
+ contact:z.object({phone:z.string().max(40),email:z.string().max(180),whatsapp:z.string().max(40),location:z.string().max(500),instagram:z.string().max(180),tiktok:z.string().max(180),snapchat:z.string().max(180),website:z.string().max(500)}).optional()
 }).passthrough();
 function fail(e:unknown){return apiErrorResponse(e,'/app/api/restaurant/appearance')}
 async function tenant(slug:string){const t=await database().prepare("SELECT id FROM tenants WHERE slug=? AND activity_id='restaurants' LIMIT 1").bind(slug).first<{id:string}>();if(!t)throw new ApiError(404,'NOT_FOUND');const u=await authorize(t.id);return {...t,userId:u.userId}}
