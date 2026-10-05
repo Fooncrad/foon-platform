@@ -6,12 +6,12 @@ type ErrorCode = 'INVALID_INPUT' | 'DATABASE_SCHEMA_MISSING' | 'DATABASE_COLUMN_
 function classify(error: unknown): ErrorCode {
   if (error instanceof z.ZodError) return 'INVALID_INPUT';
   const message = error instanceof Error ? error.message : String(error);
-  if (/doesn't exist|unknown table|no such table|ER_NO_SUCH_TABLE/i.test(message)) return 'DATABASE_SCHEMA_MISSING';
+  if (/doesn't exist|unknown table|no such table|ER_NO_SUCH_TABLE|ER_NO_DB_ERROR|no database selected/i.test(message)) return 'DATABASE_SCHEMA_MISSING';
   if (/unknown column|ER_BAD_FIELD_ERROR/i.test(message)) return 'DATABASE_COLUMN_MISSING';
-  if (/foreign key|constraint|ER_DUP_ENTRY/i.test(message)) return 'DATABASE_CONSTRAINT';
+  if (/foreign key|constraint|ER_DUP_ENTRY|ER_NO_REFERENCED_ROW|ER_ROW_IS_REFERENCED/i.test(message)) return 'DATABASE_CONSTRAINT';
   if (/access denied|ER_ACCESS_DENIED/i.test(message)) return 'DATABASE_ACCESS_DENIED';
   if (/timeout|timed out|ETIMEDOUT/i.test(message)) return 'DATABASE_TIMEOUT';
-  if (/connect|ECONN|PROTOCOL_CONNECTION_LOST/i.test(message)) return 'DATABASE_CONNECTION';
+  if (/connect|ECONN|PROTOCOL_CONNECTION_LOST|DATABASE_NOT_CONFIGURED|pool is closed|too many connections/i.test(message)) return 'DATABASE_CONNECTION';
   return 'SERVICE_UNAVAILABLE';
 }
 
