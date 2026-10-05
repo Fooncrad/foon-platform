@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     const branch = table?{id:table.branch_id}:await database().prepare('SELECT id FROM branches WHERE tenant_id=? ORDER BY is_primary DESC,id ASC LIMIT 1').bind(tenant.id).first<{ id: string }>();
     if (!branch) throw new ApiError(409, 'BRANCH_REQUIRED');
     const serviceReference=table?table.table_number:input.serviceReference;
-    const id = crypto.randomUUID(), reference = `FN-${Date.now().toString(36).toUpperCase()}-${id.slice(0, 6).toUpperCase()}`, now = Date.now(), amount = (totalCents / 100).toFixed(2);
+    const id = crypto.randomUUID(), typePrefix:Record<string,string>={takeaway:'ORDT',pickup:'ORDP',dine_in:'ORDD',delivery:'ORDL',room_service:'ORDR',reservation:'ORDB'}, reference = `${typePrefix[input.orderType]||'ORD'}${Date.now().toString(36).toUpperCase()}${id.slice(0, 4).toUpperCase()}`, now = Date.now(), amount = (totalCents / 100).toFixed(2);
     try {
       await database().transaction(async tx => {
         await enforceOrderLimit(tx,tenant.id);
