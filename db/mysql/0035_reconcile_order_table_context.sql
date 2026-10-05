@@ -1,4 +1,9 @@
--- Production already contains restaurant_orders.table_id and restaurant_orders_table.
--- Keep this migration as a no-op marker so deployments never fail on duplicate
--- column/index errors. Future schema changes must be additive and verified first.
-SELECT 1;
+-- Production reconciliation for order checkout fields used by the current API.
+-- table_id and restaurant_orders_table are already created by 0008_pos_service_context.sql.
+-- Keep changes additive; never drop or narrow production data.
+
+ALTER TABLE restaurant_orders
+  ADD COLUMN customer_locale VARCHAR(2) NULL AFTER notes;
+
+ALTER TABLE restaurant_order_items
+  ADD COLUMN tax_amount DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER line_total;
