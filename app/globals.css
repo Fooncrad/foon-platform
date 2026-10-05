@@ -1619,3 +1619,82 @@ button {
     overflow-x: clip;
   }
 }
+
+
+/* FOON invariant — responsive width must never depend on handset model.
+   This rule is intentionally global and must remain across all templates. */
+:root {
+  --foon-viewport-inline: 100%;
+}
+
+html {
+  min-width: 0;
+  max-inline-size: 100%;
+  overflow-x: clip;
+  overscroll-behavior-inline: none;
+}
+
+body {
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-x: clip;
+  position: relative;
+}
+
+body > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+main,
+header,
+footer,
+section,
+article,
+aside,
+nav,
+form,
+fieldset {
+  min-inline-size: 0;
+}
+
+table {
+  max-inline-size: 100%;
+}
+
+input,
+textarea,
+select {
+  min-inline-size: 0;
+  inline-size: 100%;
+}
+
+pre,
+code {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* Never let generic viewport-width utilities enlarge the document.
+   Components that intentionally scroll horizontally must own their local overflow. */
+.w-screen,
+.min-w-screen {
+  max-inline-size: 100% !important;
+}
+
+@media (max-width: 720px) {
+  .container {
+    inline-size: calc(100% - 32px);
+    max-inline-size: calc(100% - 32px);
+  }
+
+  .restaurant-shell,
+  .restaurant-main,
+  .restaurant-workspace-shell,
+  .restaurant-reference-dashboard,
+  .restaurant-menu-admin-grid {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+}
