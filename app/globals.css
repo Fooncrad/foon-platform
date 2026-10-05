@@ -1532,3 +1532,9 @@ html,body{max-width:100%;overflow-x:hidden}
  .menu-footer-social{width:100%!important}
 }
 @media(max-width:360px){.menu-restaurant-footer nav{grid-template-columns:1fr!important}}
+
+
+.menu-header nav{display:flex!important;align-items:center!important;gap:7px!important}
+.menu-header-qr{width:auto!important;min-width:44px!important;padding-inline:10px!important;gap:6px!important}
+.menu-header-qr span{font-size:12px;font-weight:800;white-space:nowrap}
+@media(max-width:480px){.menu-header-qr span{display:none}.menu-header-qr{padding-inline:0!important;width:44px!important}}
