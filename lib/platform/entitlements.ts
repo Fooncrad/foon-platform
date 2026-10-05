@@ -9,7 +9,11 @@ export async function tenantEntitlement(tenantId:string,featureId:string):Promis
  JOIN package_plan_features pf ON pf.plan_id=s.plan_id AND pf.feature_id=?
  WHERE s.tenant_id=? AND s.status='active' AND (s.expires_at IS NULL OR s.expires_at>?)
  ORDER BY s.created_at DESC LIMIT 1`).bind(featureId,tenantId,Date.now()).first<{enabled:number;feature_limit:number|null}>();
- // Default-on: a missing plan-feature row must not hide a workspace. Only an explicit row with enabled=0 disables it.\n return {enabled:row?Boolean(Number(row.enabled)):true,limit:row?.feature_limit==null?null:Number(row.feature_limit)};
+ // Missing grants are enabled by default. Only an explicit enabled=0 disables a capability.
+ return {
+  enabled: row ? Boolean(Number(row.enabled)) : true,
+  limit: row?.feature_limit == null ? null : Number(row.feature_limit)
+ };
 }
 
 export async function requireTenantFeature(tenantId:string,featureId:string){
