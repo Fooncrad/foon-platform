@@ -2178,3 +2178,14 @@ html,body{
 .drawer-form{margin-top:14px;border:0!important;box-shadow:none!important;padding:0!important;background:transparent!important}
 .admin-drawer-actions{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid var(--admin-line)}
 @media(max-width:760px){.store-admin-tools{grid-template-columns:1fr!important}.store-create-trigger{width:100%}.admin-drawer{width:100%;max-width:none;padding:14px}}
+
+/* Admin viewport reset v2: remove legacy full-viewport spacer before the workspace */
+body:has(.control-panel){display:block!important;min-height:0!important}
+body:has(.control-panel)>main,body:has(.control-panel)>div,body:has(.control-panel) .admin-container{min-height:0!important;height:auto!important;align-content:start!important;align-items:start!important;justify-content:start!important}
+.admin-container:has(.control-panel),.control-panel{position:relative!important;inset:auto!important;top:auto!important;min-height:0!important;height:auto!important;transform:none!important}
+.control-panel>.control-heading{display:none!important;height:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;overflow:hidden!important}
+.control-panel>.feedback,.control-panel>.error-state{margin-top:0!important}
+.admin-workspace,.workspace-provider,.workspace-content{position:relative!important;top:auto!important;inset-block-start:auto!important;vertical-align:top!important}
+.workspace-provider{min-height:calc(100dvh - 64px)!important}
+.workspace-content{align-self:stretch!important}
+.command-toolbar{top:0!important}
