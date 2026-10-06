@@ -2156,3 +2156,11 @@ html,body{
 @media(max-width:900px){.store-admin-row{grid-template-columns:1fr 1fr}.store-plan-control{grid-column:1/-1}.store-admin-stats{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.workspace-provider,[dir="rtl"] .workspace-provider{display:block!important}.store-admin-tools,.store-admin-row{grid-template-columns:1fr}.store-plan-control,.store-row-actions,.store-password-inline{grid-column:1}.store-admin-stats{grid-template-columns:1fr 1fr}}
 @media(max-width:420px){.store-admin-stats{grid-template-columns:1fr 1fr}.store-admin-tools{grid-template-columns:1fr}.store-password-inline{grid-template-columns:1fr}}
+
+/* Admin top-gap hotfix: toolbar must start at the top of the workspace */
+.control-panel,.admin-workspace,.workspace-provider,.workspace-content{margin-top:0!important;padding-top:0!important}
+.admin-workspace,.workspace-provider{min-height:0!important}
+.workspace-provider{align-items:flex-start!important}
+.workspace-content{align-self:flex-start!important;min-height:0!important}
+.command-toolbar{position:sticky!important;top:0!important;bottom:auto!important;margin-top:0!important;transform:none!important}
+@media(max-width:760px){.control-panel>.control-heading{display:none!important}.workspace-content{padding-top:0!important}.command-toolbar{position:sticky!important;top:0!important}}
