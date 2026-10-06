@@ -2189,3 +2189,24 @@ body:has(.control-panel)>main,body:has(.control-panel)>div,body:has(.control-pan
 .workspace-provider{min-height:calc(100dvh - 64px)!important}
 .workspace-content{align-self:stretch!important}
 .command-toolbar{top:0!important}
+
+/* Compact mobile admin header: menu + language + alerts + profile, search on second row */
+.admin-mobile-identity{display:flex;align-items:center;gap:7px;margin-inline-start:auto}
+.admin-language-switch{display:flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--admin-line);border-radius:10px;background:var(--admin-card)}
+.admin-language-switch button{min-width:31px;height:30px;padding:0 6px;border:0;border-radius:7px;background:transparent;color:var(--admin-muted);font-size:9px;font-weight:900;letter-spacing:.04em}
+.admin-language-switch button.is-active{background:var(--admin-sidebar);color:#fff}
+@media(max-width:760px){
+ .command-toolbar{display:grid!important;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"menu identity" "search search";height:auto!important;min-height:0!important;gap:7px!important;padding-block:7px!important;align-items:center!important}
+ .admin-sidebar-trigger{grid-area:menu!important;width:40px!important;height:40px!important}
+ .admin-mobile-identity{grid-area:identity;justify-self:end;margin:0}
+ [dir="rtl"] .admin-mobile-identity{justify-self:start}
+ .command-search{grid-area:search;width:100%!important;max-width:none!important;min-height:40px!important}
+ .admin-language-switch{height:40px}
+ .admin-language-switch button{height:32px;min-width:29px}
+ .command-toolbar .admin-orb{width:40px!important;height:40px!important;flex:0 0 40px}
+ .command-toolbar .notification-bell,.command-toolbar [data-notification-bell]{width:40px!important;height:40px!important}
+}
+@media(max-width:390px){
+ .admin-language-switch button{min-width:27px;padding-inline:4px}
+ .admin-mobile-identity{gap:4px}
+}
