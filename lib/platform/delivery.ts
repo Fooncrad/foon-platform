@@ -36,7 +36,7 @@ export async function resolveTemplate(event:MessageEvent,locale:Locale,tenantId?
  const shared=await database().prepare('SELECT subject,body FROM platform_message_templates WHERE event=? AND locale=?').bind(event,locale).first<{subject:string;body:string}>();
  return shared?{...shared,source:'platform'}:defaultTemplate(event,locale);
 }
-export function interpolate(value:string,variables:Record<string,string>){return value.replace(/{{\\s*([^{}]+)\\s*}}/g,(_,key:string)=>{if(!(key.trim() in variables))throw new ApiError(400,'MISSING_VARIABLE');return variables[key.trim()]});}
+export function interpolate(value:string,variables:Record<string,string>){return value.replace(/{{\s*([^{}]+)\s*}}/g,(_,key:string)=>{if(!(key.trim() in variables))throw new ApiError(400,'MISSING_VARIABLE');return variables[key.trim()]});}
 function escapeHtml(value:string){return value.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));}
 function emailHtml(subject:string,body:string,locale:Locale,resetUrl?:string){
  let safeBody=escapeHtml(body);
