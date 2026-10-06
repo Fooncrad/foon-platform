@@ -1909,8 +1909,8 @@ html,body{
 .control-panel>.control-heading .quiet-button{min-height:36px;padding:7px 11px;border-radius:10px;font-size:11px;background:var(--admin-card)}
 
 .admin-workspace{width:100%;min-width:0}
-.workspace-provider{min-height:calc(100dvh - 72px)!important;width:100%;display:grid!important;grid-template-columns:244px minmax(0,1fr);align-items:stretch;background:var(--admin-page)}
-[dir="rtl"] .workspace-provider{grid-template-columns:minmax(0,1fr) 244px}
+.workspace-provider{min-height:calc(100dvh - 72px)!important;width:100%;display:flex!important;flex-direction:row;align-items:stretch;background:var(--admin-page);overflow:visible}
+[dir="rtl"] .workspace-provider{flex-direction:row-reverse}
 .workspace-sidebar{
   position:sticky!important;
   top:72px;
@@ -1924,8 +1924,7 @@ html,body{
   overflow:hidden;
   box-shadow:none!important;
 }
-[dir="rtl"] .workspace-sidebar{grid-column:2;grid-row:1}
-[dir="rtl"] .workspace-content{grid-column:1;grid-row:1}
+.workspace-content{flex:1 1 auto}
 .workspace-sidebar-header{
   min-height:69px;
   padding:14px 16px!important;
@@ -2100,8 +2099,6 @@ html,body{
 .control-panel .feedback,.control-panel .info-note{font-size:10px!important;padding:11px 13px!important}
 
 @media(max-width:1080px){
-  .workspace-provider{grid-template-columns:220px minmax(0,1fr)}
-  [dir="rtl"] .workspace-provider{grid-template-columns:minmax(0,1fr) 220px}
   .workspace-sidebar{width:220px!important;min-width:220px!important}
   .control-panel .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
   .control-panel .ops-grid{grid-template-columns:1fr}
@@ -2140,3 +2137,22 @@ html,body{
   .control-panel .metric strong{font-size:17px!important}
   .quick-actions button{min-height:58px;padding:7px}
 }
+
+/* Full store administration parity: compact catalog + strict bidi behavior */
+.store-admin-center{width:100%;min-width:0;direction:inherit}
+.store-admin-center[dir="rtl"]{text-align:right}.store-admin-center[dir="ltr"]{text-align:left}
+.store-admin-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:10px}
+.store-admin-stats>div{padding:12px 14px;border:1px solid var(--admin-line);border-radius:12px;background:var(--admin-card)}
+.store-admin-stats span{display:block;font-size:10px;color:var(--admin-muted)}.store-admin-stats strong{display:block;margin-top:3px;font-size:22px}
+.store-admin-tools{display:grid;grid-template-columns:minmax(240px,1fr) minmax(180px,240px);gap:9px;margin-bottom:10px}
+.store-admin-tools .command-search{width:100%;margin:0}.store-admin-tools .command-search input{border:0!important;box-shadow:none!important;background:transparent!important}
+.store-catalog-list{display:grid;gap:8px}.store-admin-row{display:grid;grid-template-columns:minmax(180px,1.2fr) minmax(160px,.8fr) minmax(210px,1fr);gap:10px;padding:12px;border:1px solid var(--admin-line);border-radius:12px;background:var(--admin-page);align-items:center}
+.store-row-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:10px;color:var(--admin-muted)}
+.store-plan-control{display:grid;grid-template-columns:1fr auto;gap:5px;align-items:end}.store-plan-control label{grid-column:1/-1;font-size:9px;color:var(--admin-muted)}.store-plan-control .field-select{min-width:0!important}
+.store-row-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px solid var(--admin-line);padding-top:9px}
+.store-password-inline{grid-column:1/-1;display:grid!important;grid-template-columns:minmax(180px,320px) auto;gap:6px;padding-top:4px}
+.store-status.status-active{color:#15803d}.store-status.status-suspended{color:#b91c1c}.store-status.status-draft{color:#b45309}
+.store-catalog h2 small{font-size:10px;color:var(--admin-muted);font-weight:700}
+@media(max-width:900px){.store-admin-row{grid-template-columns:1fr 1fr}.store-plan-control{grid-column:1/-1}.store-admin-stats{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.workspace-provider,[dir="rtl"] .workspace-provider{display:block!important}.store-admin-tools,.store-admin-row{grid-template-columns:1fr}.store-plan-control,.store-row-actions,.store-password-inline{grid-column:1}.store-admin-stats{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.store-admin-stats{grid-template-columns:1fr 1fr}.store-admin-tools{grid-template-columns:1fr}.store-password-inline{grid-template-columns:1fr}}
