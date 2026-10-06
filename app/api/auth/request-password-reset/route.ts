@@ -14,7 +14,7 @@ export async function POST(request:Request){
   let payload:unknown;try{payload=JSON.parse(raw)}catch{throw new ApiError(400,'INVALID_INPUT')}
   const input=bodySchema.parse(payload),now=Date.now(),bucket=Math.floor(now/900000);
   const rateKey=createHash('sha256').update(input.email+':'+bucket).digest('hex');
-  await database().prepare('INSERT INTO auth_password_reset_attempts(bucket_key,attempts,expires_at) VALUES(?,1,?) ON CONFLICT(bucket_key) DO UPDATE SET attempts=attempts+1').bind(rateKey,now+1800000).run();
+  await database().prepare("INSERT INTO auth_password_reset_attempts(bucket_key,attempts,expires_at) VALUES(?,1,?) ON DUPLICATE KEY UPDATE attempts=attempts+1,expires_at=VALUES(expires_at)").bind(rateKey,now+1800000).run();
   const attempts=await database().prepare('SELECT attempts FROM auth_password_reset_attempts WHERE bucket_key=?').bind(rateKey).first<{attempts:number}>();
   if((attempts?.attempts??0)>5)return NextResponse.json(generic,{status:202});
   await database().prepare('DELETE FROM auth_password_reset_attempts WHERE expires_at<?').bind(now).run();
