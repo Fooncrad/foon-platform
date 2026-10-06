@@ -13,7 +13,17 @@ export async function resolveEmailSettings(tenantId?:string,event?:MessageEvent,
    database().prepare('SELECT * FROM tenant_email_settings WHERE tenant_id=?').bind(tenantId).first<EmailSettings>(),
    database().prepare('SELECT activity_id FROM tenants WHERE id=?').bind(tenantId).first<{activity_id:string}>()
   ]);
-  return {settings:settings?.provider==='smtp'?settings:null,scope:'tenant_email_settings:'+tenantId,custom:true,activityId:tenant?.activity_id};
+  if(settings?.provider==='smtp'&&Number(settings.enabled)===1&&settings.secret_ciphertext&&settings.from_email&&settings.smtp_host&&settings.smtp_username){
+   return {settings,scope:'tenant_email_settings:'+tenantId,custom:true,activityId:tenant?.activity_id};
+  }
+  if(tenant?.activity_id){
+   const activity=await database().prepare('SELECT * FROM activity_email_settings WHERE activity_id=?').bind(tenant.activity_id).first<EmailSettings>();
+   if(activity?.provider==='smtp'&&Number(activity.enabled)===1&&activity.secret_ciphertext&&activity.from_email&&activity.smtp_host&&activity.smtp_username){
+    return {settings:activity,scope:'activity_email_settings:'+tenant.activity_id,custom:false,activityId:tenant.activity_id};
+   }
+  }
+  const platform=await database().prepare('SELECT * FROM platform_email_settings WHERE id=?').bind('platform').first<EmailSettings>();
+  return {settings:platform?.provider==='smtp'&&Number(platform.enabled)===1?platform:null,scope:platformScope,custom:false,activityId:tenant?.activity_id};
  }
  if(requestedActivityId&&event!=='subscription_updated'&&event!=='password_reset'){
   const settings=await database().prepare('SELECT * FROM activity_email_settings WHERE activity_id=?').bind(requestedActivityId).first<EmailSettings>();
