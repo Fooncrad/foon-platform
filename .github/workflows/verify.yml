@@ -22,3 +22,5 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+        env:
+          RUN_DB_MIGRATIONS: 'false'
