@@ -66,6 +66,10 @@ try{
      console.log(`Reconciled existing schema in ${name}: ${error.code}`);
      continue;
     }
+    if(error?.code==='ER_CANT_CREATE_TABLE' && error?.errno===1005 && /errno: 121/.test(error?.sqlMessage||'')){
+     console.log(`Reconciled existing foreign key in ${name}: ${error.code} / errno 121`);
+     continue;
+    }
     throw error;
    }
   }
