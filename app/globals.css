@@ -2245,3 +2245,25 @@ body:has(.control-panel){margin:0!important;padding:0!important}
  .public-language-switch button{min-width:32px;height:32px}
 }
 @media(prefers-reduced-motion:reduce){.admin-data-loading span{animation:none}}
+
+
+/* Admin utility controls: site shortcut, compact locale dropdown, profile */
+.admin-mobile-identity{display:flex;align-items:center;gap:7px}
+.admin-site-link,.admin-profile-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}
+.admin-site-link{width:34px;height:34px;border:1px solid var(--admin-line);border-radius:10px;background:var(--admin-card);color:var(--admin-muted)}
+.admin-site-link:hover{color:#f97316;border-color:rgba(249,115,22,.3)}
+.admin-language-select{width:auto!important;min-width:108px!important;height:34px!important;gap:6px!important;padding-inline:9px!important;border-color:var(--admin-line)!important;border-radius:10px!important;background:var(--admin-card)!important;font-size:10px!important;font-weight:800!important}
+.admin-language-select svg{width:14px;height:14px}
+.admin-profile-link .admin-orb{display:grid;place-items:center}
+.admin-profile-link:hover .admin-orb{box-shadow:0 0 0 3px rgba(249,115,22,.14)}
+@media(max-width:760px){
+ .admin-site-link{width:40px;height:40px}
+ .admin-language-select{height:40px!important;min-width:102px!important}
+ .admin-profile-link .admin-orb{width:40px!important;height:40px!important}
+}
+@media(max-width:420px){
+ .admin-mobile-identity{gap:4px}
+ .admin-language-select{min-width:94px!important;padding-inline:7px!important}
+ .admin-site-link{width:36px;height:36px}
+ .admin-profile-link .admin-orb{width:36px!important;height:36px!important}
+}
