@@ -15,8 +15,3 @@ CREATE TABLE IF NOT EXISTS restaurant_table_service_events (
  FOREIGN KEY(table_id) REFERENCES restaurant_tables(id),
  FOREIGN KEY(waiter_id) REFERENCES staff_profiles(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
--- Reconcile columns used by current table-service API.
-ALTER TABLE restaurant_table_service_events ADD COLUMN IF NOT EXISTS actor_id VARCHAR(36) NULL AFTER table_id;
-ALTER TABLE restaurant_table_service_events ADD COLUMN IF NOT EXISTS source VARCHAR(30) NOT NULL DEFAULT 'menu' AFTER reason;
