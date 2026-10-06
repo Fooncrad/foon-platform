@@ -10,6 +10,7 @@ const harmlessExistingSchemaErrors=new Set([
  'ER_DUP_FIELDNAME', // column already exists
  'ER_DUP_KEYNAME',   // index/key already exists
  'ER_TABLE_EXISTS_ERROR',
+ 'ER_CANT_DROP_FIELD_OR_KEY', // reconciliation migration may target an index already removed
 ]);
 function splitSqlStatements(sql){
  const statements=[];let start=0;let quote=null;let escaped=false;
