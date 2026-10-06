@@ -14,11 +14,13 @@ export async function POST(request:Request){
   let payload:unknown;try{payload=JSON.parse(raw)}catch{throw new ApiError(400,'INVALID_INPUT')}
   const input=bodySchema.parse(payload),now=Date.now(),bucket=Math.floor(now/900000);
   const rateKey=createHash('sha256').update(input.email+':'+bucket).digest('hex');
-  await database().prepare("INSERT INTO auth_password_reset_attempts(bucket_key,attempts,expires_at) VALUES(?,1,?) ON DUPLICATE KEY UPDATE attempts=attempts+1,expires_at=VALUES(expires_at)").bind(rateKey,now+1800000).run();
-  const attempts=await database().prepare('SELECT attempts FROM auth_password_reset_attempts WHERE bucket_key=?').bind(rateKey).first<{attempts:number}>();
-  if((attempts?.attempts??0)>5)return NextResponse.json(generic,{status:202});
-  await database().prepare('DELETE FROM auth_password_reset_attempts WHERE expires_at<?').bind(now).run();
-  await database().prepare('DELETE FROM password_reset_tokens WHERE expires_at<=?').bind(now).run();
+  try{
+   await database().prepare("INSERT INTO auth_password_reset_attempts(bucket_key,attempts,expires_at) VALUES(?,1,?) ON DUPLICATE KEY UPDATE attempts=attempts+1,expires_at=VALUES(expires_at)").bind(rateKey,now+1800000).run();
+   const attempts=await database().prepare('SELECT attempts FROM auth_password_reset_attempts WHERE bucket_key=?').bind(rateKey).first<{attempts:number}>();
+   if((attempts?.attempts??0)>5)return NextResponse.json(generic,{status:202});
+   await database().prepare('DELETE FROM auth_password_reset_attempts WHERE expires_at<?').bind(now).run();
+  }catch(error){console.error('Password reset rate-limit storage unavailable',error instanceof Error?error.message:'UNKNOWN')}
+  try{await database().prepare('DELETE FROM password_reset_tokens WHERE expires_at<=?').bind(now).run()}catch(error){console.error('Password reset token storage unavailable',error instanceof Error?error.message:'UNKNOWN');throw new ApiError(503,'PASSWORD_RESET_SCHEMA_REQUIRED')}
   const user=await database().prepare('SELECT id,email,display_name FROM users WHERE email=?').bind(input.email).first<{id:string;email:string;display_name:string}>();
   if(!user)return NextResponse.json(generic,{status:202});
   await database().prepare('DELETE FROM password_reset_tokens WHERE user_id=? AND (used_at IS NULL OR expires_at<=?)').bind(user.id,now).run();
@@ -37,6 +39,7 @@ export async function POST(request:Request){
  }catch(error){
   if(error instanceof ApiError)return NextResponse.json({error:error.code},{status:error.status});
   if(error instanceof z.ZodError)return NextResponse.json({error:'INVALID_INPUT'},{status:400});
+  console.error('Password reset request failed',error instanceof Error?error.message:'UNKNOWN');
   return NextResponse.json({error:'RESET_REQUEST_UNAVAILABLE'},{status:503});
  }
 }
