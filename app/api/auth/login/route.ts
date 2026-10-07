@@ -33,5 +33,13 @@ export async function POST(request:Request){
    else if(next==='/'||next==='/admin'||next==='/onboarding')next=workspace.activity_id==='restaurants'?'/restaurant?tenant='+workspace.id:'/store?tenant='+workspace.id;
   }
   const response=NextResponse.json({next});response.cookies.set('foon_session',token,{httpOnly:true,secure:process.env.NODE_ENV==='production'&&process.env.SITE_ORIGIN?.startsWith('https://'),sameSite:'lax',path:'/',maxAge:7*86400});return response;
- }catch(e){return e instanceof ApiError?NextResponse.json({error:e.code},{status:e.status}):NextResponse.json({error:'SIGN_IN_UNAVAILABLE'},{status:503});}
+ }catch(e){
+  if(e instanceof ApiError)return NextResponse.json({error:e.code},{status:e.status});
+  const err=e as {code?:string;message?:string};
+  const trace=crypto.randomUUID().slice(0,8).toUpperCase();
+  console.error('[auth:login]',{trace,code:err?.code,message:err?.message});
+  const databaseCodes=new Set(['DATABASE_BUSY','POOL_ENQUEUELIMIT','ETIMEDOUT','ECONNREFUSED','PROTOCOL_CONNECTION_LOST','ER_ACCESS_DENIED_ERROR','ER_BAD_DB_ERROR','ER_NO_SUCH_TABLE']);
+  const error=databaseCodes.has(String(err?.code))?'DATABASE_UNAVAILABLE':'SIGN_IN_UNAVAILABLE';
+  return NextResponse.json({error,trace},{status:503});
+ }
 }
