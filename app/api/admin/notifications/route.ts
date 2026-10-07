@@ -2,7 +2,43 @@ import {ApiError,actor,sameOrigin} from '@/lib/platform/security';
 import {database} from '@/db';
 import {z} from 'zod';
 export const dynamic='force-dynamic';
-async function admin(){const u=await actor();if(!u.admin)throw new ApiError(403,'FORBIDDEN');return u;}\nfunction failure(error:unknown){\n if(error instanceof ApiError)return Response.json({error:error.code},{status:error.status});\n console.error('[admin:notifications]',error);\n return Response.json({error:'NOTIFICATIONS_UNAVAILABLE'},{status:503});\n}
+
+async function admin(){
+  const u=await actor();
+  if(!u.admin)throw new ApiError(403,'FORBIDDEN');
+  return u;
+}
+
+function failure(error:unknown){
+  if(error instanceof ApiError)return Response.json({error:error.code},{status:error.status});
+  console.error('[admin:notifications]',error);
+  return Response.json({error:'NOTIFICATIONS_UNAVAILABLE'},{status:503});
+}
+
 const row=z.object({event:z.string().min(2).max(80),enabled:z.boolean(),in_app:z.boolean(),browser_push:z.boolean(),email:z.boolean(),sound:z.boolean(),sound_key:z.string().max(60),volume:z.number().int().min(0).max(100),priority:z.enum(['low','normal','high','urgent']),repeat_count:z.number().int().min(1).max(10),recipient_roles:z.string().max(500)});
-export async function GET(){try{await admin();const [settings,events]=await Promise.all([database().prepare('SELECT * FROM platform_notification_settings ORDER BY event').all(),database().prepare('SELECT id,tenant_id,event,entity_type,entity_id,title,body,priority,status,channels,error_code,trace_id,created_at FROM notification_events ORDER BY created_at DESC LIMIT 200').all()]);return Response.json({settings:settings.results,events:events.results})}catch(error){return failure(error)}}
-export async function POST(req:Request){try{sameOrigin(req);await admin();const v=row.parse(await req.json()),now=Date.now();await database().prepare(`INSERT INTO platform_notification_settings(event,enabled,in_app,browser_push,email,sound,sound_key,volume,priority,repeat_count,recipient_roles,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE enabled=VALUES(enabled),in_app=VALUES(in_app),browser_push=VALUES(browser_push),email=VALUES(email),sound=VALUES(sound),sound_key=VALUES(sound_key),volume=VALUES(volume),priority=VALUES(priority),repeat_count=VALUES(repeat_count),recipient_roles=VALUES(recipient_roles),updated_at=VALUES(updated_at)`).bind(v.event,v.enabled?1:0,v.in_app?1:0,v.browser_push?1:0,v.email?1:0,v.sound?1:0,v.sound_key,v.volume,v.priority,v.repeat_count,v.recipient_roles,now).run();return Response.json({ok:true})}catch(e){if(e instanceof z.ZodError)return Response.json({error:'INVALID_INPUT'},{status:400});return failure(e)}}
+
+export async function GET(){
+  try{
+    await admin();
+    const [settings,events]=await Promise.all([
+      database().prepare('SELECT * FROM platform_notification_settings ORDER BY event').all(),
+      database().prepare('SELECT id,tenant_id,event,entity_type,entity_id,title,body,priority,status,channels,error_code,trace_id,created_at FROM notification_events ORDER BY created_at DESC LIMIT 200').all()
+    ]);
+    return Response.json({settings:settings.results,events:events.results});
+  }catch(error){
+    return failure(error);
+  }
+}
+
+export async function POST(req:Request){
+  try{
+    sameOrigin(req);
+    await admin();
+    const v=row.parse(await req.json()),now=Date.now();
+    await database().prepare(`INSERT INTO platform_notification_settings(event,enabled,in_app,browser_push,email,sound,sound_key,volume,priority,repeat_count,recipient_roles,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE enabled=VALUES(enabled),in_app=VALUES(in_app),browser_push=VALUES(browser_push),email=VALUES(email),sound=VALUES(sound),sound_key=VALUES(sound_key),volume=VALUES(volume),priority=VALUES(priority),repeat_count=VALUES(repeat_count),recipient_roles=VALUES(recipient_roles),updated_at=VALUES(updated_at)`).bind(v.event,v.enabled?1:0,v.in_app?1:0,v.browser_push?1:0,v.email?1:0,v.sound?1:0,v.sound_key,v.volume,v.priority,v.repeat_count,v.recipient_roles,now).run();
+    return Response.json({ok:true});
+  }catch(e){
+    if(e instanceof z.ZodError)return Response.json({error:'INVALID_INPUT'},{status:400});
+    return failure(e);
+  }
+}
