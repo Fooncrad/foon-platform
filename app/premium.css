@@ -505,3 +505,33 @@ body{background:radial-gradient(circle at 12% -10%,rgba(237,106,22,.10),transpar
 @media(max-width:760px){.production-public-header-inner{width:calc(100% - 32px);min-height:70px}.production-public-brand{min-width:0}.production-public-brand strong{font-size:19px}.production-public-brand small{font-size:7px}.production-public-header nav{position:absolute;top:70px;right:16px;left:16px;display:none;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:var(--panel-shadow);flex-direction:column;align-items:stretch}.production-public-header nav.open{display:flex}.production-public-header nav>a{padding:12px 14px}.production-public-header nav [data-slot=select-trigger],.production-public-header nav .icon-button{width:100%;justify-content:center}.production-public-menu-toggle{display:grid;place-items:center;width:40px;height:40px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--foreground)}.hero{padding:52px 0 48px}.hero h1{font-size:clamp(34px,10vw,46px)}.hero .intro{font-size:16px}.trust-rail{gap:8px;font-size:11px}.premium-board{grid-template-columns:1fr;border-radius:18px}.premium-board .board-top,.premium-board .board-bottom{grid-column:1}.premium-board .board-row{min-height:0;padding:22px}.premium-board .board-row:nth-of-type(odd){border-inline-start:0}.sector-section{padding:40px 0 52px}.section-heading h2{font-size:26px}.foundation-strip{padding:27px 23px;border-radius:18px}.foundation-strip h2{font-size:21px}.foundation-strip p{font-size:14px}.production-footer-inner{width:calc(100% - 32px)}}
 @media(min-width:761px){.production-public-menu-toggle{display:none}}
 @media(prefers-reduced-motion:reduce){.hero .primary-button,.hero-ghost,.activity-card,.premium-board .board-row,.production-public-header nav>a{transform:none!important}}
+
+
+/* FOON 2026 visual foundation */
+:root{
+ --foon-surface:color-mix(in srgb,var(--card) 94%,transparent);
+ --foon-soft-shadow:0 1px 2px rgba(10,31,68,.03),0 14px 40px rgba(10,31,68,.06);
+ --foon-hover-shadow:0 18px 48px rgba(10,31,68,.11);
+ --foon-radius:16px;
+}
+body{background:
+ radial-gradient(circle at 82% -10%,rgba(7,97,249,.08),transparent 30rem),
+ radial-gradient(circle at 12% 8%,rgba(249,132,34,.055),transparent 24rem),
+ var(--background)}
+.production-public-header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(18px) saturate(145%);-webkit-backdrop-filter:blur(18px) saturate(145%)}
+.primary-button,.quiet-button,.icon-button,.activity-card,.metric,.policy-grid button,.form-card,.records-card,.contact-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease}
+.primary-button{box-shadow:0 8px 22px rgba(7,97,249,.18)}
+.primary-button:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(7,97,249,.24)}
+.activity-card,.metric,.policy-grid button,.form-card,.records-card,.contact-card{background:var(--foon-surface);box-shadow:var(--foon-soft-shadow);border-color:color-mix(in srgb,var(--border) 88%,transparent)}
+.activity-card:hover,.policy-grid button:hover,.contact-card:hover{transform:translateY(-3px);box-shadow:var(--foon-hover-shadow);border-color:color-mix(in srgb,var(--primary) 28%,var(--border))}
+.form-card input,.form-card textarea,.field-select{transition:border-color .16s ease,box-shadow .16s ease,background .16s ease}
+.form-card input:focus,.form-card textarea:focus,.field-select:focus{border-color:color-mix(in srgb,var(--primary) 55%,var(--border));box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 10%,transparent)}
+.control-tabs{scrollbar-width:none}.control-tabs::-webkit-scrollbar{display:none}
+@media(max-width:720px){
+ body{background:var(--background)}
+ .primary-button,.quiet-button,.icon-button{min-height:44px}
+ .activity-card:hover,.policy-grid button:hover,.contact-card:hover{transform:none}
+ .form-card,.records-card{padding:18px;border-radius:14px}
+ input,select,textarea{font-size:16px!important}
+}
+@media(prefers-reduced-motion:reduce){.primary-button,.quiet-button,.icon-button,.activity-card,.metric,.policy-grid button,.form-card,.records-card,.contact-card{transition:none!important}}
