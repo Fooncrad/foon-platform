@@ -11,9 +11,9 @@ cpSync('public','dist/public',{recursive:true});
 for(const name of ['.env','.env.local','.env.production','.env.production.local'])rmSync(`dist/${name}`,{force:true});
 writeFileSync('dist/.build-complete','FOON Node.js standalone build\n');
 console.log('Hostinger output: dist; entry: dist/server.js');
-// Keep deployment builds independent from database network/auth availability.
-// Production schema is part of the release. Migrate by default; set RUN_DB_MIGRATIONS=false only for an intentionally database-less build.
-if(process.env.RUN_DB_MIGRATIONS!=='false'){
+// A clean application build must never depend on production database reachability.
+// Schema changes are an explicit release step: set RUN_DB_MIGRATIONS=true when intentionally migrating.
+if(process.env.RUN_DB_MIGRATIONS==='true'){
  const child=spawnSync(process.execPath,['scripts/migrate-mysql.mjs'],{stdio:'inherit',env:process.env});
  if(child.status!==0)process.exit(child.status??1);
  if(process.env.ADMIN_INITIAL_PASSWORD){
