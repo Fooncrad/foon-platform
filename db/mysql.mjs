@@ -2,7 +2,7 @@ import mysql from 'mysql2/promise';
 let pool;
 function connectionOptions(){
  const {DATABASE_URL,DB_HOST,DB_PORT,DB_USER,DB_PASSWORD,DB_NAME,DB_SSL}=process.env;
- const timeouts={connectTimeout:5000,enableKeepAlive:true,keepAliveInitialDelay:0};
+ const timeouts={connectTimeout:Number(process.env.DB_CONNECT_TIMEOUT_MS||5000),enableKeepAlive:true,keepAliveInitialDelay:0};
  if(DATABASE_URL){
   const url=new URL(DATABASE_URL);
   const secure=url.searchParams.get('ssl')!=='false'&&url.searchParams.get('ssl-mode')!=='DISABLED';
@@ -13,7 +13,7 @@ function connectionOptions(){
 }
 export function getPool(){
  if(pool)return pool;
- pool=mysql.createPool({charset:'utf8mb4',connectionLimit:8,maxIdle:8,idleTimeout:30000,waitForConnections:true,queueLimit:24,supportBigNumbers:true,bigNumberStrings:false,...connectionOptions()});
+ pool=mysql.createPool({charset:'utf8mb4',connectionLimit:Number(process.env.DB_POOL_SIZE||8),maxIdle:Number(process.env.DB_POOL_SIZE||8),idleTimeout:30000,waitForConnections:true,queueLimit:Number(process.env.DB_QUEUE_LIMIT||24),supportBigNumbers:true,bigNumberStrings:false,...connectionOptions()});
  pool.on?.('connection',connection=>{connection.query('SET SESSION MAX_EXECUTION_TIME=4500').catch(()=>{});});
  return pool;
 }
