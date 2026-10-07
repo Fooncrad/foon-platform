@@ -14,7 +14,7 @@ function connectionOptions(){
 export function getPool(){
  if(pool)return pool;
  pool=mysql.createPool({charset:'utf8mb4',connectionLimit:8,maxIdle:8,idleTimeout:30000,waitForConnections:true,queueLimit:24,supportBigNumbers:true,bigNumberStrings:false,...connectionOptions()});
- pool.on?.('connection',connection=>{connection.query('SET SESSION MAX_EXECUTION_TIME=4500').catch(()=>{});});
+ pool.on?.('connection',connection=>{try{connection.query('SET SESSION MAX_EXECUTION_TIME=4500',()=>{});}catch{}});
  return pool;
 }
 export function mysqlSql(sql){
