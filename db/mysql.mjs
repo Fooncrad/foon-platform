@@ -14,7 +14,7 @@ function connectionOptions(){
 export function getPool(){
  if(pool)return pool;
  pool=mysql.createPool({charset:'utf8mb4',connectionLimit:Number(process.env.DB_POOL_SIZE||8),maxIdle:Number(process.env.DB_POOL_SIZE||8),idleTimeout:30000,waitForConnections:true,queueLimit:Number(process.env.DB_QUEUE_LIMIT||24),supportBigNumbers:true,bigNumberStrings:false,...connectionOptions()});
- pool.on?.('connection',connection=>{connection.query('SET SESSION MAX_EXECUTION_TIME=4500').catch(()=>{});});
+ // mysql2/promise pools emit the underlying callback-style connection here.\n // Do not call .catch() on connection.query(): Query is not a Promise and doing so\n // throws synchronously on every new connection, preventing the pool from becoming usable.\n pool.on?.('connection',connection=>{\n  connection.query('SET SESSION MAX_EXECUTION_TIME=4500',error=>{\n   if(error)console.error('[mysql:session-init]',{code:error.code,errno:error.errno,sqlState:error.sqlState});\n  });\n });
  return pool;
 }
 export function mysqlSql(sql){
