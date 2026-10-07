@@ -13,14 +13,19 @@ if(!existsSync(`${standalone}/server.js`))throw new Error('Standalone output mis
 rmSync('dist',{recursive:true,force:true});
 cpSync(standalone,'dist',{recursive:true});
 cpSync('.next/static','dist/.next/static',{recursive:true});
-if(existsSync('public'))cpSync('public','dist/public',{recursive:true});
+// Make Next's native standalone directory independently deployable too.
+cpSync('.next/static',`${standalone}/.next/static`,{recursive:true});
+if(existsSync('public')){
+ cpSync('public','dist/public',{recursive:true});
+ cpSync('public',`${standalone}/public`,{recursive:true});
+}
 
 for(const name of ['.env','.env.local','.env.production','.env.production.local']){
  rmSync(`dist/${name}`,{force:true});
  rmSync(`${standalone}/${name}`,{force:true});
 }
 writeFileSync('dist/.build-complete','FOON Node.js standalone build\n');
-console.log('Hostinger output ready: .next/standalone + dist; entry: dist/server.js');
+console.log('Hostinger output ready: .next/standalone (server.js + static + public) and dist mirror');
 
 if(process.env.RUN_DB_MIGRATIONS==='true'){
  const child=spawnSync(process.execPath,['scripts/migrate-mysql.mjs'],{stdio:'inherit',env:process.env});
