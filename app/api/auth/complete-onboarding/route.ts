@@ -5,8 +5,9 @@ import {database} from '@/db';
 import {ApiError,sameOrigin} from '@/lib/platform/security';
 import {getCurrentUser} from '@/app/session';
 import {activities} from '@/lib/platform/activities';
+import {sendAutomaticMessage} from '@/lib/platform/delivery';
 export const dynamic='force-dynamic';
-const schema=z.object({storeName:z.string().trim().min(2).max(120),slug:z.string().regex(/^[a-z][a-z0-9-]{2,59}$/),activityId:z.enum(activities.map(a=>a.id) as [string,...string[]]),countryCode:z.string().regex(/^[A-Z]{2}$/),currency:z.string().regex(/^[A-Z]{3}$/),phone:z.string().trim().min(7).max(32),city:z.string().trim().min(2).max(120)});
+const schema=z.object({storeName:z.string().trim().min(2).max(120),slug:z.string().regex(/^[a-z][a-z0-9-]{2,59}$/),activityId:z.enum(activities.map(a=>a.id) as [string,...string[]]),countryCode:z.string().regex(/^[A-Z]{2}$/),currency:z.string().regex(/^[A-Z]{3}$/),phone:z.string().trim().min(7).max(32),city:z.string().trim().min(2).max(120),locale:z.enum(['ar','en','fr']).default('ar')});
 export async function POST(request:Request){
  try{
   sameOrigin(request);
@@ -31,6 +32,10 @@ export async function POST(request:Request){
    db.prepare('INSERT INTO branches(id,tenant_id,name,is_primary) VALUES(?,?,?,1)').bind(branchId,tenantId,v.storeName)
   ]);
   const next=isPaid?'/store/subscription?tenant='+tenantId:(restaurant?'/restaurant?tenant='+tenantId:'/store?tenant='+tenantId);
+  const mailVars={customer_name:user.displayName||user.email,store_name:v.storeName,service_name:v.storeName,service_number:tenantId,service_type:v.activityId,amount:'0',currency:v.currency,date:new Date(now).toISOString(),plan_name:plan.id,expires_at:'',reset_url:''};
+  await sendAutomaticMessage({tenantId,event:'welcome',locale:v.locale,recipient:user.email,variables:mailVars,idempotencyKey:'business-welcome:'+tenantId});
+  const adminEmail=process.env.PLATFORM_ADMIN_EMAIL?.trim().toLowerCase();
+  if(adminEmail&&adminEmail!==user.email.toLowerCase())await sendAutomaticMessage({event:'welcome',locale:'ar',recipient:adminEmail,variables:{...mailVars,customer_name:user.displayName||user.email},idempotencyKey:'business-admin:'+tenantId});
   return NextResponse.json({next,tenantId},{status:201});
  }catch(error){
   if(error instanceof ApiError)return NextResponse.json({error:error.code},{status:error.status});
